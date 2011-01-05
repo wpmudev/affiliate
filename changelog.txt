@@ -1,0 +1,31 @@
+Plugin Name: Affiliate lite
+Author: Barry Getty (Incsub)
+
+Change Log:
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+1.2.2 - 12/16/2010
+----------------------------------------------------------------------
+- Enhancement: compatibility with New Blog Template
+
+1.2.1 - 10/03/2010
+----------------------------------------------------------------------
+- Removed cookiehash define
+
+1.2 - 07/08/2010
+----------------------------------------------------------------------
+- Added affiliate images to site list
+- Changed ajax calls to standard wp from custom
+- updated flot javascript charting library
+
+1.1 - 06/09/2010
+----------------------------------------------------------------------
+- Initial work for WP3 compatibility.
+
+1.0.1 - 09/30/2009
+----------------------------------------------------------------------
+- Moved addiliate settings to "Affiliate referrals" page.
+
+1.0.0 - 09/24/2009
+----------------------------------------------------------------------
+- Initial Release.
