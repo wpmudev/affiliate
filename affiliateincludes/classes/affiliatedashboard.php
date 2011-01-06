@@ -144,15 +144,15 @@ class affiliatedashboard {
 
 	function dashboard_widget_header() {
 		if(strstr(strtolower($_SERVER['SCRIPT_NAME']), 'index.php')) {
-			wp_enqueue_script('flot_js', affiliate_url('affiliatelite/js/jquery.flot.min.js'), array('jquery'));
-			wp_enqueue_script('aff_js', affiliate_url('affiliatelite/js/affiliatelitedash.js'), array('jquery'));
+			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
+			wp_enqueue_script('aff_js', affiliate_url('affiliateincludes/js/affiliatelitedash.js'), array('jquery'));
 
 			add_action ('admin_head', array(&$this, 'dashboard_widget_iehead'));
 		}
 	}
 
 	function dashboard_widget_iehead() {
-		echo '<!--[if IE]><script language="javascript" type="text/javascript" src="' . affiliate_url('affiliatelite/js/excanvas.min.js') . '"></script><![endif]-->';
+		echo '<!--[if IE]><script language="javascript" type="text/javascript" src="' . affiliate_url('affiliateincludes/js/excanvas.min.js') . '"></script><![endif]-->';
 	}
 
 	function dashboard_affiliate_register() {

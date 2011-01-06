@@ -332,16 +332,16 @@ class affiliateadmin {
 
 		// Main user report page
 		if(isset($_GET['page']) && addslashes($_GET['page']) == 'affiliateearnings') {
-			wp_enqueue_script('flot_js', affiliate_url('affiliatelite/js/jquery.flot.min.js'), array('jquery'));
-			wp_enqueue_script('aff_js', affiliate_url('affiliatelite/js/affiliateliteuserreport.js'), array('jquery'));
+			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
+			wp_enqueue_script('aff_js', affiliate_url('affiliateincludes/js/affiliateliteuserreport.js'), array('jquery'));
 
 			add_action('admin_head', array(&$this, 'add_iehead') );
 		}
 
 		// Admin user report page
 		if(isset($_GET['page']) && addslashes($_GET['page']) == 'affiliatesadmin' && addslashes($_GET['subpage']) == 'users' && isset($_GET['id'])) {
-			wp_enqueue_script('flot_js', affiliate_url('affiliatelite/js/jquery.flot.min.js'), array('jquery'));
-			wp_enqueue_script('aff_js', affiliate_url('affiliatelite/js/affiliateadminuserreport.js'), array('jquery'));
+			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
+			wp_enqueue_script('aff_js', affiliate_url('affiliateincludes/js/affiliateadminuserreport.js'), array('jquery'));
 
 			add_action('admin_head', array(&$this, 'add_iehead') );
 		}
@@ -350,7 +350,7 @@ class affiliateadmin {
 	}
 
 	function add_iehead() {
-		echo '<!--[if IE]><script language="javascript" type="text/javascript" src="' . affiliate_url('affiliatelite/js/excanvas.min.js') . '"></script><![endif]-->';
+		echo '<!--[if IE]><script language="javascript" type="text/javascript" src="' . affiliate_url('affiliateincludes/js/excanvas.min.js') . '"></script><![endif]-->';
 	}
 
 	function add_profile_report_page() {
@@ -577,8 +577,6 @@ class affiliateadmin {
 			echo "</div>";
 
 			echo "<div id='clickscolumn' style='width: 48%; margin-right: 2%; margin-top: 20px; min-height: 400px; float: left;'>";
-
-			//echo "<div id='affdashgraph' style='height: 250px; background-color: #fff; margin-left: 10px; margin-right: 10px; margin-bottom: 20px;'>" . "</div>";
 
 			// The table
 			echo '<table width="100%" cellpadding="3" cellspacing="3" class="widefat" style="width: 100%;">';
@@ -1858,12 +1856,12 @@ class affiliateadmin {
 			$aff = get_blog_option( $blog_id, 'affiliate_referrer', 'none' );
 			if($aff != 'none') {
 				// This is an affiliate
-				echo "<img src='" .  affiliate_url("affiliatelite/images/affiliatelink.png") . "' alt='referred'>&nbsp;";
+				echo "<img src='" .  affiliate_url("affiliateincludes/images/affiliatelink.png") . "' alt='referred'>&nbsp;";
 			}
 			$paid = get_blog_option( $blog_id, 'affiliate_paid', 'no' );
 			if($paid != 'no') {
 				// This is an affiliate
-				echo "<img src='" . affiliate_url("affiliatelite/images/affiliatemoney.png") . "' alt='paid'>";
+				echo "<img src='" . affiliate_url("affiliateincludes/images/affiliatemoney.png") . "' alt='paid'>";
 			}
 		}
 

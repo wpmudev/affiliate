@@ -3,8 +3,8 @@
 Plugin Name: Affiliate
 Plugin URI: http://premium.wpmudev.org/project/wordpress-mu-affiliate
 Description: This plugin adds a simple affiliate system to your site.
-Author: Barry at Clearskys.net
-Version: 1.2.2
+Author: Barry
+Version: 2.0
 Author URI: http://incsub.com
 WDP ID: 106
 */
@@ -73,8 +73,8 @@ class affiliate {
 		} else {
 			$thedir = WP_PLUGIN_DIR . 'affiliate';
 		}
-		if ( is_dir( $thedir . '/affiliatelite/plugins' ) ) {
-			if ( $dh = opendir( $thedir . '/affiliatelite/plugins' ) ) {
+		if ( is_dir( $thedir . '/affiliateincludes/plugins' ) ) {
+			if ( $dh = opendir( $thedir . '/affiliateincludes/plugins' ) ) {
 				$aff_plugins = array ();
 				while ( ( $plugin = readdir( $dh ) ) !== false )
 					if ( substr( $plugin, -4 ) == '.php' )
@@ -82,7 +82,7 @@ class affiliate {
 				closedir( $dh );
 				sort( $aff_plugins );
 				foreach( $aff_plugins as $aff_plugin )
-					include_once( $thedir . '/affiliatelite/plugins/' . $aff_plugin );
+					include_once( $thedir . '/affiliateincludes/plugins/' . $aff_plugin );
 			}
 		}
 
@@ -340,15 +340,15 @@ class affiliate {
 
 }
 
-require_once('affiliatelite/includes/functions.php');
+require_once('affiliateincludes/includes/functions.php');
 // Set up my location
 set_affiliate_url(__FILE__);
 set_affiliate_dir(__FILE__);
 
 if(is_admin()) {
 	// Only include the administration side of things when we need to
-	include_once('affiliatelite/classes/affiliateadmin.php');
-	include_once('affiliatelite/classes/affiliatedashboard.php');
+	include_once('affiliateincludes/classes/affiliateadmin.php');
+	include_once('affiliateincludes/classes/affiliatedashboard.php');
 
 }
 
