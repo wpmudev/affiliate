@@ -455,8 +455,6 @@ class affiliateadmin {
 				<?php
 
 				if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') {
-					$url = get_option('home');
-					$url = str_replace('http://','',$url);
 
 					$reference = get_usermeta($user_ID, 'affiliate_reference');
 					$referrer = get_usermeta($user_ID, 'affiliate_referrer');
