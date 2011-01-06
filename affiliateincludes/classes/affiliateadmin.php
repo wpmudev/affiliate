@@ -44,12 +44,13 @@ class affiliateadmin {
 
 		add_action( 'init', array( &$this, 'initialise_ajax' ), 1 );
 
-		add_action ('init', array(&$this, 'aff_report_header'), 999);
+		add_action( 'init', array(&$this, 'aff_report_header'), 999 );
 
 		add_action( 'init', array(&$this, 'handle_export_link' ) );
 
 		// Menus and profile page
 		add_action( 'admin_menu', array(&$this, 'add_menu_items') );
+		add_action( 'network_admin_menu', array(&$this, 'add_menu_items') );
 
 		add_action( 'show_user_profile', array(&$this, 'add_profile_box' ) );
 		add_action( 'personal_options_update', array(&$this, 'update_profile_box' ) );
@@ -300,7 +301,11 @@ class affiliateadmin {
 
 		// Add administration menu
 		if(is_multisite()) {
-			add_submenu_page('ms-admin.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+			if(function_exists('is_network_admin') && is_network_admin()) {
+				add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+			} else {
+				add_submenu_page('ms-admin.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+			}
 		} else {
 			add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
 		}
@@ -309,7 +314,6 @@ class affiliateadmin {
 
 		// Add profile menu
 		if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') {
-
 			if($getoption('affiliateenablebanners', 'no') == 'yes') {
 				add_submenu_page('users.php', __('Affiliate Banners','affiliate'), __('Affiliate Banners','affiliate'), 'read', "affiliatebanners", array(&$this,'add_profile_banner_page'));
 			}
