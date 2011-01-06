@@ -1,11 +1,12 @@
 <?php
 /*
-Plugin Name: Affiliate lite
+Plugin Name: Affiliate
 Plugin URI: http://premium.wpmudev.org/project/wordpress-mu-affiliate
 Description: This plugin adds a simple affiliate system to your site.
 Author: Barry at Clearskys.net
 Version: 1.2.2
 Author URI: http://incsub.com
+WDP ID: 106
 */
 // Uncomment to have the system check all pages and referrers
 define('AFFILIATE_CHECKALL', 'yes');
@@ -17,7 +18,7 @@ define('AFFILIATE_PAYONCE', 'yes');
 
 
 // Front end and reporting part of the affiliate system
-class affiliatelite {
+class affiliate {
 
 	var $build = 1;
 
@@ -351,6 +352,6 @@ if(is_admin()) {
 
 }
 
-$affiliate =& new affiliatelite();
+$affiliate =& new affiliate();
 
 ?>
