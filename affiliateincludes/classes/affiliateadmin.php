@@ -24,6 +24,17 @@ class affiliateadmin {
 		// Grab our own local reference to the database class
 		$this->db =& $wpdb;
 
+		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+			// we're activated site wide
+			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
+			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
+		} else {
+			// we're only activated on a blog level so put the admin menu in the main area
+			$this->affiliatedata = $this->db->prefix . 'affiliatedata';
+			$this->affiliatereferrers = $this->db->prefix . 'affiliatereferrers';
+		}
+
+		/*
 		if(!empty($this->db->base_prefix)) {
 			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
@@ -31,6 +42,7 @@ class affiliateadmin {
 			$this->affiliatedata = $this->db->prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->prefix . 'affiliatereferrers';
 		}
+		*/
 
 		$installed = get_option('Aff_Installed', false);
 
@@ -115,7 +127,7 @@ class affiliateadmin {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		if(function_exists('get_site_option')) {
+		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
 		} else {
 			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
@@ -301,6 +313,13 @@ class affiliateadmin {
 
 		// Add administration menu
 		if(is_multisite()) {
+
+			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+				// we're activated site wide so put the admin menu in the network area
+			} else {
+				// we're only activated on a blog level so put the admin menu in the main area
+			}
+
 			if(function_exists('is_network_admin') && is_network_admin()) {
 				add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
 			} else {
@@ -362,7 +381,7 @@ class affiliateadmin {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		if(is_multisite()) {
+		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
 		} else {
 			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
@@ -869,7 +888,7 @@ class affiliateadmin {
 
 		$reference = get_usermeta($user_ID, 'affiliate_reference');
 
-		if(is_multisite()) {
+		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$getoption = 'get_site_option';
 			$site = $getoption('site_name');
 			$url = get_blog_option(1,'home');
@@ -969,7 +988,7 @@ class affiliateadmin {
 
 	function handle_affiliate_settings_panel() {
 
-		if(is_multisite()) {
+		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$getoption = 'get_site_option';
 			$updateoption = 'update_site_option';
 		} else {
@@ -1006,8 +1025,6 @@ class affiliateadmin {
 
 		$page = addslashes($_GET['page']);
 		$subpage = addslashes($_GET['subpage']);
-
-
 
 		echo '<form method="post" action="?page=' . $page . '&amp;subpage=' . $subpage . '&amp;action=updateaffiliateoptions">';
 		wp_nonce_field( "affiliateoptions" );
@@ -1164,7 +1181,7 @@ class affiliateadmin {
 
 			}
 
-			if(is_multisite()) {
+			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 				$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
 			} else {
 				$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
@@ -1541,16 +1558,11 @@ class affiliateadmin {
 
 					$actions[] = "<a href='?page=$page&amp;subpage=users&amp;id=". $result->ID . "' class='edit'>" . __('Manage Affiliate','affiliate') . "</a>";
 
-
 					echo '<div class="row-actions">';
 					echo implode(' | ', $actions);
 					echo '</div>';
-
 					echo '</td>';
-
 					echo '</tr>';
-
-
 				}
 			} else {
 
@@ -1559,22 +1571,16 @@ class affiliateadmin {
 				echo '<td colspan="2" valign="top">';
 				echo __('There are no users matching the search criteria.','affiliate');
 				echo '</td>';
-
 				echo '</tr>';
-
-
-
 			}
 
 			echo '</tbody>';
 			echo '<tfoot>';
 			echo '<tr>';
 				echo '<th scope="col" class="check-column"></th>';
-
 					echo '<th scope="col">';
 					echo __('Username','affiliate');
 					echo '</th>';
-
 				echo '</tr>';
 			echo '</tfoot>';
 
@@ -1668,7 +1674,7 @@ class affiliateadmin {
 			echo '</ul>';
 			echo '<br clear="all" />';
 
-			if(function_exists('get_site_option')) {
+			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 				$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
 			} else {
 				$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
@@ -1795,10 +1801,7 @@ class affiliateadmin {
 					echo '<td valign="top" class="num">';
 					echo number_format($result->payments,2);
 					echo '</td>';
-
 					echo '</tr>';
-
-
 				}
 			} else {
 
@@ -1807,18 +1810,13 @@ class affiliateadmin {
 				echo '<td colspan="6" valign="top">';
 				echo __('There are no results for the selected month.','affiliate');
 				echo '</td>';
-
 				echo '</tr>';
-
-
-
 			}
 
 			echo '</tbody>';
 			echo '<tfoot>';
 			echo '<tr>';
 				echo '<th scope="col" class="check-column"></th>';
-
 					echo '<th scope="col">';
 					echo __('Username','affiliate');
 					echo '</th>';

@@ -20,7 +20,7 @@ class affiliatedashboard {
 
 		$this->db =& $wpdb;
 
-		if(!empty($this->db->base_prefix)) {
+		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
 		} else {
@@ -51,7 +51,7 @@ class affiliatedashboard {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		if(function_exists('get_site_option')) {
+		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
 		} else {
 			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
