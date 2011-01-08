@@ -313,17 +313,16 @@ class affiliateadmin {
 
 		// Add administration menu
 		if(is_multisite()) {
-
 			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 				// we're activated site wide so put the admin menu in the network area
+				if(function_exists('is_network_admin') && is_network_admin()) {
+					add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+				}
 			} else {
 				// we're only activated on a blog level so put the admin menu in the main area
-			}
-
-			if(function_exists('is_network_admin') && is_network_admin()) {
-				add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
-			} else {
-				add_submenu_page('ms-admin.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+				if(!function_exists('is_network_admin') || !is_network_admin()) {
+					add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+				}
 			}
 		} else {
 			add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
