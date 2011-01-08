@@ -7,7 +7,6 @@ Author: Barry
 Version: 2.0
 Author URI: http://incsub.com
 WDP ID: 106
-Network: True
 */
 // Uncomment to have the system check all pages and referrers
 define('AFFILIATE_CHECKALL', 'yes');
