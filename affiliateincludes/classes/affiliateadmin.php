@@ -50,6 +50,8 @@ class affiliateadmin {
 
 		add_action( 'init', array(&$this, 'handle_export_link' ) );
 
+		add_action( 'plugins_loaded', array(&$this, 'load_textdomain'));
+
 		// Menus and profile page
 		add_action( 'admin_menu', array(&$this, 'add_menu_items') );
 		add_action( 'network_admin_menu', array(&$this, 'add_menu_items') );
@@ -102,6 +104,16 @@ class affiliateadmin {
 
 			$this->db->query($sql);
 		}
+
+	}
+
+	function load_textdomain() {
+
+		$locale = apply_filters( 'affiliate_locale', get_locale() );
+		$mofile = membership_dir( "affiliateincludes/languages/affiliate-$locale.mo" );
+
+		if ( file_exists( $mofile ) )
+			load_textdomain( 'affiliate', $mofile );
 
 	}
 
@@ -505,7 +517,7 @@ class affiliateadmin {
 					?>
 					<p><?php _e('<h3>Affiliate Details</h3>', 'affiliate') ?></p>
 					<p><?php _e(sprintf('In order for us to track your referrals, you should use the following URL to link to our site:'), 'affiliate') ?></p>
-					<p><?php _e(sprintf('<strong>http://%s?ref=%s</strong>', $url, $reference ), 'affiliate') ?></p>
+					<p><?php _e(sprintf('<strong>http://%s?ref=%s</strong>', str_replace('http://', '', $url), $reference ), 'affiliate') ?></p>
 
 					<?php
 						if(defined('AFFILIATE_CHECKALL') && !empty($referrer)) {
