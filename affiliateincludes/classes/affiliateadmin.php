@@ -110,7 +110,7 @@ class affiliateadmin {
 	function load_textdomain() {
 
 		$locale = apply_filters( 'affiliate_locale', get_locale() );
-		$mofile = membership_dir( "affiliateincludes/languages/affiliate-$locale.mo" );
+		$mofile = affiliate_dir( "affiliateincludes/languages/affiliate-$locale.mo" );
 
 		if ( file_exists( $mofile ) )
 			load_textdomain( 'affiliate', $mofile );
