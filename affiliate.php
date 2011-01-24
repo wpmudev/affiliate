@@ -68,13 +68,10 @@ class affiliate {
 		add_action('affiliate_referrer', array(&$this, 'record_referrer'), 10, 2);
 
 		// Include affiliate plugins
-		if($this->onmu) {
-			$thedir = WPMU_PLUGIN_DIR;
-		} else {
-			$thedir = WP_PLUGIN_DIR . 'affiliate';
-		}
-		if ( is_dir( $thedir . '/affiliateincludes/plugins' ) ) {
-			if ( $dh = opendir( $thedir . '/affiliateincludes/plugins' ) ) {
+		$thedir = affiliate_dir('/affiliateincludes/plugins');
+
+		if ( is_dir( $thedir ) ) {
+			if ( $dh = opendir( $thedir ) ) {
 				$aff_plugins = array ();
 				while ( ( $plugin = readdir( $dh ) ) !== false )
 					if ( substr( $plugin, -4 ) == '.php' )
@@ -82,7 +79,7 @@ class affiliate {
 				closedir( $dh );
 				sort( $aff_plugins );
 				foreach( $aff_plugins as $aff_plugin )
-					include_once( $thedir . '/affiliateincludes/plugins/' . $aff_plugin );
+					include_once( $thedir . '/' . $aff_plugin );
 			}
 		}
 
