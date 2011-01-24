@@ -45,10 +45,12 @@ class affiliate {
 
 		$this->detect_location(1);
 
-		if(!empty($this->db->base_prefix)) {
+		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+			// we're activated site wide
 			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
 		} else {
+			// we're only activated on a blog level so put the admin menu in the main area
 			$this->affiliatedata = $this->db->prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->prefix . 'affiliatereferrers';
 		}
