@@ -21,11 +21,18 @@ class affiliatedashboard {
 		$this->db =& $wpdb;
 
 		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+			// we're activated site wide
 			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
 		} else {
-			$this->affiliatedata = $this->db->prefix . 'affiliatedata';
-			$this->affiliatereferrers = $this->db->prefix . 'affiliatereferrers';
+			if(defined('AFFILIATE_USE_BASE_PREFIX_IF_EXISTS') && AFFILIATE_USE_BASE_PREFIX_IF_EXISTS == 'yes' && !empty($this->db->base_prefix)) {
+				$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
+				$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
+			} else {
+				// we're only activated on a blog level so put the admin menu in the main area
+				$this->affiliatedata = $this->db->prefix . 'affiliatedata';
+				$this->affiliatereferrers = $this->db->prefix . 'affiliatereferrers';
+			}
 		}
 
 		add_action ('init', array(&$this, 'initialise_ajax'), 1);

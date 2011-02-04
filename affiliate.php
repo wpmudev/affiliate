@@ -50,9 +50,15 @@ class affiliate {
 			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
 		} else {
-			// we're only activated on a blog level so put the admin menu in the main area
-			$this->affiliatedata = $this->db->prefix . 'affiliatedata';
-			$this->affiliatereferrers = $this->db->prefix . 'affiliatereferrers';
+			if(defined('AFFILIATE_USE_BASE_PREFIX_IF_EXISTS') && AFFILIATE_USE_BASE_PREFIX_IF_EXISTS == 'yes' && !empty($this->db->base_prefix)) {
+				$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
+				$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
+			} else {
+				// we're only activated on a blog level so put the admin menu in the main area
+				$this->affiliatedata = $this->db->prefix . 'affiliatedata';
+				$this->affiliatereferrers = $this->db->prefix . 'affiliatereferrers';
+			}
+
 		}
 
 		register_activation_hook(__FILE__, array(&$this, 'install'));
@@ -339,6 +345,7 @@ class affiliate {
 
 }
 
+require_once('affiliateincludes/includes/config.php');
 require_once('affiliateincludes/includes/functions.php');
 // Set up my location
 set_affiliate_url(__FILE__);

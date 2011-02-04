@@ -1,0 +1,3 @@
+<?php
+if(!defined('AFFILIATE_USE_BASE_PREFIX_IF_EXISTS')) define('AFFILIATE_USE_BASE_PREFIX_IF_EXISTS', 'yes');
+?>
