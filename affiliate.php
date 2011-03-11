@@ -355,8 +355,10 @@ if(is_admin()) {
 	// Only include the administration side of things when we need to
 	include_once('affiliateincludes/classes/affiliateadmin.php');
 	include_once('affiliateincludes/classes/affiliatedashboard.php');
-
 }
+
+// Include the new shortcodes class
+include_once('affiliateincludes/classes/affiliateshortcodes.php');
 
 $affiliate =& new affiliate();
 

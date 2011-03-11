@@ -1,7 +1,7 @@
 <?php
 
 // Administration side of the affiliate system
-class affiliateadmin {
+class affiliateshortcodes {
 
 	var $build = 3;
 
@@ -39,93 +39,23 @@ class affiliateadmin {
 			}
 		}
 
-		$installed = get_option('Aff_Installed', false);
-
-		if($installed === false || $installed != $this->build) {
-			$this->install();
-
-			update_option('Aff_Installed', $this->build);
-		}
-
-		register_activation_hook(__FILE__, array(&$this, 'install'));
-
-		add_action( 'init', array( &$this, 'initialise_ajax' ), 1 );
+		add_action( 'init', array( &$this, 'initialise' ), 1 );
 
 		add_action( 'init', array(&$this, 'aff_report_header'), 999 );
 
-		add_action( 'init', array(&$this, 'handle_export_link' ) );
-
 		add_action( 'plugins_loaded', array(&$this, 'load_textdomain'));
 
-		// Menus and profile page
-		add_action( 'admin_menu', array(&$this, 'add_menu_items') );
-		add_action( 'network_admin_menu', array(&$this, 'add_menu_items') );
-
-		add_action( 'show_user_profile', array(&$this, 'add_profile_box' ) );
-		add_action( 'personal_options_update', array(&$this, 'update_profile_box' ) );
+		//add_action( 'show_user_profile', array(&$this, 'add_profile_box' ) );
+		//add_action( 'personal_options_update', array(&$this, 'update_profile_box' ) );
 
 		// Affiliate blog reporting
-		add_filter( 'wpmu_blogs_columns', array(&$this, 'add_affiliate_column' ) );
-		add_action( 'manage_blogs_custom_column', array(&$this, 'show_affiliate_column' ), 10, 2 );
-
-		// Include affiliate plugins
-		$thedir = affiliate_dir('/affiliateincludes/plugins');
-
-		if ( is_dir( $thedir ) ) {
-			if ( $dh = opendir( $thedir ) ) {
-				$aff_plugins = array ();
-				while ( ( $plugin = readdir( $dh ) ) !== false )
-					if ( substr( $plugin, -4 ) == '.php' )
-						$aff_plugins[] = $plugin;
-				closedir( $dh );
-				sort( $aff_plugins );
-				foreach( $aff_plugins as $aff_plugin )
-					include_once( $thedir . '/' . $aff_plugin );
-			}
-		}
+		//add_filter( 'wpmu_blogs_columns', array(&$this, 'add_affiliate_column' ) );
+		//add_action( 'manage_blogs_custom_column', array(&$this, 'show_affiliate_column' ), 10, 2 );
 
 	}
 
-	function affiliateadmin() {
+	function affiliateshortcodes() {
 		$this->__construct();
-	}
-
-	function install() {
-		$this->create_affiliate_tables();
-	}
-
-	function create_affiliate_tables() {
-
-
-		if($this->db->get_var( "SHOW TABLES LIKE '" . $this->affiliatedata . "' ") != $this->affiliatedata) {
-			 $sql = "CREATE TABLE `" . $this->affiliatedata . "` (
-			  	`user_id` bigint(20) default NULL,
-			  	`period` varchar(6) default NULL,
-			  	`uniques` bigint(20) default '0',
-			  	`signups` bigint(20) default '0',
-			  	`completes` bigint(20) default '0',
-			  	`debits` decimal(10,2) default '0.00',
-			  	`credits` decimal(10,2) default '0.00',
-			  	`payments` decimal(10,2) default '0.00',
-			  	`lastupdated` datetime default '0000-00-00 00:00:00',
-			  	UNIQUE KEY `user_period` (`user_id`,`period`),
-			  	KEY `period` (`period`),
-			  	KEY `user_id` (`user_id`)
-				)";
-
-			$this->db->query($sql);
-
-			$sql = "CREATE TABLE `" . $this->affiliatereferrers . "` (
-			  	`user_id` bigint(20) default NULL,
-			  	`period` varchar(6) default NULL,
-			  	`url` varchar(250) default NULL,
-			  	`referred` bigint(20) default '0',
-			  	UNIQUE KEY `user_id` (`user_id`,`period`,`url`)
-				)";
-
-			$this->db->query($sql);
-		}
-
 	}
 
 	function load_textdomain() {
@@ -138,9 +68,201 @@ class affiliateadmin {
 
 	}
 
-	function initialise_ajax() {
+	function initialise() {
+		// Ajax
 		add_action( 'wp_ajax__aff_getstats', array(&$this,'ajax__aff_getstats') );
 		add_action( 'wp_ajax__aff_getvisits', array(&$this,'ajax__aff_getvisits') );
+
+		// Shortcodes
+		add_shortcode('affiliatestatstable', array(&$this, 'do_affiliatestatstable_shortcode') );
+		add_shortcode('affiliatestatschart', array(&$this, 'do_affiliatestatschart_shortcode') );
+		add_shortcode('affiliatevisitstable', array(&$this, 'do_affiliatevisitstable_shortcode') );
+		add_shortcode('affiliatevisitschart', array(&$this, 'do_affiliatevisitschart_shortcode') );
+
+	}
+
+	function do_affiliatestatstable_shortcode($atts, $content = null, $code = "") {
+
+		global $wp_query;
+
+		$defaults = array(	"holder"				=>	'',
+							"holderclass"			=>	'',
+							"item"					=>	'',
+							"itemclass"				=>	'',
+							"postfix"				=>	'',
+							"prefix"				=>	'',
+							"wrapwith"				=>	'',
+							"wrapwithclass"			=>	''
+						);
+
+		extract(shortcode_atts($defaults, $atts));
+
+		$html = '';
+
+		if(!empty($holder)) {
+			$html .= "<{$holder} class='{$holderclass}'>";
+		}
+		if(!empty($item)) {
+			$html .= "<{$item} class='{$itemclass}'>";
+		}
+		$html .= $prefix;
+
+		if(!empty($wrapwith)) {
+			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
+		}
+
+
+		if(!empty($wrapwith)) {
+			$html .= "</{$wrapwith}>";
+		}
+
+		$html .= $postfix;
+		if(!empty($item)) {
+			$html .= "</{$item}>";
+		}
+		if(!empty($holder)) {
+			$html .= "</{$holder}>";
+		}
+
+		return $html;
+	}
+
+	function do_affiliatestatschart_shortcode($atts, $content = null, $code = "") {
+
+		global $wp_query;
+
+		$defaults = array(	"holder"				=>	'',
+							"holderclass"			=>	'',
+							"item"					=>	'',
+							"itemclass"				=>	'',
+							"postfix"				=>	'',
+							"prefix"				=>	'',
+							"wrapwith"				=>	'',
+							"wrapwithclass"			=>	''
+						);
+
+		extract(shortcode_atts($defaults, $atts));
+
+		$html = '';
+
+		if(!empty($holder)) {
+			$html .= "<{$holder} class='{$holderclass}'>";
+		}
+		if(!empty($item)) {
+			$html .= "<{$item} class='{$itemclass}'>";
+		}
+		$html .= $prefix;
+
+		if(!empty($wrapwith)) {
+			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
+		}
+
+
+		if(!empty($wrapwith)) {
+			$html .= "</{$wrapwith}>";
+		}
+
+		$html .= $postfix;
+		if(!empty($item)) {
+			$html .= "</{$item}>";
+		}
+		if(!empty($holder)) {
+			$html .= "</{$holder}>";
+		}
+
+		return $html;
+	}
+
+	function do_affiliatevisitstable_shortcode($atts, $content = null, $code = "") {
+
+		global $wp_query;
+
+		$defaults = array(	"holder"				=>	'',
+							"holderclass"			=>	'',
+							"item"					=>	'',
+							"itemclass"				=>	'',
+							"postfix"				=>	'',
+							"prefix"				=>	'',
+							"wrapwith"				=>	'',
+							"wrapwithclass"			=>	''
+						);
+
+		extract(shortcode_atts($defaults, $atts));
+
+		$html = '';
+
+		if(!empty($holder)) {
+			$html .= "<{$holder} class='{$holderclass}'>";
+		}
+		if(!empty($item)) {
+			$html .= "<{$item} class='{$itemclass}'>";
+		}
+		$html .= $prefix;
+
+		if(!empty($wrapwith)) {
+			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
+		}
+
+
+		if(!empty($wrapwith)) {
+			$html .= "</{$wrapwith}>";
+		}
+
+		$html .= $postfix;
+		if(!empty($item)) {
+			$html .= "</{$item}>";
+		}
+		if(!empty($holder)) {
+			$html .= "</{$holder}>";
+		}
+
+		return $html;
+	}
+
+	function do_affiliatevisitschart_shortcode($atts, $content = null, $code = "") {
+
+		global $wp_query;
+
+		$defaults = array(	"holder"				=>	'',
+							"holderclass"			=>	'',
+							"item"					=>	'',
+							"itemclass"				=>	'',
+							"postfix"				=>	'',
+							"prefix"				=>	'',
+							"wrapwith"				=>	'',
+							"wrapwithclass"			=>	''
+						);
+
+		extract(shortcode_atts($defaults, $atts));
+
+		$html = '';
+
+		if(!empty($holder)) {
+			$html .= "<{$holder} class='{$holderclass}'>";
+		}
+		if(!empty($item)) {
+			$html .= "<{$item} class='{$itemclass}'>";
+		}
+		$html .= $prefix;
+
+		if(!empty($wrapwith)) {
+			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
+		}
+
+
+		if(!empty($wrapwith)) {
+			$html .= "</{$wrapwith}>";
+		}
+
+		$html .= $postfix;
+		if(!empty($item)) {
+			$html .= "</{$item}>";
+		}
+		if(!empty($holder)) {
+			$html .= "</{$holder}>";
+		}
+
+		return $html;
 	}
 
 	function ajax__aff_getstats() {
@@ -319,61 +441,6 @@ class affiliateadmin {
 		if(isset($_GET['callback'])) {
 			echo ")";
 		}
-
-	}
-
-
-	function add_menu_items() {
-
-		$user = wp_get_current_user();
-		$user_ID = $user->ID;
-
-		if(is_multisite()) {
-			$getoption = 'get_site_option';
-		} else {
-			$getoption = 'get_option';
-		}
-
-		// Add administration menu
-		if(is_multisite()) {
-			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-				// we're activated site wide so put the admin menu in the network area
-				if(function_exists('is_network_admin')) {
-					if(is_network_admin()) {
-						add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
-					}
-				}
-			} else {
-				// we're only activated on a blog level so put the admin menu in the main area
-				if(!function_exists('is_network_admin')) {
-					add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
-				} elseif(!is_network_admin()) {
-					add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
-				}
-			}
-		} else {
-			add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
-		}
-
-		add_submenu_page('users.php', __('Affiliate Earnings Report','affiliate'), __('Affiliate Referrals','affiliate'), 'read', "affiliateearnings", array(&$this,'add_profile_report_page'));
-
-		// Add profile menu
-		if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') {
-			if($getoption('affiliateenablebanners', 'no') == 'yes') {
-				add_submenu_page('users.php', __('Affiliate Banners','affiliate'), __('Affiliate Banners','affiliate'), 'read', "affiliatebanners", array(&$this,'add_profile_banner_page'));
-			}
-		}
-	}
-
-	function add_profile_box() {
-
-		// Removed for now
-
-	}
-
-	function update_profile_box() {
-
-		// Removed for now
 
 	}
 
@@ -1895,6 +1962,6 @@ class affiliateadmin {
 
 }
 
-$affadmin =& new affiliateadmin();
+$affshortcode =& new affiliateshortcodes();
 
 ?>
