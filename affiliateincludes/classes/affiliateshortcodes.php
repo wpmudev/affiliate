@@ -74,11 +74,167 @@ class affiliateshortcodes {
 		add_action( 'wp_ajax__aff_getvisits', array(&$this,'ajax__aff_getvisits') );
 
 		// Shortcodes
+		add_shortcode('affiliatelogincheck', array(&$this, 'do_affiliatelogincheck_shortcode') );
+		add_shortcode('affiliateuserdetails', array(&$this, 'do_affiliateuserdetails_shortcode') );
+
 		add_shortcode('affiliatestatstable', array(&$this, 'do_affiliatestatstable_shortcode') );
 		add_shortcode('affiliatestatschart', array(&$this, 'do_affiliatestatschart_shortcode') );
 		add_shortcode('affiliatevisitstable', array(&$this, 'do_affiliatevisitstable_shortcode') );
+		add_shortcode('affiliatetopvisitstable', array(&$this, 'do_affiliatetopvisitstable_shortcode') );
 		add_shortcode('affiliatevisitschart', array(&$this, 'do_affiliatevisitschart_shortcode') );
 
+		// Check for shortcodes in any posts
+		add_action( 'template_redirect', array(&$this, 'check_for_shortcodes') );
+
+	}
+
+	function get_custom_stylesheet() {
+		return apply_filters( 'affiliate_custom_shortcode_style', affiliate_url('affiliateincludes/styles/shortcode.css') );
+	}
+
+	function get_custom_javascript() {
+		return apply_filters( 'affiliate_custom_shortcode_javascript', affiliate_url('affiliateincludes/js/shortcode.js') );
+	}
+
+	function check_for_shortcodes( ) {
+		global $wp_query;
+
+		if ( is_singular() ) {
+			$post = $wp_query->get_queried_object();
+			if ( false !== strpos($post->post_content, '[affiliatestatschart') || false !== strpos($post->post_content, '[affiliatevisitschart') ) {
+				wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
+				wp_enqueue_script( 'affiliatepublicjs', $this->get_custom_javascript(), array('jquery') );
+
+				add_action('wp_head', array(&$this, 'add_iehead') );
+			}
+
+			if ( false !== strpos($post->post_content, '[affiliate') ) {
+				wp_enqueue_style( 'affiliatepubliccss', $this->get_custom_stylesheet(), array() );
+			}
+
+		}
+	}
+
+	function do_affiliatelogincheck_shortcode($atts, $content = null, $code = "") {
+
+		global $wp_query, $user;
+
+		$defaults = array(	"holder"				=>	'',
+							"holderclass"			=>	'',
+							"item"					=>	'',
+							"itemclass"				=>	'',
+							"postfix"				=>	'',
+							"prefix"				=>	'',
+							"wrapwith"				=>	'',
+							"wrapwithclass"			=>	''
+						);
+
+		extract(shortcode_atts($defaults, $atts));
+
+		$html = '';
+
+		if(!empty($holder)) {
+			$html .= "<{$holder} class='{$holderclass}'>";
+		}
+		if(!empty($item)) {
+			$html .= "<{$item} class='{$itemclass}'>";
+		}
+		$html .= $prefix;
+
+		if(!empty($wrapwith)) {
+			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
+		}
+
+		$html .= $prefix;
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			$html .= "<div class='affiliateloginmessage'>";
+			if(empty($content)) {
+				$html .= sprintf( __( 'You are not currently logged in. Please %s to see your affiliate information.','affiliate' ), '<a href="' . wp_login_url() . '">' . __('login','affiliate') . '</a>' );
+			} else {
+				$html .= $content;
+			}
+			$html .= "</div>";
+		}
+
+		$html .= $postfix;
+
+		if(!empty($wrapwith)) {
+			$html .= "</{$wrapwith}>";
+		}
+
+		$html .= $postfix;
+		if(!empty($item)) {
+			$html .= "</{$item}>";
+		}
+		if(!empty($holder)) {
+			$html .= "</{$holder}>";
+		}
+
+		return $html;
+	}
+
+	function do_affiliateuserdetails_shortcode($atts, $content = null, $code = "") {
+
+		global $wp_query, $user;
+
+		$defaults = array(	"holder"				=>	'',
+							"holderclass"			=>	'',
+							"item"					=>	'',
+							"itemclass"				=>	'',
+							"postfix"				=>	'',
+							"prefix"				=>	'',
+							"wrapwith"				=>	'',
+							"wrapwithclass"			=>	''
+						);
+
+		extract(shortcode_atts($defaults, $atts));
+
+		$html = '';
+
+		if(!empty($holder)) {
+			$html .= "<{$holder} class='{$holderclass}'>";
+		}
+		if(!empty($item)) {
+			$html .= "<{$item} class='{$itemclass}'>";
+		}
+		$html .= $prefix;
+
+		if(!empty($wrapwith)) {
+			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
+		}
+
+		$html .= $prefix;
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(!empty($user_ID)) {
+			$html .= "<div id='affiliateuserdetails'>";
+
+			$html .= $this->show_user_details();
+
+			$html .= "</div>";
+		}
+
+		$html .= $postfix;
+
+		if(!empty($wrapwith)) {
+			$html .= "</{$wrapwith}>";
+		}
+
+		$html .= $postfix;
+		if(!empty($item)) {
+			$html .= "</{$item}>";
+		}
+		if(!empty($holder)) {
+			$html .= "</{$holder}>";
+		}
+
+		return $html;
 	}
 
 	function do_affiliatestatstable_shortcode($atts, $content = null, $code = "") {
@@ -111,6 +267,9 @@ class affiliateshortcodes {
 			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
 		}
 
+		$html .= $prefix;
+		$html .= $this->show_clicks_table();
+		$html .= $postfix;
 
 		if(!empty($wrapwith)) {
 			$html .= "</{$wrapwith}>";
@@ -156,6 +315,10 @@ class affiliateshortcodes {
 		if(!empty($wrapwith)) {
 			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
 		}
+
+		$html .= $prefix;
+		$html .= $this->show_clicks_chart();
+		$html .= $postfix;
 
 
 		if(!empty($wrapwith)) {
@@ -203,6 +366,58 @@ class affiliateshortcodes {
 			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
 		}
 
+		$html .= $prefix;
+		$html .= $this->show_visits_table();
+		$html .= $postfix;
+
+		if(!empty($wrapwith)) {
+			$html .= "</{$wrapwith}>";
+		}
+
+		$html .= $postfix;
+		if(!empty($item)) {
+			$html .= "</{$item}>";
+		}
+		if(!empty($holder)) {
+			$html .= "</{$holder}>";
+		}
+
+		return $html;
+	}
+
+	function do_affiliatetopvisitstable_shortcode($atts, $content = null, $code = "") {
+
+		global $wp_query;
+
+		$defaults = array(	"holder"				=>	'',
+							"holderclass"			=>	'',
+							"item"					=>	'',
+							"itemclass"				=>	'',
+							"postfix"				=>	'',
+							"prefix"				=>	'',
+							"wrapwith"				=>	'',
+							"wrapwithclass"			=>	''
+						);
+
+		extract(shortcode_atts($defaults, $atts));
+
+		$html = '';
+
+		if(!empty($holder)) {
+			$html .= "<{$holder} class='{$holderclass}'>";
+		}
+		if(!empty($item)) {
+			$html .= "<{$item} class='{$itemclass}'>";
+		}
+		$html .= $prefix;
+
+		if(!empty($wrapwith)) {
+			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
+		}
+
+		$html .= $prefix;
+		$html .= $this->show_top_visits_table();
+		$html .= $postfix;
 
 		if(!empty($wrapwith)) {
 			$html .= "</{$wrapwith}>";
@@ -249,6 +464,9 @@ class affiliateshortcodes {
 			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
 		}
 
+		$html .= $prefix;
+		$html .= $this->show_visits_chart();
+		$html .= $postfix;
 
 		if(!empty($wrapwith)) {
 			$html .= "</{$wrapwith}>";
@@ -467,6 +685,632 @@ class affiliateshortcodes {
 
 	function add_iehead() {
 		echo '<!--[if IE]><script language="javascript" type="text/javascript" src="' . affiliate_url('affiliateincludes/js/excanvas.min.js') . '"></script><![endif]-->';
+	}
+
+	function show_clicks_chart() {
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+
+		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
+		} else {
+			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
+		}
+		$headings = array_merge($headings, array( __('Debits','affiliate'), __('Credits','affiliate'), __('Payments','affiliate') ));
+
+		$newcolumns = apply_filters('affiliate_column_names', $headings);
+		if(count($newcolumns) == 6) {
+			// We must have 6 columns
+			$columns = $newcolumns;
+		}
+
+		$reference = get_usermeta($user_ID, 'affiliate_reference');
+
+		if(is_multisite()) {
+			$getoption = 'get_site_option';
+			$site = $getoption('site_name');
+			$url = get_blog_option(1,'home');
+		} else {
+			$getoption = 'get_option';
+			$site = $getoption('blogname');
+			$url = $getoption('home');
+		}
+
+		ob_start();
+
+		echo "<div id='affdashlegend' style='background-color: #fff;'>";
+		echo "</div>";
+
+
+		echo "<div id='affdashgraph' style='width: 100%; min-height: 350px; background-color: #fff;'>";
+		echo "</div>";
+
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		return $html;
+
+
+	}
+
+	function show_clicks_table() {
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+
+		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
+		} else {
+			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
+		}
+		$headings = array_merge($headings, array( __('Debits','affiliate'), __('Credits','affiliate'), __('Payments','affiliate') ));
+
+		$newcolumns = apply_filters('affiliate_column_names', $headings);
+		if(count($newcolumns) == 6) {
+			// We must have 6 columns
+			$columns = $newcolumns;
+		}
+
+		$reference = get_usermeta($user_ID, 'affiliate_reference');
+
+		if(is_multisite()) {
+			$getoption = 'get_site_option';
+			$site = $getoption('site_name');
+			$url = get_blog_option(1,'home');
+		} else {
+			$getoption = 'get_option';
+			$site = $getoption('blogname');
+			$url = $getoption('home');
+		}
+
+		$results = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatedata} WHERE user_id = %d ORDER BY period DESC", $user_ID ) );
+
+		ob_start();
+		echo "<div id='clickstable' style=''>";
+
+		// The table
+		echo '<table width="100%" cellpadding="3" cellspacing="3" class="widefat" style="width: 100%;">';
+		echo '<thead>';
+		echo '<tr>';
+			echo '<th scope="col">';
+			echo __('Date','affiliate');
+			echo '</th>';
+			foreach($columns as $column) {
+				echo '<th scope="col" class="num">';
+				echo stripslashes($column);
+				echo '</th>';
+			}
+		echo '</tr>';
+		echo '</thead>';
+
+		echo '<tbody id="the-list">';
+
+		$totalclicks = 0;
+		$totalsignups = 0;
+		$totalcompletes = 0;
+		$totaldebits = 0;
+		$totalcredits = 0;
+		$totalpayments = 0;
+
+		if(!empty($results)) {
+			$recent = array_shift($results);
+		} else {
+			$recent = array();
+		}
+
+		$startat = strtotime(date("Y-m-15"));
+
+		for($n = 0; $n < 18; $n++) {
+			$rdate = strtotime("-$n month", $startat);
+			$period = date('Ym', $rdate);
+			$place = 18 - $n;
+
+			echo "<tr $bgcolour class='$class periods' id='period-$place'>";
+			echo '<td valign="top">';
+			echo date("M", $rdate) . '<br/>' . date("Y", $rdate);
+			echo '</td>';
+
+			if(!empty($recent) && $recent->period == $period) {
+				// We are on the current period
+				echo '<td valign="top" class="num">';
+				echo $recent->uniques;
+				$totalclicks += $recent->uniques;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo $recent->signups;
+				$totalsignups += $recent->signups;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo $recent->completes;
+				$totalcompletes += $recent->completes;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format($recent->debits, 2);
+				$totaldebits += (float) $recent->debits;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format($recent->credits, 2);
+				$totalcredits += (float) $recent->credits;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format($recent->payments, 2);
+				$totalpayments += (float) $recent->payments;
+				echo '</td>';
+
+				if(!empty($results)) {
+					$recent = array_shift($results);
+				} else {
+					$recent = array();
+				}
+
+			} else {
+				// A zero blank row
+				echo '<td valign="top" class="num">';
+				echo 0;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo 0;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo 0;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo "0.00";
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format(0, 2);
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format(0, 2);
+				echo '</td>';
+			}
+			echo '</tr>';
+		}
+
+		echo '</tbody>';
+
+		echo '<tfoot>';
+		echo '<tr>';
+			echo '<th scope="col">';
+			echo '</th>';
+			echo '<th scope="col" class="num">';
+			echo $totalclicks;
+			echo '</th>';
+			echo '<th scope="col" class="num">';
+			echo $totalsignups;
+			echo '</th>';
+			echo '<th scope="col" class="num">';
+			echo $totalcompletes;
+			echo '</th>';
+			echo '<th scope="col" class="num">';
+			echo number_format($totaldebits, 2);
+			echo '</th>';
+			echo '<th scope="col" class="num">';
+			echo number_format($totalcredits, 2);
+			echo '</th>';
+			echo '<th scope="col" class="num">';
+			echo number_format($totalpayments, 2);
+			echo '</th>';
+		echo '</tr>';
+		echo '</tfoot>';
+
+		echo '</table>';
+
+		echo "</div>";
+
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		return $html;
+
+
+	}
+
+	function show_visits_table() {
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+
+		ob_start();
+		// This months visits table
+		$rows = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatereferrers} WHERE user_id = %d AND period = %s ORDER BY referred DESC LIMIT 0, 15", $user_ID, date("Ym") ) );
+		echo "<div id='visitstable' style=''>";
+		echo "<table class='widefat'>";
+
+		echo "<thead>";
+			echo "<tr>";
+			echo "<th scope='col'>";
+			echo  __('Top referrers for ','affiliate') . date("M Y");
+			echo "</th>";
+			echo "<th scope='col' style='width: 3em;'>";
+			echo __('Visits','affiliate');
+			echo "</th>";
+			echo "</tr>";
+		echo "</thead>";
+
+		echo "<tfoot>";
+			echo "<tr>";
+			echo "<th scope='col'>";
+			echo  __('Top referrers for ','affiliate') . date("M Y");
+			echo "</th>";
+			echo "<th scope='col' style='width: 3em;'>";
+			echo __('Visits','affiliate');
+			echo "</th>";
+			echo "</tr>";
+		echo "</tfoot>";
+
+		echo "<tbody>";
+
+		if(!empty($rows)) {
+
+			$class = 'alternate';
+			foreach($rows as $r) {
+
+				echo "<tr class='$class' style='$style'>";
+				echo "<td style='padding: 5px;'>";
+				echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
+				echo "</td>";
+				echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
+				echo $r->referred;
+				echo "</td>";
+				echo "</tr>";
+
+				if($class != 'alternate') {
+					$class = '';
+				} else {
+					$class = 'alternate';
+				}
+
+			}
+
+		} else {
+			echo __('<tr><td colspan="2">You have no referred visits this month.</td></tr>','affiliate');
+		}
+
+		echo "</tbody>";
+		echo "</table>";
+		echo "</div>";
+
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		return $html;
+
+	}
+
+	function show_top_visits_table() {
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+
+		ob_start();
+		// Build 18 months of years
+		$startat = strtotime(date("Y-m-15"));
+		$years = array();
+		for($n = 0; $n < 18; $n++) {
+			$rdate = strtotime("-$n month", $startat);
+			$years[] = "'" . date('Ym', $rdate) . "'";
+		}
+
+		$rows = $this->db->get_results( $this->db->prepare( "SELECT url, SUM(referred) as totalreferred FROM {$this->affiliatereferrers} WHERE user_id = %d AND period in (" . implode(',', $years) . ") GROUP BY url ORDER BY totalreferred DESC LIMIT 0, 15", $user_ID ) );
+		echo "<div id='topvisitstable' style=''>";
+		echo "<table class='widefat'>";
+
+		echo "<thead>";
+			echo "<tr>";
+			echo "<th scope='col'>";
+			echo  __('Top referrers over past 18 months','affiliate');
+			echo "</th>";
+			echo "<th scope='col' style='width: 3em;'>";
+			echo __('Visits','affiliate');
+			echo "</th>";
+			echo "</tr>";
+		echo "</thead>";
+
+		echo "<tfoot>";
+			echo "<tr>";
+			echo "<th scope='col'>";
+			echo  __('Top referrers over past 18 months','affiliate');
+			echo "</th>";
+			echo "<th scope='col' style='width: 3em;'>";
+			echo __('Visits','affiliate');
+			echo "</th>";
+			echo "</tr>";
+		echo "</tfoot>";
+
+		echo "<tbody>";
+
+		if(!empty($rows)) {
+
+			$class = 'alternate';
+			foreach($rows as $r) {
+
+				echo "<tr class='$class' style='$style'>";
+				echo "<td style='padding: 5px;'>";
+				echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
+				echo "</td>";
+				echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
+				echo $r->totalreferred;
+				echo "</td>";
+				echo "</tr>";
+
+				if($class != 'alternate') {
+					$class = '';
+				} else {
+					$class = 'alternate';
+				}
+
+			}
+
+		} else {
+			echo __('<tr><td colspan="2">You have no overall referred visits.</td></tr>','affiliate');
+		}
+
+		echo "</tbody>";
+		echo "</table>";
+		echo "</div>";
+
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		return $html;
+
+	}
+
+	function show_visits_chart() {
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+
+		ob_start();
+		echo "<div id='affvisitlegend' style='background-color: #fff;'>";
+		echo "</div>";
+
+		echo "<div id='affvisitgraph' style='width: 100%; min-height: 350px; background-color: #fff;'>";
+		echo "</div>";
+
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		return $html;
+
+	}
+
+	function show_user_details() {
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+
+		if(is_multisite()) {
+			$getoption = 'get_site_option';
+			$site = $getoption('site_name');
+			$url = get_blog_option(1,'home');
+		} else {
+			$getoption = 'get_option';
+			$site = $getoption('blogname');
+			$url = $getoption('home');
+		}
+
+		ob_start();
+
+		if(isset($_POST['action']) && addslashes($_POST['action']) == 'update') {
+
+			check_admin_referer('affiliatepublicsettings');
+
+			update_user_meta($user_ID, 'enable_affiliate', $_POST['enable_affiliate']);
+			update_user_meta($user_ID, 'affiliate_paypal', $_POST['affiliate_paypal']);
+			if(isset($_POST['affiliate_referrer'])) {
+				update_user_meta($user_ID, 'affiliate_referrer', str_replace('http://', '', untrailingslashit($_POST['affiliate_referrer'])));
+			} else {
+				delete_user_meta($user_ID, 'affiliate_referrer');
+			}
+			if(isset($_POST['enable_affiliate']) && addslashes($_POST['enable_affiliate']) == 'yes') {
+				// Set up the affiliation details
+				// Store a record of the reference
+				$reference = $user->user_login . '-' . strrev(sprintf('%02d', $user_ID + 35));
+				update_user_meta($user_ID, 'affiliate_reference', $reference);
+				update_user_meta($user_ID, 'affiliate_hash', 'aff' . md5(AUTH_SALT . $reference));
+			} else {
+				// Wipe the affiliation details
+				delete_user_meta($user_ID, 'affiliate_reference');
+				delete_user_meta($user_ID, 'affiliate_hash');
+			}
+
+		}
+
+		echo "<div class='formholder'>";
+		if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
+			echo "<strong>" . __('Hello, Thank you for supporting us</strong>, to view or change any of your affiliate settings click on the edit link.','affiliate') . "</strong><a href='#view' id='editaffsettingslink' style='float:right; font-size: 8pt;'>" . __('edit','affiliate') . "</a>";
+
+			echo "<div id='innerbox' style='width: 100%; display: none;'>";
+
+			echo "<form action='' method='post'>";
+			wp_nonce_field( "affiliatepublicsettings" );
+
+			echo "<input type='hidden' name='action' value='update' />";
+
+			$settingstextdefault = "<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
+		<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
+		<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>";
+
+			echo stripslashes( $getoption('affiliatesettingstext', $settingstextdefault) );
+
+			?>
+
+			<table class="form-table">
+				<tr style='background: transparent;'>
+					<th><label for="enable_affiliate"><?php _e('Enable Affiliate links', 'affiliate'); ?></label></th>
+					<td>
+						<select name='enable_affiliate'>
+							<option value='yes' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') echo "selected = 'selected'"; ?>><?php _e('Yes please', 'affiliate'); ?></option>
+							<option value='no' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) != 'yes') echo "selected = 'selected'"; ?>><?php _e('No thanks', 'affiliate'); ?></option>
+						</select>
+					</td>
+				</tr>
+
+				<tr style='background: transparent;'>
+					<th><label for="affiliate_paypal"><?php _e('PayPal Email Address', 'affiliate'); ?></label></th>
+					<td>
+					<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo get_user_meta($user_ID, 'affiliate_paypal', true); ?>" class="regular-text" />
+					</td>
+				</tr>
+
+			</table>
+
+			<?php
+
+			if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
+
+				$reference = get_user_meta($user_ID, 'affiliate_reference', true);
+				$referrer = get_user_meta($user_ID, 'affiliate_referrer', true);
+				$refurl = "profile.php?page=affiliateearnings";
+
+				if(defined('AFFILIATE_CHECKALL')) { ?>
+
+					<h3><?php _e('Affiliate Advanced Settings', 'affiliate') ?></h3>
+
+					<?php
+					$advsettingstextdefault = "<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>
+				<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>";
+
+					echo stripslashes( $getoption('affiliateadvancedsettingstext', $advsettingstextdefault) );
+
+					?>
+
+					<table class="form-table">
+						<tr style='background: transparent;'>
+							<th><label for="affiliate_referrer"><?php _e('Your URL', 'affiliate'); ?></label></th>
+							<td>
+								http://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo get_user_meta($user_ID, 'affiliate_referrer', true); ?>" class="regular-text" />
+							</td>
+						</tr>
+
+					</table>
+
+				<?php
+				}
+				?>
+				<p><?php _e('<h3>Affiliate Details</h3>', 'affiliate') ?></p>
+				<p><?php _e(sprintf('In order for us to track your referrals, you should use the following URL to link to our site:'), 'affiliate') ?></p>
+				<p><?php _e(sprintf('<strong>http://%s?ref=%s</strong>', str_replace('http://', '', $url), $reference ), 'affiliate') ?></p>
+
+				<?php
+					if(defined('AFFILIATE_CHECKALL') && !empty($referrer)) {
+						// We are always going to check for a referer site
+						?>
+						<p><?php _e(sprintf('Alternatively you can just link directly to the URL below from the site you entered in the advanced settings above:'), 'affiliate') ?></p>
+						<p><?php _e(sprintf('<strong>http://%s</strong>', $url ), 'affiliate') ?></p>
+						<?php
+
+					}
+
+
+				if($getoption('affiliateenablebanners', 'no') == 'yes') {
+				?>
+				<p><?php _e(sprintf('If you would rather use a banner or button then we have a wide selection of sizes <a href="%s">here</a>.', "profile.php?page=affiliatebanners" ), 'affiliate') ?></p>
+				<?php } ?>
+				<p><?php _e(sprintf('<strong>You can check on your referral totals by viewing the details on this page</strong>' ), 'affiliate') ?></p>
+			<?php
+			}
+
+			echo '<p class="submit">';
+			echo '<input type="submit" name="Submit" value="' . __('Update Settings','affiliate') . '" /></p>';
+
+			echo "</form>";
+			echo "</div>";
+
+		} else {
+			// Not an affiliate yet, so display the form
+			echo "<strong>" . __('Hello, why not consider becoming an affiliate?','affiliate') . "</strong><br/>";
+
+			echo "<div id='innerbox' style='width: 100%'>";
+
+			echo "<form action='' method='post'>";
+			wp_nonce_field( "affiliatepublicsettings" );
+
+			echo "<input type='hidden' name='action' value='update' />";
+
+
+			$settingstextdefault = "<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
+		<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
+		<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>";
+
+			echo stripslashes( $getoption('affiliatesettingstext', $settingstextdefault) );
+
+			?>
+
+			<table class="form-table">
+				<tr style='background: transparent;'>
+					<th><label for="enable_affiliate"><?php _e('Enable Affiliate links', 'affiliate'); ?></label></th>
+					<td>
+						<select name='enable_affiliate'>
+							<option value='yes' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') echo "selected = 'selected'"; ?>><?php _e('Yes please', 'affiliate'); ?></option>
+							<option value='no' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) != 'yes') echo "selected = 'selected'"; ?>><?php _e('No thanks', 'affiliate'); ?></option>
+						</select>
+					</td>
+				</tr>
+
+				<tr style='background: transparent;'>
+					<th><label for="affiliate_paypal"><?php _e('PayPal Email Address', 'affiliate'); ?></label></th>
+					<td>
+					<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo get_user_meta($user_ID, 'affiliate_paypal', true); ?>" class="regular-text" />
+					</td>
+				</tr>
+
+			</table>
+
+			<?php
+
+			echo '<p class="submit">';
+			echo '<input type="submit" name="Submit" value="' . __('Update Settings','affiliate') . '" /></p>';
+
+			echo "</form>";
+			echo "</div>";
+
+
+		}
+
+		echo "</div>";
+
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		return $html;
+
 	}
 
 	function add_profile_report_page() {

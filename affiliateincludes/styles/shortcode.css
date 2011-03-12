@@ -1,0 +1,127 @@
+/* @override http://dev.site/wp-content/plugins/affiliate/affiliateincludes/styles/shortcode.css?ver=3.1 */
+
+/* Chart legends */
+#affdashlegend {
+	position: relative;
+	width: 200px;
+}
+
+#affdashlegend td.legendColorBox {
+	width: 10px;
+}
+
+#affvisitlegend {
+	position: relative;
+	width: 200px;
+}
+
+#affvisitlegend td.legendColorBox {
+	width: 10px;
+}
+
+
+/* Main clicks table */
+#clickstable {
+}
+
+#clickstable table {
+	border: 1px solid #0c53f8;
+}
+
+#clickstable table.widefat thead tr {
+	background-color: #78acfa;
+	color: #000;
+}
+
+#clickstable table.widefat thead th {
+	border-top: 1px solid #0c53f8;
+}
+
+#clickstable table.widefat tfoot tr {
+	background-color: #78acfa;
+	color: #000;
+}
+
+#clickstable table tr td {
+	border-top: 1px solid #0c53f8;
+	border-bottom: 1px solid #0c53f8;
+}
+
+/* Main visits table */
+#visitstable {
+}
+
+#visitstable table {
+	border: 1px solid #0c53f8;
+}
+
+#visitstable table.widefat thead tr {
+	background-color: #78acfa;
+	color: #000;
+}
+
+#visitstable table.widefat thead th {
+	border-top: 1px solid #0c53f8;
+	color: #000;
+}
+
+#visitstable table.widefat tfoot tr {
+	background-color: #78acfa;
+	color: #000;
+}
+
+#visitstable table tr td {
+	border-top: 1px solid #0c53f8;
+	border-bottom: 1px solid #0c53f8;
+}
+
+/* Top visits table */
+#topvisitstable {
+}
+
+#topvisitstable table {
+	border: 1px solid #0c53f8;
+}
+
+#topvisitstable table.widefat thead tr {
+	background-color: #78acfa;
+	color: #000;
+}
+
+#topvisitstable table.widefat thead th {
+	border-top: 1px solid #0c53f8;
+}
+
+#topvisitstable table.widefat tfoot tr {
+	background-color: #78acfa;
+	color: #000;
+}
+
+#topvisitstable table tr td {
+	border-top: 1px solid #0c53f8;
+	border-bottom: 1px solid #0c53f8;
+}
+
+/* Affiliate login message */
+div.affiliateloginmessage {
+	
+}
+
+#affiliateuserdetails div.formholder {
+	width: 90%%; 
+	background-color: #FFFEEB; 
+	margin-left: auto; 
+	margin-right: auto; 
+	border: 1px #e6db55 solid; 
+	padding: 10px;
+}
+
+#affiliateuserdetails table {
+	border: none;
+}
+
+#affiliateuserdetails table td, #affiliateuserdetails table th {
+	border: none;
+}
+
+
