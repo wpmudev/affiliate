@@ -116,6 +116,16 @@ div.affiliateloginmessage {
 	padding: 10px;
 }
 
+#affiliateuserdetails div.innerbox.closed {
+	width: 100%; 
+	display: none;
+}
+
+#affiliateuserdetails div.innerbox.open {
+	width: 100%; 
+	display: block;
+}
+
 #affiliateuserdetails table {
 	border: none;
 }

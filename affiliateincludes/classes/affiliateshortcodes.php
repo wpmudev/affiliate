@@ -1156,7 +1156,7 @@ class affiliateshortcodes {
 		if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
 			echo "<strong>" . __('Hello, Thank you for supporting us</strong>, to view or change any of your affiliate settings click on the edit link.','affiliate') . "</strong><a href='#view' id='editaffsettingslink' style='float:right; font-size: 8pt;'>" . __('edit','affiliate') . "</a>";
 
-			echo "<div id='innerbox' style='width: 100%; display: none;'>";
+			echo "<div class='innerbox closed'>";
 
 			echo "<form action='' method='post'>";
 			wp_nonce_field( "affiliatepublicsettings" );
@@ -1257,7 +1257,7 @@ class affiliateshortcodes {
 			// Not an affiliate yet, so display the form
 			echo "<strong>" . __('Hello, why not consider becoming an affiliate?','affiliate') . "</strong><br/>";
 
-			echo "<div id='innerbox' style='width: 100%'>";
+			echo "<div class='innerbox open'>";
 
 			echo "<form action='' method='post'>";
 			wp_nonce_field( "affiliatepublicsettings" );
