@@ -128,7 +128,7 @@ function affDoPlot() {
 }
 
 function affToggleView() {
-	jQuery('#innerbox').slideToggle('slow');
+	jQuery('div.formholder div.innerbox').slideToggle('slow').toggleClass('closed').toggleClass('open');
 }
 
 function affReportReady() {
