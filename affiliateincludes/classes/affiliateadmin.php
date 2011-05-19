@@ -914,7 +914,7 @@ class affiliateadmin {
 
 		$reference = get_usermeta($user_ID, 'affiliate_reference');
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$getoption = 'get_site_option';
 			$site = $getoption('site_name');
 			$url = get_blog_option(1,'home');

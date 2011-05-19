@@ -76,6 +76,8 @@ class affiliateshortcodes {
 		add_shortcode('affiliatetopvisitstable', array(&$this, 'do_affiliatetopvisitstable_shortcode') );
 		add_shortcode('affiliatevisitschart', array(&$this, 'do_affiliatevisitschart_shortcode') );
 
+		add_shortcode('affiliatebanners', array(&$this, 'do_affiliatebanners_shortcode') );
+
 		// Check for shortcodes in any posts
 		add_action( 'template_redirect', array(&$this, 'check_for_shortcodes') );
 
@@ -1306,6 +1308,101 @@ class affiliateshortcodes {
 		return $html;
 
 	}
+
+	function output_banners() {
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+
+		$reference = get_usermeta($user_ID, 'affiliate_reference');
+
+		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+			$getoption = 'get_site_option';
+			$site = $getoption('site_name');
+			$url = get_blog_option(1,'home');
+		} else {
+			$getoption = 'get_option';
+			$site = $getoption('blogname');
+			$url = $getoption('home');
+		}
+
+		ob_start();
+
+		$banners = $getoption('affiliatebannerlinks');
+		foreach((array) $banners as $banner) {
+
+			?>
+			<img src='<?php echo $banner; ?>' />
+			<br/><br/>
+			<textarea cols='80' rows='5'><?php
+				echo sprintf("<a href='%s?ref=%s'>\n", $url, $reference);
+				echo "<img src='" . $banner . "' alt='" . htmlentities(stripslashes($site),ENT_QUOTES, 'UTF-8') . "' title='Check out " . htmlentities(stripslashes($site),ENT_QUOTES, 'UTF-8') . "' />\n";
+				echo "</a>";
+			?></textarea>
+			<br/><br/>
+			<?php
+
+		}
+
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		return $html;
+
+	}
+
+	function do_affiliatebanners_shortcode($atts, $content = null, $code = "") {
+		global $wp_query;
+
+		$defaults = array(	"holder"				=>	'',
+							"holderclass"			=>	'',
+							"item"					=>	'',
+							"itemclass"				=>	'',
+							"postfix"				=>	'',
+							"prefix"				=>	'',
+							"wrapwith"				=>	'',
+							"wrapwithclass"			=>	''
+						);
+
+		extract(shortcode_atts($defaults, $atts));
+
+		$html = '';
+
+		if(!empty($holder)) {
+			$html .= "<{$holder} class='{$holderclass}'>";
+		}
+		if(!empty($item)) {
+			$html .= "<{$item} class='{$itemclass}'>";
+		}
+		$html .= $prefix;
+
+		if(!empty($wrapwith)) {
+			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
+		}
+
+		$html .= $prefix;
+		$html .= $this->output_banners();
+		$html .= $postfix;
+
+		if(!empty($wrapwith)) {
+			$html .= "</{$wrapwith}>";
+		}
+
+		$html .= $postfix;
+		if(!empty($item)) {
+			$html .= "</{$item}>";
+		}
+		if(!empty($holder)) {
+			$html .= "</{$holder}>";
+		}
+
+		return $html;
+	}
+
+
 
 }
 
