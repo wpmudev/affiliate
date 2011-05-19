@@ -328,7 +328,7 @@ class affiliateadmin {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		if(is_multisite()) {
+		if(is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$getoption = 'get_site_option';
 		} else {
 			$getoption = 'get_option';
@@ -1014,7 +1014,7 @@ class affiliateadmin {
 
 	function handle_affiliate_settings_panel() {
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$getoption = 'get_site_option';
 			$updateoption = 'update_site_option';
 		} else {

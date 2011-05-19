@@ -101,7 +101,7 @@ function affDoPlot() {
 	if(chart) {
 		affReBuildChart(chart, ticks);
 	} else {
-		jQuery.getJSON(ajaxurl, { action: '_aff_getstats' },
+		jQuery.getJSON(affiliate.ajaxurl, { action: '_aff_getstats' },
 		        function(data){
 
 					if(data.chart) { chart = data.chart; } else { chart = []; }
@@ -114,7 +114,7 @@ function affDoPlot() {
 	if(visit) {
 		affReBuildVisits(visit, ticktwo);
 	} else {
-		jQuery.getJSON(ajaxurl, { action: '_aff_getvisits' },
+		jQuery.getJSON(affiliate.ajaxurl, { action: '_aff_getvisits' },
 		        function(data){
 
 					if(data.chart) { visit = data.chart; } else { visit = []; }

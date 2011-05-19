@@ -24,7 +24,7 @@ class affiliateshortcodes {
 		// Grab our own local reference to the database class
 		$this->db =& $wpdb;
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			// we're activated site wide
 			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
@@ -94,9 +94,10 @@ class affiliateshortcodes {
 
 		if ( is_singular() ) {
 			$post = $wp_query->get_queried_object();
-			if ( false !== strpos($post->post_content, '[affiliatestatschart') || false !== strpos($post->post_content, '[affiliatevisitschart') ) {
+			if ( false !== strpos($post->post_content, '[affiliatestatschart') || false !== strpos($post->post_content, '[affiliatevisitschart') || false !== strpos($post->post_content, '[affiliateuserdetails')  ) {
 				wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
 				wp_enqueue_script( 'affiliatepublicjs', $this->get_custom_javascript(), array('jquery') );
+				wp_localize_script( 'affiliatepublicjs', 'affiliate', array( 'ajaxurl' => admin_url('admin-ajax.php') ) );
 
 				add_action('wp_head', array(&$this, 'add_iehead') );
 			}
