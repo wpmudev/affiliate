@@ -536,14 +536,14 @@ class affiliateadmin {
 					?>
 					<p><?php _e('<h3>Affiliate Details</h3>', 'affiliate') ?></p>
 					<p><?php _e(sprintf('In order for us to track your referrals, you should use the following URL to link to our site:'), 'affiliate') ?></p>
-					<p><?php _e(sprintf('<strong>http://%s?ref=%s</strong>', str_replace('http://', '', $url), $reference ), 'affiliate') ?></p>
+					<p><?php _e(sprintf('<strong>%s?ref=%s</strong>', $url, $reference ), 'affiliate') ?></p>
 
 					<?php
 						if(defined('AFFILIATE_CHECKALL') && !empty($referrer)) {
 							// We are always going to check for a referer site
 							?>
 							<p><?php _e(sprintf('Alternatively you can just link directly to the URL below from the site you entered in the advanced settings above:'), 'affiliate') ?></p>
-							<p><?php _e(sprintf('<strong>http://%s</strong>', $url ), 'affiliate') ?></p>
+							<p><?php _e(sprintf('<strong>%s</strong>', $url ), 'affiliate') ?></p>
 							<?php
 
 						}
@@ -1201,7 +1201,7 @@ class affiliateadmin {
 					case 'findusers':
 						check_admin_referer('find-user');
 						$userlist = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->users} WHERE user_login = %s", addslashes($_POST['username']) ) );
-						print_r($userlist);
+						//print_r($userlist);
 						break;
 				}
 
