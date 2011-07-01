@@ -4,6 +4,12 @@ Author: Barry Getty (Incsub)
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+2.3.1 - 06/02/2011
+----------------------------------------------------------------------
+- Fixed double http:// issue
+- Added add_theme_support checks for affiliate_styles and affiliate_scripts
+in front end shortcode based admin.
+
 2.3 - 05/19/2011
 ----------------------------------------------------------------------
 - Fixed admin side banners issue
