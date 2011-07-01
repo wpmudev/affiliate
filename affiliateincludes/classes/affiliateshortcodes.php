@@ -97,14 +97,16 @@ class affiliateshortcodes {
 		if ( is_singular() ) {
 			$post = $wp_query->get_queried_object();
 			if ( false !== strpos($post->post_content, '[affiliatestatschart') || false !== strpos($post->post_content, '[affiliatevisitschart') || false !== strpos($post->post_content, '[affiliateuserdetails')  ) {
-				wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
-				wp_enqueue_script( 'affiliatepublicjs', $this->get_custom_javascript(), array('jquery') );
-				wp_localize_script( 'affiliatepublicjs', 'affiliate', array( 'ajaxurl' => admin_url('admin-ajax.php') ) );
+				if( !current_theme_supports( 'affiliate_scripts' )) {
+					wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
+					wp_enqueue_script( 'affiliatepublicjs', $this->get_custom_javascript(), array('jquery') );
+					wp_localize_script( 'affiliatepublicjs', 'affiliate', array( 'ajaxurl' => admin_url('admin-ajax.php') ) );
 
-				add_action('wp_head', array(&$this, 'add_iehead') );
+					add_action('wp_head', array(&$this, 'add_iehead') );
+				}
 			}
 
-			if ( false !== strpos($post->post_content, '[affiliate') ) {
+			if ( false !== strpos($post->post_content, '[affiliate') && !current_theme_supports( 'affiliate_styles' ) ) {
 				wp_enqueue_style( 'affiliatepubliccss', $this->get_custom_stylesheet(), array() );
 			}
 
