@@ -159,7 +159,7 @@ class affiliatedashboard {
 	}
 
 	function dashboard_widget_iehead() {
-		echo '<!--[if IE]><script language="javascript" type="text/javascript" src="' . affiliate_url('affiliateincludes/js/excanvas.min.js') . '"></script><![endif]-->';
+		echo '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="' . affiliate_url('affiliateincludes/js/excanvas.min.js') . '"></script><![endif]-->';
 	}
 
 	function dashboard_affiliate_register() {
