@@ -64,9 +64,13 @@ class affiliateadmin {
 		add_action( 'show_user_profile', array(&$this, 'add_profile_box' ) );
 		add_action( 'personal_options_update', array(&$this, 'update_profile_box' ) );
 
-		// Affiliate blog reporting
+		// Affiliate blog and user reporting
 		add_filter( 'wpmu_blogs_columns', array(&$this, 'add_affiliate_column' ) );
 		add_action( 'manage_blogs_custom_column', array(&$this, 'show_affiliate_column' ), 10, 2 );
+
+		add_filter( 'manage_users_columns', array(&$this, 'add_user_affiliate_column') );
+		add_filter( 'wpmu_users_columns', array(&$this, 'add_user_affiliate_column') );
+		add_filter( 'manage_users_custom_column', array(&$this, 'show_user_affiliate_column'), 10, 3 );
 
 		// Include affiliate plugins
 		load_affiliate_plugins();
@@ -1891,9 +1895,39 @@ class affiliateadmin {
 
 	}
 
+	function add_user_affiliate_column( $columns ) {
+		$columns['referred'] = __('Referred by', 'affiliate');
+
+		return $columns;
+	}
+
+	function show_user_affiliate_column( $content, $column_name, $user_id ) {
+
+		if(function_exists('get_user_meta')) {
+			$affid = get_user_meta($user_id, 'affiliate_referrer', true);
+		} else {
+			$affid = get_usermeta($user_id, 'affiliate_referrer');
+		}
+
+		if(!empty($affid)) {
+			// was referred so get the referrers details
+			$referrer = new WP_User( $affid );
+
+			if(is_network_admin()) {
+				$content .= "<a href='" . network_admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+			} else {
+				$content .= "<a href='" . admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+			}
+
+		}
+
+		return $content;
+
+	}
+
 	function add_affiliate_column($columns) {
 
-		$columns['affiliate'] = __('Affiliate', 'affiliate');
+		$columns['referred'] = __('Referred by', 'affiliate');
 
 		return $columns;
 
