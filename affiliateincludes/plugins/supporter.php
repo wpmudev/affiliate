@@ -1,7 +1,10 @@
 <?php
-
-// Affiliate system plugin for the WordPress MU Supporter plugin
-// Written by Barry (Incsub) 09-09-2009
+/*
+Plugin Name: Supporter add-on
+Description: Affiliate system plugin for the WordPress Supporter plugin
+Author: Barry (Incsub)
+Author URI: http://caffeinatedb.com
+*/
 
 add_action('wpmu_new_blog', 'affiliate_new_blog', 10, 2);
 add_action('supporter_payment_processed', 'affiliate_supporter_paid', 10, 3);

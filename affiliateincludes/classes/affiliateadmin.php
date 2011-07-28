@@ -69,20 +69,7 @@ class affiliateadmin {
 		add_action( 'manage_blogs_custom_column', array(&$this, 'show_affiliate_column' ), 10, 2 );
 
 		// Include affiliate plugins
-		$thedir = affiliate_dir('/affiliateincludes/plugins');
-
-		if ( is_dir( $thedir ) ) {
-			if ( $dh = opendir( $thedir ) ) {
-				$aff_plugins = array ();
-				while ( ( $plugin = readdir( $dh ) ) !== false )
-					if ( substr( $plugin, -4 ) == '.php' )
-						$aff_plugins[] = $plugin;
-				closedir( $dh );
-				sort( $aff_plugins );
-				foreach( $aff_plugins as $aff_plugin )
-					include_once( $thedir . '/' . $aff_plugin );
-			}
-		}
+		load_affiliate_plugins();
 
 	}
 
@@ -1618,7 +1605,54 @@ class affiliateadmin {
 
 	}
 
+	function show_affiliates_panel_menu() {
+
+		global $page, $subpage;
+
+		$apages = array(	''			=>	__('Affiliate reports', 'affiliate'),
+							'users'		=>	__('Manage affiliates', 'affiliate'),
+							'settings'	=>	__('Affiliate settings', 'affiliate'),
+							'addons'	=>	__('Manage add ons', 'affiliate')
+						);
+
+
+
+		$actions = array();
+
+		foreach($apages as $akey => $apage) {
+			$url = '<a href="?page=' . $page;
+			if(!empty($akey)) {
+				$url .= '&amp;subpage=' . $akey;
+			}
+			$url .= '" class="rbutton">';
+			if($subpage == $akey) {
+				$url .= '<strong>';
+			}
+			$url .= $apage;
+			if($subpage == $akey) {
+				$url .= '</strong>';
+			}
+			$url .= '</a>';
+
+			$actions[] = $url;
+
+		}
+
+
+		echo '<ul class="subsubsub">';
+		echo '<li>';
+		echo implode(' | </li><li>', $actions);
+		echo '</li>';
+		echo '</ul>';
+		echo '<br clear="all" />';
+
+	}
+
 	function handle_affiliates_panel() {
+
+		global $page, $subpage;
+
+		wp_reset_vars( array('page', 'subpage') );
 
 		$page = addslashes($_GET['page']);
 		$subpage = addslashes($_GET['subpage']);
@@ -1626,25 +1660,18 @@ class affiliateadmin {
 		echo "<div class='wrap'>";
 		echo "<h2>" . __('Affiliate System Administration','affiliate') . "</h2>";
 
+		$this->show_affiliates_panel_menu();
+
 		if(!empty($subpage)) {
 			switch($subpage) {
 				case 'settings':
-							echo '<ul class="subsubsub">';
-							echo '<li><a href="?page=' . $page . '" class="rbutton">' . __('Affiliate reports', 'affiliate') . '</a> | </li>';
-							echo '<li><a href="?page=' . $page . '&amp;subpage=users" class="rbutton">' . __('Manage affiliates', 'affiliate') . '</a> | </li>';
-							echo '<li><a href="?page=' . $page . '&amp;subpage=settings" class="rbutton"><strong>' . __('Affiliate settings', 'affiliate') . '</strong></a></li>';
-							echo '</ul>';
-							echo '<br clear="all" />';
 							$this->handle_affiliate_settings_panel();
 							break;
 				case 'users':
-							echo '<ul class="subsubsub">';
-							echo '<li><a href="?page=' . $page . '" class="rbutton">' . __('Affiliate reports', 'affiliate') . '</a> | </li>';
-							echo '<li><a href="?page=' . $page . '&amp;subpage=users" class="rbutton"><strong>' . __('Manage affiliates', 'affiliate') . '</strong></a> | </li>';
-							echo '<li><a href="?page=' . $page . '&amp;subpage=settings" class="rbutton">' . __('Affiliate settings', 'affiliate') . '</a></li>';
-							echo '</ul>';
-							echo '<br clear="all" />';
 							$this->handle_affiliate_users_panel();
+							break;
+				case 'addons':
+							$this->handle_plugins_panel();
 							break;
 				default:
 							break;
@@ -1693,12 +1720,6 @@ class affiliateadmin {
 
 				}
 
-			echo '<ul class="subsubsub">';
-			echo '<li><a href="?page=' . $page . '" class="rbutton"><strong>' . __('Affiliate reports', 'affiliate') . '</strong></a> | </li>';
-			echo '<li><a href="?page=' . $page . '&amp;subpage=users" class="rbutton">' . __('Manage affiliates', 'affiliate') . '</a> | </li>';
-			echo '<li><a href="?page=' . $page . '&amp;subpage=settings" class="rbutton">' . __('Affiliate settings', 'affiliate') . '</a></li>';
-			echo '</ul>';
-			echo '<br clear="all" />';
 
 			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 				$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
@@ -1891,6 +1912,245 @@ class affiliateadmin {
 			}
 		}
 
+	}
+
+	// Plugins interface
+	function handle_plugins_panel_updates() {
+		global $action, $page;
+
+		if(isset($_GET['doaction']) || isset($_GET['doaction2'])) {
+			if(addslashes($_GET['action']) == 'toggle' || addslashes($_GET['action2']) == 'toggle') {
+				$action = 'bulk-toggle';
+			}
+		}
+
+		$active = get_option('affiliate_activated_plugins', array());
+
+		switch(addslashes($action)) {
+
+			case 'deactivate':	$key = addslashes($_GET['plugin']);
+								if(!empty($key)) {
+									check_admin_referer('toggle-plugin-' . $key);
+
+									$found = array_search($key, $active);
+									if($found !== false) {
+										unset($active[$found]);
+										update_option('affiliate_activated_plugins', array_unique($active));
+										return 5;
+									} else {
+										return 6;
+									}
+								}
+								break;
+
+			case 'activate':	$key = addslashes($_GET['plugin']);
+								if(!empty($key)) {
+									check_admin_referer('toggle-plugin-' . $key);
+
+									if(!in_array($key, $active)) {
+										$active[] = $key;
+										update_option('affiliate_activated_plugins', array_unique($active));
+										return 3;
+									} else {
+										return 4;
+									}
+								}
+								break;
+
+			case 'bulk-toggle':
+								check_admin_referer('bulk-plugins');
+								foreach($_GET['plugincheck'] AS $key) {
+									$found = array_search($key, $active);
+									if($found !== false) {
+										unset($active[$found]);
+									} else {
+										$active[] = $key;
+									}
+								}
+								update_option('affiliate_activated_plugins', array_unique($active));
+								return 7;
+								break;
+
+		}
+	}
+
+	function handle_plugins_panel() {
+		global $action, $page, $subpage;
+
+		wp_reset_vars( array('action', 'page', 'subpage') );
+
+		$messages = array();
+		$messages[1] = __('Plugin updated.','affiliate');
+		$messages[2] = __('Plugin not updated.','affiliate');
+
+		$messages[3] = __('Plugin activated.','affiliate');
+		$messages[4] = __('Plugin not activated.','affiliate');
+
+		$messages[5] = __('Plugin deactivated.','affiliate');
+		$messages[6] = __('Plugin not deactivated.','affiliate');
+
+		$messages[7] = __('Plugin activation toggled.','affiliate');
+
+		if(!empty($action)) {
+			$msg = $this->handle_plugins_panel_updates();
+		}
+
+		if ( !empty($msg) ) {
+			echo '<div id="message" class="updated fade"><p>' . $messages[(int) $msg] . '</p></div>';
+			$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+		}
+
+		?>
+
+			<form method="get" action="?page=<?php echo esc_attr($page); ?>&amp;subpage=<?php echo esc_attr($subpage); ?>" id="posts-filter">
+
+			<input type='hidden' name='page' value='<?php echo esc_attr($page); ?>' />
+			<input type='hidden' name='subpage' value='<?php echo esc_attr($subpage); ?>' />
+
+			<div class="tablenav">
+
+			<div class="alignleft actions">
+			<select name="action">
+			<option selected="selected" value=""><?php _e('Bulk Actions', 'affiliate'); ?></option>
+			<option value="toggle"><?php _e('Toggle activation', 'affiliate'); ?></option>
+			</select>
+			<input type="submit" class="button-secondary action" id="doaction" name="doaction" value="<?php _e('Apply', 'affiliate'); ?>">
+
+			</div>
+
+			<div class="alignright actions"></div>
+
+			<br class="clear">
+			</div>
+
+			<div class="clear"></div>
+
+			<?php
+				wp_original_referer_field(true, 'previous'); wp_nonce_field('bulk-plugins');
+
+				$columns = array(	"name"		=>	__('Plugin Name', 'affiliate'),
+									"file" 		=> 	__('Plugin File','affiliate'),
+									"active"	=>	__('Active','affiliate')
+								);
+
+				$columns = apply_filters('affiliate_plugincolumns', $columns);
+
+				$plugins = get_affiliate_plugins();
+
+				$active = get_option('affiliate_activated_plugins', array());
+
+			?>
+
+			<table cellspacing="0" class="widefat fixed">
+				<thead>
+				<tr>
+				<th style="" class="manage-column column-cb check-column" id="cb" scope="col"><input type="checkbox"></th>
+				<?php
+					foreach($columns as $key => $col) {
+						?>
+						<th style="" class="manage-column column-<?php echo $key; ?>" id="<?php echo $key; ?>" scope="col"><?php echo $col; ?></th>
+						<?php
+					}
+				?>
+				</tr>
+				</thead>
+
+				<tfoot>
+				<tr>
+				<th style="" class="manage-column column-cb check-column" scope="col"><input type="checkbox"></th>
+				<?php
+					reset($columns);
+					foreach($columns as $key => $col) {
+						?>
+						<th style="" class="manage-column column-<?php echo $key; ?>" id="<?php echo $key; ?>" scope="col"><?php echo $col; ?></th>
+						<?php
+					}
+				?>
+				</tr>
+				</tfoot>
+
+				<tbody>
+					<?php
+					if(!empty($plugins)) {
+						foreach($plugins as $key => $plugin) {
+							$default_headers = array(
+								                'Name' => 'Plugin Name',
+												'Author' => 'Author',
+												'Description'	=>	'Description',
+												'AuthorURI' => 'Author URI'
+								        );
+
+							$plugin_data = get_file_data( affiliate_dir('affiliateincludes/plugins/' . $plugin), $default_headers, 'plugin' );
+
+							if(empty($plugin_data['Name'])) {
+								continue;
+							}
+
+							?>
+							<tr valign="middle" class="alternate" id="plugin-<?php echo $plugin; ?>">
+								<th class="check-column" scope="row"><input type="checkbox" value="<?php echo esc_attr($plugin); ?>" name="plugincheck[]"></th>
+								<td class="column-name">
+									<strong><?php echo esc_html($plugin_data['Name']) . "</strong>" . __(' by ', 'affiliate') . "<a href='" . esc_attr($plugin_data['AuthorURI']) . "'>" . esc_html($plugin_data['Author']) . "</a>"; ?>
+									<?php if(!empty($plugin_data['Description'])) {
+										?><br/><?php echo esc_html($plugin_data['Description']);
+										}
+
+										$actions = array();
+
+										if(in_array($plugin, $active)) {
+											$actions['toggle'] = "<span class='edit activate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=deactivate&amp;plugin=" . $plugin . "", 'toggle-plugin-' . $plugin) . "'>" . __('Deactivate', 'affiliate') . "</a></span>";
+										} else {
+											$actions['toggle'] = "<span class='edit deactivate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=activate&amp;plugin=" . $plugin . "", 'toggle-plugin-' . $plugin) . "'>" . __('Activate', 'affiliate') . "</a></span>";
+										}
+									?>
+									<br><div class="row-actions"><?php echo implode(" | ", $actions); ?></div>
+									</td>
+
+								<td class="column-name">
+									<?php echo esc_html($plugin); ?>
+									</td>
+								<td class="column-active">
+									<?php
+										if(in_array($plugin, $active)) {
+											echo "<strong>" . __('Active', 'affiliate') . "</strong>";
+										} else {
+											echo __('Inactive', 'affiliate');
+										}
+									?>
+								</td>
+						    </tr>
+							<?php
+						}
+					} else {
+						$columncount = count($columns) + 1;
+						?>
+						<tr valign="middle" class="alternate" >
+							<td colspan="<?php echo $columncount; ?>" scope="row"><?php _e('No Plugns where found for this install.','affiliate'); ?></td>
+					    </tr>
+						<?php
+					}
+					?>
+
+				</tbody>
+			</table>
+
+
+			<div class="tablenav">
+
+			<div class="alignleft actions">
+			<select name="action2">
+				<option selected="selected" value=""><?php _e('Bulk Actions', 'affiliate'); ?></option>
+				<option value="toggle"><?php _e('Toggle activation', 'affiliate'); ?></option>
+			</select>
+			<input type="submit" class="button-secondary action" id="doaction2" name="doaction2" value="Apply">
+			</div>
+			<div class="alignright actions"></div>
+			<br class="clear">
+			</div>
+
+			</form>
+
+		<?php
 	}
 
 }

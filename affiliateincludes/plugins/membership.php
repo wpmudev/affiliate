@@ -1,7 +1,10 @@
 <?php
-
-// Affiliate system plugin for the WordPress Membership plugin
-// Written by Barry (Incsub)
+/*
+Plugin Name: Membership add-on
+Description: Affiliate system plugin for the WordPress Membership plugin
+Author: Barry (Incsub)
+Author URI: http://caffeinatedb.com
+*/
 
 add_action( 'user_register', 'affiliate_new_user' );
 add_action( 'membership_add_subscription', 'affiliate_new_subscription', 10, 4 );
