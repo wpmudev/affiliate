@@ -3,7 +3,7 @@
 // Administration side of the affiliate system
 class affiliateshortcodes {
 
-	var $build = 3;
+	var $build = 4;
 
 	var $db;
 

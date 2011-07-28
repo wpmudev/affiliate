@@ -3,7 +3,7 @@
 // Administration side of the affiliate system
 class affiliateadmin {
 
-	var $build = 3;
+	var $build = 4;
 
 	var $db;
 
@@ -71,6 +71,10 @@ class affiliateadmin {
 		add_filter( 'manage_users_columns', array(&$this, 'add_user_affiliate_column') );
 		add_filter( 'wpmu_users_columns', array(&$this, 'add_user_affiliate_column') );
 		add_filter( 'manage_users_custom_column', array(&$this, 'show_user_affiliate_column'), 10, 3 );
+
+		add_action( 'pre_user_query', array(&$this, 'override_referrer_search'));
+		add_filter( 'user_row_actions', array(&$this, 'add_referrer_search_link'), 10, 2 );
+		add_filter( 'ms_user_row_actions', array(&$this, 'add_referrer_search_link'), 10, 2 );
 
 		// Include affiliate plugins
 		load_affiliate_plugins();
@@ -1903,6 +1907,10 @@ class affiliateadmin {
 
 	function show_user_affiliate_column( $content, $column_name, $user_id ) {
 
+		if($column_name != 'referred') {
+			return $content;
+		}
+
 		if(function_exists('get_user_meta')) {
 			$affid = get_user_meta($user_id, 'affiliate_referrer', true);
 		} else {
@@ -1935,17 +1943,21 @@ class affiliateadmin {
 
 	function show_affiliate_column( $column_name, $blog_id ) {
 
-		if($column_name == 'affiliate') {
-			$aff = get_blog_option( $blog_id, 'affiliate_referrer', 'none' );
-			if($aff != 'none') {
-				// This is an affiliate
-				echo "<img src='" .  affiliate_url("affiliateincludes/images/affiliatelink.png") . "' alt='referred'>&nbsp;";
+		if($column_name == 'referred') {
+			$affid = get_blog_option( $blog_id, 'affiliate_referrer', false );
+
+			if(!empty($affid)) {
+				// was referred so get the referrers details
+				$referrer = new WP_User( $affid );
+
+				if(is_network_admin()) {
+					$content .= "<a href='" . network_admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+				} else {
+					$content .= "<a href='" . admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+				}
+
 			}
-			$paid = get_blog_option( $blog_id, 'affiliate_paid', 'no' );
-			if($paid != 'no') {
-				// This is an affiliate
-				echo "<img src='" . affiliate_url("affiliateincludes/images/affiliatemoney.png") . "' alt='paid'>";
-			}
+
 		}
 
 	}
@@ -2187,6 +2199,49 @@ class affiliateadmin {
 			</form>
 
 		<?php
+	}
+
+	function get_referred_by( $id ) {
+
+		$sql = $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value = %s", $id );
+
+		$results = $this->db->get_col( $sql );
+
+		return $results;
+	}
+
+	function override_referrer_search( &$search ) {
+
+		if(substr_compare($_REQUEST['s'], 'referrer:', 0, 9, true) !== false) {
+			// we have a referrer search so modify it
+			$searchstring = explode( 'referrer:', $_REQUEST['s'] );
+
+			if(!empty($searchstring[1])) {
+				$user = get_userdatabylogin( $searchstring[1] );
+				if($user) {
+					$referred = $this->get_referred_by( $user->ID );
+
+					$search->query_where = "WHERE 1=1 AND ( ID IN (0," . implode(',', $referred) . ") )";
+
+					if(!empty($search->query_vars['blog_id']) && is_multisite()) {
+						$search->query_where .= " AND (wp_usermeta.meta_key = '" . $this->db->get_blog_prefix( $search->query_vars['blog_id'] ) . "capabilities' )";
+					}
+
+				}
+			}
+		}
+
+	}
+
+	function add_referrer_search_link( $actions, $user_object ) {
+
+		if(is_network_admin()) {
+			$actions['referred'] = '<a href="' . network_admin_url('users.php?s=referrer:' . $user_object->user_login ) . '">' . __( 'Referred', 'affiliate' ) . '</a>';
+		} else {
+			$actions['referred'] = '<a href="' . admin_url('users.php?s=referrer:' . $user_object->user_login ) . '">' . __( 'Referred', 'affiliate' ) . '</a>';
+		}
+
+		return $actions;
 	}
 
 }

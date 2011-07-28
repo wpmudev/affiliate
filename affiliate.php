@@ -8,14 +8,6 @@ Version: 2.4
 Author URI: http://incsub.com
 WDP ID: 106
 */
-// Uncomment to have the system check all pages and referrers
-define('AFFILIATE_CHECKALL', 'yes');
-// Uncomment to have the system set a 'browser-session' cookie if no referrer is found - this reduces server load
-// and is recommended if the above setting is un-commented
-define('AFFILIATE_SETNOCOOKIE', 'yes');
-// Pay the affiliate only once
-define('AFFILIATE_PAYONCE', 'yes');
-
 
 // Front end and reporting part of the affiliate system
 class affiliate {
