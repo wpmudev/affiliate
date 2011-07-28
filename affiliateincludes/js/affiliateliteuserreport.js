@@ -94,31 +94,38 @@ function affReBuildVisits(chart, ticks) {
 
 function affDoPlot() {
 
-	if(chart) {
-		affReBuildChart(chart, ticks);
-	} else {
-		jQuery.getJSON(ajaxurl, { action: '_aff_getstats' },
-		        function(data){
+	if(jQuery('#affdashgraph').length != 0) {
 
-					if(data.chart) { chart = data.chart; } else { chart = []; }
-					if(data.ticks) { ticks = data.ticks; } else { ticks = []; }
+		if(chart && jQuery('#affdashgraph').length != 0) {
+			affReBuildChart(chart, ticks);
+		} else {
+			jQuery.getJSON(ajaxurl, { action: '_aff_getstats' },
+			        function(data){
 
-					affReBuildChart(chart, ticks);
-		        });
+						if(data.chart) { chart = data.chart; } else { chart = []; }
+						if(data.ticks) { ticks = data.ticks; } else { ticks = []; }
+
+						affReBuildChart(chart, ticks);
+			        });
+		}
 	}
 
-	if(visit) {
-		affReBuildVisits(visit, ticktwo);
-	} else {
-		jQuery.getJSON(ajaxurl, { action: '_aff_getvisits' },
-		        function(data){
+	if(jQuery('#affvisitgraph').length != 0) {
 
-					if(data.chart) { visit = data.chart; } else { visit = []; }
-					if(data.ticks) { ticktwo = data.ticks; } else { ticktwo = []; }
+		if(visit) {
+			affReBuildVisits(visit, ticktwo);
+		} else {
+			jQuery.getJSON(ajaxurl, { action: '_aff_getvisits' },
+			        function(data){
 
-					affReBuildVisits(visit, ticktwo);
+						if(data.chart) { visit = data.chart; } else { visit = []; }
+						if(data.ticks) { ticktwo = data.ticks; } else { ticktwo = []; }
 
-				});
+						affReBuildVisits(visit, ticktwo);
+
+					});
+		}
+
 	}
 
 }

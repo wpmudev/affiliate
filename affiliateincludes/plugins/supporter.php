@@ -32,6 +32,12 @@ function affiliate_new_blog( $blog_id, $user_id ) {
 			update_blog_option( $blog_id, 'affiliate_referrer', AFFILIATEID );
 		}
 
+		if(function_exists('update_user_meta')) {
+			update_user_meta($user_id, 'affiliate_referrer', AFFILIATEID);
+		} else {
+			update_usermeta($user_id, 'affiliate_referrer', AFFILIATEID);
+		}
+
 	}
 
 }

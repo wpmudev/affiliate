@@ -57,6 +57,10 @@ function affReBuildChart(chart, ticks) {
 
 function affDoPlot() {
 
+	if(jQuery('#affdashgraph').length == 0) {
+		return;
+	}
+
 	if(chart) {
 		affReBuildChart(chart, ticks);
 	} else {

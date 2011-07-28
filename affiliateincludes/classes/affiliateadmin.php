@@ -369,6 +369,7 @@ class affiliateadmin {
 		// Main user report page
 		if(isset($_GET['page']) && addslashes($_GET['page']) == 'affiliateearnings') {
 			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
+			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.pie.min.js'), array('flot_js'));
 			wp_enqueue_script('aff_js', affiliate_url('affiliateincludes/js/affiliateliteuserreport.js'), array('jquery'));
 
 			add_action('admin_head', array(&$this, 'add_iehead') );
@@ -377,6 +378,7 @@ class affiliateadmin {
 		// Admin user report page
 		if(isset($_GET['page']) && addslashes($_GET['page']) == 'affiliatesadmin' && addslashes($_GET['subpage']) == 'users' && isset($_GET['id'])) {
 			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
+
 			wp_enqueue_script('aff_js', affiliate_url('affiliateincludes/js/affiliateadminuserreport.js'), array('jquery'));
 
 			add_action('admin_head', array(&$this, 'add_iehead') );
@@ -1854,7 +1856,7 @@ class affiliateadmin {
 
 				echo "<tr $bgcolour class='$class'>";
 
-				echo '<td colspan="6" valign="top">';
+				echo '<td colspan="8" valign="top">';
 				echo __('There are no results for the selected month.','affiliate');
 				echo '</td>';
 				echo '</tr>';
