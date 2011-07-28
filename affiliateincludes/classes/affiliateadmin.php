@@ -335,19 +335,19 @@ class affiliateadmin {
 				// we're activated site wide so put the admin menu in the network area
 				if(function_exists('is_network_admin')) {
 					if(is_network_admin()) {
-						add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+						add_submenu_page('index.php', __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
 					}
 				}
 			} else {
 				// we're only activated on a blog level so put the admin menu in the main area
 				if(!function_exists('is_network_admin')) {
-					add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+					add_submenu_page('index.php', __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
 				} elseif(!is_network_admin()) {
-					add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+					add_submenu_page('index.php', __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
 				}
 			}
 		} else {
-			add_submenu_page('index.php', __('Affiliates'), __('Affiliates'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+			add_submenu_page('index.php', __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
 		}
 
 		add_submenu_page('users.php', __('Affiliate Earnings Report','affiliate'), __('Affiliate Referrals','affiliate'), 'read', "affiliateearnings", array(&$this,'add_profile_report_page'));
@@ -470,9 +470,9 @@ class affiliateadmin {
 
 				echo "<input type='hidden' name='action' value='update' />";
 
-				$settingstextdefault = "<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
+				$settingstextdefault = __("<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
 			<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
-			<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>";
+			<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>", 'affiliate');
 
 				echo stripslashes( $getoption('affiliatesettingstext', $settingstextdefault) );
 
@@ -511,8 +511,8 @@ class affiliateadmin {
 						<h3><?php _e('Affiliate Advanced Settings', 'affiliate') ?></h3>
 
 						<?php
-						$advsettingstextdefault = "<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>
-					<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>";
+						$advsettingstextdefault = __("<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>
+					<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>", 'affiliate');
 
 						echo stripslashes( $getoption('affiliateadvancedsettingstext', $advsettingstextdefault) );
 
@@ -572,9 +572,9 @@ class affiliateadmin {
 				echo "<input type='hidden' name='action' value='update' />";
 
 
-				$settingstextdefault = "<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
+				$settingstextdefault = __("<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
 			<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
-			<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>";
+			<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>", 'affiliate');
 
 				echo stripslashes( $getoption('affiliatesettingstext', $settingstextdefault) );
 
@@ -1043,7 +1043,7 @@ class affiliateadmin {
 
 			do_action('affililate_settings_form_update');
 
-			echo '<div id="message" class="updated fade"><p>' . __('Affiliate settings saved.','blogsmu') . '</p></div>';
+			echo '<div id="message" class="updated fade"><p>' . __('Affiliate settings saved.','affiliate') . '</p></div>';
 		}
 
 		$page = addslashes($_GET['page']);
@@ -1082,20 +1082,20 @@ class affiliateadmin {
 
 		echo '<h3>' . __('Profile page text', 'affiliate') . '</h3>';
 
-		$settingstextdefault = "<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
+		$settingstextdefault = __("<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
 <p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
-<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>";
+<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>", 'affiliate');
 
 		echo '<table class="form-table">';
 		echo '<tr valign="top">';
-		echo '<th scope="row">' . __('Affiliate settings profile text') . '</th>';
+		echo '<th scope="row">' . __('Affiliate settings profile text', 'affiliate') . '</th>';
 		echo '<td>';
 		echo '<textarea name="affiliatesettingstext" id="affiliatesettingstext" cols="60" rows="10">' . stripslashes( $getoption('affiliatesettingstext', $settingstextdefault) ) . '</textarea>';
 		echo '</td>';
 		echo '</tr>';
 
-		$advsettingstextdefault = "<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>
-<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>";
+		$advsettingstextdefault = __("<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>
+<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>", 'affiliate');
 
 		echo '<table class="form-table">';
 		echo '<tr valign="top">';
