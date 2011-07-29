@@ -2212,7 +2212,7 @@ class affiliateadmin {
 
 	function override_referrer_search( &$search ) {
 
-		if(substr_compare($_REQUEST['s'], 'referrer:', 0, 9, true) !== false) {
+		if(substr($_REQUEST['s'], 0, 9) == 'referrer:') {
 			// we have a referrer search so modify it
 			$searchstring = explode( 'referrer:', $_REQUEST['s'] );
 
