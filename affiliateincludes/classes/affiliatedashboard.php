@@ -237,6 +237,6 @@ class affiliatedashboard {
 
 }
 
-$affdash =& new affiliatedashboard();
+$affdash = new affiliatedashboard();
 
 ?>

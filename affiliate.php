@@ -339,6 +339,6 @@ if(is_admin()) {
 // Include the new shortcodes class
 include_once('affiliateincludes/classes/affiliateshortcodes.php');
 
-$affiliate =& new affiliate();
+$affiliate = new affiliate();
 
 ?>

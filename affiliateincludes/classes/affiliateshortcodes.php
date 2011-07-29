@@ -1408,6 +1408,6 @@ class affiliateshortcodes {
 
 }
 
-$affshortcode =& new affiliateshortcodes();
+$affshortcode = new affiliateshortcodes();
 
 ?>

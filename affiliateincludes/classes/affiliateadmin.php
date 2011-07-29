@@ -2246,6 +2246,6 @@ class affiliateadmin {
 
 }
 
-$affadmin =& new affiliateadmin();
+$affadmin = new affiliateadmin();
 
 ?>
