@@ -396,7 +396,7 @@ class affiliateadmin {
 	}
 
 	function add_iehead() {
-		echo '<!--[if IE]><script language="javascript" type="text/javascript" src="' . affiliate_url('affiliateincludes/js/excanvas.min.js') . '"></script><![endif]-->';
+		echo '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="' . affiliate_url('affiliateincludes/js/excanvas.min.js') . '"></script><![endif]-->';
 	}
 
 	function add_profile_report_page() {
