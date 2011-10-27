@@ -1771,15 +1771,15 @@ class affiliateadmin {
 					echo '>' . date('M Y', $rdate) . '</option>';
 				}
 				echo '</select>&nbsp;';
-				echo '<input type="submit" value="' . __('Refresh') . '" name="allaction_refresh" class="button-secondary" />';
+				echo '<input type="submit" value="' . __('Refresh', 'affiliate') . '" name="allaction_refresh" class="button-secondary" />';
 
 				echo '<br class="clear" />';
 				echo '</div>';
 
 				echo '<div class="alignright">';
 
-				echo '<input type="submit" value="' . __('Export Payments') . '" name="allaction_exportpayments" class="button-secondary delete" />';
-				echo '<input type="submit" value="' . __('Mark as Paid') . '" name="allaction_markaspaid" class="button-secondary" />';
+				echo '<input type="submit" value="' . __('Export Payments', 'affiliate') . '" name="allaction_exportpayments" class="button-secondary delete" />';
+				echo '<input type="submit" value="' . __('Mark as Paid', 'affiliate') . '" name="allaction_markaspaid" class="button-secondary" />';
 				wp_nonce_field( 'allaffiliateactions' );
 				echo '<br class="clear" />';
 				echo '</div>';
