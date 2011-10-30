@@ -77,7 +77,7 @@ class affiliateadmin {
 		add_filter( 'ms_user_row_actions', array(&$this, 'add_referrer_search_link'), 10, 2 );
 
 		// Include affiliate plugins
-		load_affiliate_plugins();
+		load_affiliate_addons();
 
 	}
 
@@ -1222,6 +1222,11 @@ class affiliateadmin {
 			$user = get_userdata($user_id);
 
 			echo "<strong>" . __('Details for user : ','affiliate') . $user->user_login . " ( " . get_usermeta($user_id, 'affiliate_paypal') . " )" . "</strong>";
+			// Get the affiliate website listing
+			$referrer = get_user_meta($user_id, 'affiliate_referrer', true);
+			if(!empty($referrer)) {
+				echo " " . __('linked to ', 'affiliate') . "<a href='http://{$referrer}'>" . $referrer . "</a>";
+			}
 			echo "<br/>";
 			echo "<div id='clickscolumn' style='width: 48%; margin-right: 2%; margin-top: 20px; min-height: 400px; float: left;'>";
 
@@ -1576,6 +1581,12 @@ class affiliateadmin {
 					echo $user->user_login;
 					echo " ( " . get_usermeta($result->ID, 'affiliate_paypal') . " )";
 
+					// Get the affiliate website listing
+					$referrer = get_user_meta($result->ID, 'affiliate_referrer', true);
+					if(!empty($referrer)) {
+						echo " " . __('linked to ', 'affiliate') . "<a href='http://{$referrer}'>" . $referrer . "</a>";
+					}
+
 						// Quick links
 					$actions = array();
 
@@ -1622,7 +1633,7 @@ class affiliateadmin {
 		$apages = array(	''			=>	__('Affiliate reports', 'affiliate'),
 							'users'		=>	__('Manage affiliates', 'affiliate'),
 							'settings'	=>	__('Affiliate settings', 'affiliate'),
-							'addons'	=>	__('Manage add ons', 'affiliate')
+							'addons'	=>	__('Manage addons', 'affiliate')
 						);
 
 
@@ -1681,7 +1692,7 @@ class affiliateadmin {
 							$this->handle_affiliate_users_panel();
 							break;
 				case 'addons':
-							$this->handle_plugins_panel();
+							$this->handle_addons_panel();
 							break;
 				default:
 							break;
@@ -1820,7 +1831,13 @@ class affiliateadmin {
 					echo '<td valign="top">';
 					$user = get_userdata($result->user_id);
 					echo $user->user_login;
-					echo " ( " . get_usermeta($result->user_id, 'affiliate_paypal') . " )";
+					echo " ( " . get_user_meta($result->user_id, 'affiliate_paypal', true) . " )";
+
+					// Get the affiliate website listing
+					$referrer = get_user_meta($result->user_id, 'affiliate_referrer', true);
+					if(!empty($referrer)) {
+						echo " " . __('linked to ', 'affiliate') . "<a href='http://{$referrer}'>" . $referrer . "</a>";
+					}
 
 						// Quick links
 					$actions = array();
@@ -1963,7 +1980,7 @@ class affiliateadmin {
 	}
 
 	// Plugins interface
-	function handle_plugins_panel_updates() {
+	function handle_addons_panel_updates() {
 		global $action, $page;
 
 		if(isset($_GET['doaction']) || isset($_GET['doaction2'])) {
@@ -1972,18 +1989,18 @@ class affiliateadmin {
 			}
 		}
 
-		$active = get_option('affiliate_activated_plugins', array());
+		$active = get_option('affiliate_activated_addons', array());
 
 		switch(addslashes($action)) {
 
-			case 'deactivate':	$key = addslashes($_GET['plugin']);
+			case 'deactivate':	$key = addslashes($_GET['addon']);
 								if(!empty($key)) {
-									check_admin_referer('toggle-plugin-' . $key);
+									check_admin_referer('toggle-addon-' . $key);
 
 									$found = array_search($key, $active);
 									if($found !== false) {
 										unset($active[$found]);
-										update_option('affiliate_activated_plugins', array_unique($active));
+										update_option('affiliate_activated_addons', array_unique($active));
 										return 5;
 									} else {
 										return 6;
@@ -1991,13 +2008,13 @@ class affiliateadmin {
 								}
 								break;
 
-			case 'activate':	$key = addslashes($_GET['plugin']);
+			case 'activate':	$key = addslashes($_GET['addon']);
 								if(!empty($key)) {
-									check_admin_referer('toggle-plugin-' . $key);
+									check_admin_referer('toggle-addon-' . $key);
 
 									if(!in_array($key, $active)) {
 										$active[] = $key;
-										update_option('affiliate_activated_plugins', array_unique($active));
+										update_option('affiliate_activated_addons', array_unique($active));
 										return 3;
 									} else {
 										return 4;
@@ -2006,8 +2023,8 @@ class affiliateadmin {
 								break;
 
 			case 'bulk-toggle':
-								check_admin_referer('bulk-plugins');
-								foreach($_GET['plugincheck'] AS $key) {
+								check_admin_referer('bulk-addon');
+								foreach($_GET['addoncheck'] AS $key) {
 									$found = array_search($key, $active);
 									if($found !== false) {
 										unset($active[$found]);
@@ -2015,32 +2032,32 @@ class affiliateadmin {
 										$active[] = $key;
 									}
 								}
-								update_option('affiliate_activated_plugins', array_unique($active));
+								update_option('affiliate_activated_addons', array_unique($active));
 								return 7;
 								break;
 
 		}
 	}
 
-	function handle_plugins_panel() {
+	function handle_addons_panel() {
 		global $action, $page, $subpage;
 
 		wp_reset_vars( array('action', 'page', 'subpage') );
 
 		$messages = array();
-		$messages[1] = __('Plugin updated.','affiliate');
-		$messages[2] = __('Plugin not updated.','affiliate');
+		$messages[1] = __('Addon updated.','affiliate');
+		$messages[2] = __('Addon not updated.','affiliate');
 
-		$messages[3] = __('Plugin activated.','affiliate');
-		$messages[4] = __('Plugin not activated.','affiliate');
+		$messages[3] = __('Addon activated.','affiliate');
+		$messages[4] = __('Addon not activated.','affiliate');
 
-		$messages[5] = __('Plugin deactivated.','affiliate');
-		$messages[6] = __('Plugin not deactivated.','affiliate');
+		$messages[5] = __('Addon deactivated.','affiliate');
+		$messages[6] = __('Addon not deactivated.','affiliate');
 
-		$messages[7] = __('Plugin activation toggled.','affiliate');
+		$messages[7] = __('Addon activation toggled.','affiliate');
 
 		if(!empty($action)) {
-			$msg = $this->handle_plugins_panel_updates();
+			$msg = $this->handle_addons_panel_updates();
 		}
 
 		if ( !empty($msg) ) {
@@ -2074,18 +2091,18 @@ class affiliateadmin {
 			<div class="clear"></div>
 
 			<?php
-				wp_original_referer_field(true, 'previous'); wp_nonce_field('bulk-plugins');
+				wp_original_referer_field(true, 'previous'); wp_nonce_field('bulk-addons');
 
-				$columns = array(	"name"		=>	__('Plugin Name', 'affiliate'),
-									"file" 		=> 	__('Plugin File','affiliate'),
+				$columns = array(	"name"		=>	__('Addon Name', 'affiliate'),
+									"file" 		=> 	__('Addon File','affiliate'),
 									"active"	=>	__('Active','affiliate')
 								);
 
 				$columns = apply_filters('affiliate_plugincolumns', $columns);
 
-				$plugins = get_affiliate_plugins();
+				$plugins = get_affiliate_addons();
 
-				$active = get_option('affiliate_activated_plugins', array());
+				$active = get_option('affiliate_activated_addons', array());
 
 			?>
 
@@ -2128,7 +2145,7 @@ class affiliateadmin {
 												'AuthorURI' => 'Author URI'
 								        );
 
-							$plugin_data = get_file_data( affiliate_dir('affiliateincludes/plugins/' . $plugin), $default_headers, 'plugin' );
+							$plugin_data = get_file_data( affiliate_dir('affiliateincludes/addons/' . $plugin), $default_headers, 'plugin' );
 
 							if(empty($plugin_data['Name'])) {
 								continue;
@@ -2146,9 +2163,9 @@ class affiliateadmin {
 										$actions = array();
 
 										if(in_array($plugin, $active)) {
-											$actions['toggle'] = "<span class='edit activate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=deactivate&amp;plugin=" . $plugin . "", 'toggle-plugin-' . $plugin) . "'>" . __('Deactivate', 'affiliate') . "</a></span>";
+											$actions['toggle'] = "<span class='edit activate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=deactivate&amp;addon=" . $plugin . "", 'toggle-addon-' . $plugin) . "'>" . __('Deactivate', 'affiliate') . "</a></span>";
 										} else {
-											$actions['toggle'] = "<span class='edit deactivate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=activate&amp;plugin=" . $plugin . "", 'toggle-plugin-' . $plugin) . "'>" . __('Activate', 'affiliate') . "</a></span>";
+											$actions['toggle'] = "<span class='edit deactivate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=activate&amp;addon=" . $plugin . "", 'toggle-addon-' . $plugin) . "'>" . __('Activate', 'affiliate') . "</a></span>";
 										}
 									?>
 									<br><div class="row-actions"><?php echo implode(" | ", $actions); ?></div>
@@ -2173,7 +2190,7 @@ class affiliateadmin {
 						$columncount = count($columns) + 1;
 						?>
 						<tr valign="middle" class="alternate" >
-							<td colspan="<?php echo $columncount; ?>" scope="row"><?php _e('No Plugns where found for this install.','affiliate'); ?></td>
+							<td colspan="<?php echo $columncount; ?>" scope="row"><?php _e('No Addons where found for this install.','affiliate'); ?></td>
 					    </tr>
 						<?php
 					}

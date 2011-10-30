@@ -68,7 +68,7 @@ class affiliate {
 		add_action('affiliate_referrer', array(&$this, 'record_referrer'), 10, 2);
 
 		// Include affiliate plugins
-		load_affiliate_plugins();
+		load_affiliate_addons();
 
 	}
 

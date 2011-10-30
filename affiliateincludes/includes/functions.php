@@ -56,9 +56,9 @@ function affiliate_dir($extended) {
 
 }
 
-function get_affiliate_plugins() {
-	if ( is_dir( affiliate_dir('affiliateincludes/plugins') ) ) {
-		if ( $dh = opendir( affiliate_dir('affiliateincludes/plugins') ) ) {
+function get_affiliate_addons() {
+	if ( is_dir( affiliate_dir('affiliateincludes/addons') ) ) {
+		if ( $dh = opendir( affiliate_dir('affiliateincludes/addons') ) ) {
 			$aff_plugins = array ();
 			while ( ( $plugin = readdir( $dh ) ) !== false )
 				if ( substr( $plugin, -4 ) == '.php' )
@@ -66,7 +66,7 @@ function get_affiliate_plugins() {
 			closedir( $dh );
 			sort( $aff_plugins );
 
-			return apply_filters('affiliate_available_plugins', $aff_plugins);
+			return apply_filters('affiliate_available_addons', $aff_plugins);
 
 		}
 	}
@@ -74,21 +74,24 @@ function get_affiliate_plugins() {
 	return false;
 }
 
-function load_affiliate_plugins() {
+function load_affiliate_addons() {
 
-	$plugins = get_option('affiliate_activated_plugins', array());
+	$plugins = get_option('affiliate_activated_addons', array());
 
-	if ( is_dir( affiliate_dir('affiliateincludes/plugins') ) ) {
-		if ( $dh = opendir( affiliate_dir('affiliateincludes/plugins') ) ) {
+	if ( is_dir( affiliate_dir('affiliateincludes/addons') ) ) {
+		if ( $dh = opendir( affiliate_dir('affiliateincludes/addons') ) ) {
 			$aff_plugins = array ();
 			while ( ( $plugin = readdir( $dh ) ) !== false )
 				if ( substr( $plugin, -4 ) == '.php' )
 					$aff_plugins[] = $plugin;
 			closedir( $dh );
 			sort( $aff_plugins );
+
+			$aff_plugins = apply_filters('affiliate_available_addons', $aff_plugins);
+
 			foreach( $aff_plugins as $aff_plugin ) {
 				if(in_array($aff_plugin, $plugins)) {
-					include_once( affiliate_dir('affiliateincludes/plugins/' . $aff_plugin) );
+					include_once( affiliate_dir('affiliateincludes/addons/' . $aff_plugin) );
 				}
 			}
 
@@ -96,9 +99,9 @@ function load_affiliate_plugins() {
 	}
 }
 
-function load_all_affiliate_plugins() {
-	if ( is_dir( affiliate_dir('affiliateincludes/plugins') ) ) {
-		if ( $dh = opendir( affiliate_dir('affiliateincludes/plugins') ) ) {
+function load_all_affiliate_addons() {
+	if ( is_dir( affiliate_dir('affiliateincludes/addons') ) ) {
+		if ( $dh = opendir( affiliate_dir('affiliateincludes/addons') ) ) {
 			$aff_plugins = array ();
 			while ( ( $plugin = readdir( $dh ) ) !== false )
 				if ( substr( $plugin, -4 ) == '.php' )
@@ -106,7 +109,7 @@ function load_all_affiliate_plugins() {
 			closedir( $dh );
 			sort( $aff_plugins );
 			foreach( $aff_plugins as $aff_plugin )
-				include_once( affiliate_dir('affiliateincludes/plugins/' . $aff_plugin) );
+				include_once( affiliate_dir('affiliateincludes/addons/' . $aff_plugin) );
 		}
 	}
 }
