@@ -1132,6 +1132,9 @@ class affiliateshortcodes {
 			update_user_meta($user_ID, 'enable_affiliate', $_POST['enable_affiliate']);
 			update_user_meta($user_ID, 'affiliate_paypal', $_POST['affiliate_paypal']);
 			if(isset($_POST['affiliate_referrer'])) {
+
+				// Check for duplicates
+
 				update_user_meta($user_ID, 'affiliate_referrer', str_replace('http://', '', untrailingslashit($_POST['affiliate_referrer'])));
 			} else {
 				delete_user_meta($user_ID, 'affiliate_referrer');
@@ -1154,7 +1157,12 @@ class affiliateshortcodes {
 		if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
 			echo "<strong>" . __('Hello, Thank you for supporting us</strong>, to view or change any of your affiliate settings click on the edit link.','affiliate') . "</strong><a href='#view' id='editaffsettingslink' style='float:right; font-size: 8pt;'>" . __('edit','affiliate') . "</a>";
 
-			echo "<div class='innerbox closed'>";
+			if(empty($error)) {
+				echo "<div class='innerbox closed'>";
+			} else {
+				echo "<div class='innerbox open'>";
+			}
+
 
 			echo "<form action='' method='post'>";
 			wp_nonce_field( "affiliatepublicsettings-" . $user_ID );

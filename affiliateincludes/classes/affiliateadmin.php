@@ -436,6 +436,9 @@ class affiliateadmin {
 			update_usermeta($user_ID, 'enable_affiliate', $_POST['enable_affiliate']);
 			update_usermeta($user_ID, 'affiliate_paypal', $_POST['affiliate_paypal']);
 			if(isset($_POST['affiliate_referrer'])) {
+
+				// Check for duplicate and if not unique we need to display the open box with an error message
+
 				update_usermeta($user_ID, 'affiliate_referrer', str_replace('http://', '', untrailingslashit($_POST['affiliate_referrer'])));
 			} else {
 				delete_usermeta($user_ID, 'affiliate_referrer');
@@ -463,7 +466,11 @@ class affiliateadmin {
 			if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') {
 				echo "<strong>" . __('Hello, Thank you for supporting us</strong>, to view or change any of your affiliate settings click on the edit link.','affiliate') . "</strong><a href='#view' id='editaffsettingslink' style='float:right; font-size: 8pt;'>" . __('edit','affiliate') . "</a>";
 
-				echo "<div id='innerbox' style='width: 100%; display: none;'>";
+				if(empty($error)) {
+					echo "<div id='innerbox' style='width: 100%; display: none;'>";
+				} else {
+					echo "<div id='innerbox' style='width: 100%;'>";
+				}
 
 				echo "<form action='' method='post'>";
 				wp_nonce_field( "affiliatesettings" );
