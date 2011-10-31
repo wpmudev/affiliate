@@ -399,6 +399,21 @@ class affiliateadmin {
 		echo '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="' . affiliate_url('affiliateincludes/js/excanvas.min.js') . '"></script><![endif]-->';
 	}
 
+	function check_duplicate_url( $url ) {
+		$affiliate = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value='%s'", $url) );
+
+		if(!empty($affiliate)) {
+			return false;
+		} else {
+			return true;
+		}
+
+	}
+
+	function validate_url_for_msg( $url, $msg ) {
+
+	}
+
 	function add_profile_report_page() {
 
 		$user = wp_get_current_user();
@@ -417,7 +432,7 @@ class affiliateadmin {
 			$columns = $newcolumns;
 		}
 
-		$reference = get_usermeta($user_ID, 'affiliate_reference');
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 
 		if(is_multisite()) {
 			$getoption = 'get_site_option';
@@ -433,26 +448,45 @@ class affiliateadmin {
 
 			check_admin_referer('affiliatesettings');
 
-			update_usermeta($user_ID, 'enable_affiliate', $_POST['enable_affiliate']);
-			update_usermeta($user_ID, 'affiliate_paypal', $_POST['affiliate_paypal']);
+			update_user_meta($user_ID, 'enable_affiliate', $_POST['enable_affiliate']);
+			update_user_meta($user_ID, 'affiliate_paypal', $_POST['affiliate_paypal']);
 			if(isset($_POST['affiliate_referrer'])) {
 
-				// Check for duplicate and if not unique we need to display the open box with an error message
+				$url = str_replace('http://', '', untrailingslashit($_POST['affiliate_referrer']));
+				// store the update - even though it could be wrong
+				update_user_meta($user_ID, 'affiliate_referrer', $url );
+				// Remove any validated referrers as it may have been changed
+				delete_user_meta($user_ID, 'affiliate_referrer_validated');
 
-				update_usermeta($user_ID, 'affiliate_referrer', str_replace('http://', '', untrailingslashit($_POST['affiliate_referrer'])));
+				// Check for duplicate and if not unique we need to display the open box with an error message
+				if($this->check_duplicate_url($url)) {
+					$error = 'yes';
+				} else {
+					// Create the message we are looking for
+					$chmsg = '';
+					// Check a file with it exists and contains the content
+					if($this->validate_url_for_msg( trailingslashit($url) . '', $chkmsg)) {
+						update_user_meta($user_ID, 'affiliate_referrer_validated', 'yes');
+					} else {
+						$error = 'yes';
+					}
+				}
+
+
 			} else {
-				delete_usermeta($user_ID, 'affiliate_referrer');
+				delete_user_meta($user_ID, 'affiliate_referrer_validated');
+				delete_user_meta($user_ID, 'affiliate_referrer');
 			}
 			if(isset($_POST['enable_affiliate']) && addslashes($_POST['enable_affiliate']) == 'yes') {
 				// Set up the affiliation details
 				// Store a record of the reference
 				$reference = $user->user_login . '-' . strrev(sprintf('%02d', $user_ID + 35));
-				update_usermeta($user_ID, 'affiliate_reference', $reference);
-				update_usermeta($user_ID, 'affiliate_hash', 'aff' . md5(AUTH_SALT . $reference));
+				update_user_meta($user_ID, 'affiliate_reference', $reference);
+				update_user_meta($user_ID, 'affiliate_hash', 'aff' . md5(AUTH_SALT . $reference));
 			} else {
 				// Wipe the affiliation details
-				delete_usermeta($user_ID, 'affiliate_reference');
-				delete_usermeta($user_ID, 'affiliate_hash');
+				delete_user_meta($user_ID, 'affiliate_reference');
+				delete_user_meta($user_ID, 'affiliate_hash');
 			}
 
 		}
@@ -490,8 +524,8 @@ class affiliateadmin {
 						<th><label for="enable_affiliate"><?php _e('Enable Affiliate links', 'affiliate'); ?></label></th>
 						<td>
 							<select name='enable_affiliate'>
-								<option value='yes' <?php if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') echo "selected = 'selected'"; ?>><?php _e('Yes please', 'affiliate'); ?></option>
-								<option value='no' <?php if(get_usermeta($user_ID, 'enable_affiliate') != 'yes') echo "selected = 'selected'"; ?>><?php _e('No thanks', 'affiliate'); ?></option>
+								<option value='yes' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') echo "selected = 'selected'"; ?>><?php _e('Yes please', 'affiliate'); ?></option>
+								<option value='no' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) != 'yes') echo "selected = 'selected'"; ?>><?php _e('No thanks', 'affiliate'); ?></option>
 							</select>
 						</td>
 					</tr>
@@ -499,7 +533,7 @@ class affiliateadmin {
 					<tr style='background: transparent;'>
 						<th><label for="affiliate_paypal"><?php _e('PayPal Email Address', 'affiliate'); ?></label></th>
 						<td>
-						<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo get_usermeta($user_ID, 'affiliate_paypal'); ?>" class="regular-text" />
+						<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo get_user_meta($user_ID, 'affiliate_paypal', true); ?>" class="regular-text" />
 						</td>
 					</tr>
 
@@ -509,9 +543,11 @@ class affiliateadmin {
 
 				if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') {
 
-					$reference = get_usermeta($user_ID, 'affiliate_reference');
-					$referrer = get_usermeta($user_ID, 'affiliate_referrer');
+					$reference = get_user_meta($user_ID, 'affiliate_reference', true);
+					$referrer = get_user_meta($user_ID, 'affiliate_referrer', true);
 					$refurl = "profile.php?page=affiliateearnings";
+
+					$validreferrer = get_user_meta($user_ID, 'affiliate_referrer_validated', true);
 
 					if(defined('AFFILIATE_CHECKALL')) { ?>
 
@@ -525,13 +561,27 @@ class affiliateadmin {
 
 						?>
 
+							<?php
+								if(!empty($referrer)) {
+									if(!empty($validreferrer) && $validreferrer == 'yes') {
+										// valid
+										$msg = "<span style='color: green;'>" . __('Validated', 'affiliate') . "</span>";
+									} else {
+										// not valid
+										$msg = "<span style='color: red;'>" . __('Not validated', 'affiliate') . "</span>";
+									}
+								}
+
+							?>
+
 						<table class="form-table">
 							<tr style='background: transparent;'>
 								<th><label for="affiliate_referrer"><?php _e('Your URL', 'affiliate'); ?></label></th>
 								<td>
-									http://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo get_usermeta($user_ID, 'affiliate_referrer'); ?>" class="regular-text" />
+									http://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo $referrer; ?>" class="regular-text" /><?php echo "&nbsp;&nbsp;" . $msg;?>
 								</td>
 							</tr>
+
 
 						</table>
 
@@ -592,8 +642,8 @@ class affiliateadmin {
 						<th><label for="enable_affiliate"><?php _e('Enable Affiliate links', 'affiliate'); ?></label></th>
 						<td>
 							<select name='enable_affiliate'>
-								<option value='yes' <?php if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') echo "selected = 'selected'"; ?>><?php _e('Yes please', 'affiliate'); ?></option>
-								<option value='no' <?php if(get_usermeta($user_ID, 'enable_affiliate') != 'yes') echo "selected = 'selected'"; ?>><?php _e('No thanks', 'affiliate'); ?></option>
+								<option value='yes' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') echo "selected = 'selected'"; ?>><?php _e('Yes please', 'affiliate'); ?></option>
+								<option value='no' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) != 'yes') echo "selected = 'selected'"; ?>><?php _e('No thanks', 'affiliate'); ?></option>
 							</select>
 						</td>
 					</tr>
@@ -601,7 +651,7 @@ class affiliateadmin {
 					<tr style='background: transparent;'>
 						<th><label for="affiliate_paypal"><?php _e('PayPal Email Address', 'affiliate'); ?></label></th>
 						<td>
-						<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo get_usermeta($user_ID, 'affiliate_paypal'); ?>" class="regular-text" />
+						<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo get_user_meta($user_ID, 'affiliate_paypal', true); ?>" class="regular-text" />
 						</td>
 					</tr>
 

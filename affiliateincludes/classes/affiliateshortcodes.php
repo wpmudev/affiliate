@@ -1205,6 +1205,8 @@ class affiliateshortcodes {
 				$referrer = get_user_meta($user_ID, 'affiliate_referrer', true);
 				$refurl = "profile.php?page=affiliateearnings";
 
+				$validreferrer = get_user_meta($user_ID, 'affiliate_referrer_validated', true);
+
 				if(defined('AFFILIATE_CHECKALL')) { ?>
 
 					<h3><?php _e('Affiliate Advanced Settings', 'affiliate') ?></h3>
@@ -1214,6 +1216,16 @@ class affiliateshortcodes {
 				<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>";
 
 					echo stripslashes( $getoption('affiliateadvancedsettingstext', $advsettingstextdefault) );
+
+						if(!empty($referrer)) {
+							if(!empty($validreferrer) && $validreferrer == 'yes') {
+								// valid
+								$msg = "<span style='color: green;'>" . __('Validated', 'affiliate') . "</span>";
+							} else {
+								// not valid
+								$msg = "<span style='color: red;'>" . __('Not validated', 'affiliate') . "</span>";
+							}
+						}
 
 					?>
 

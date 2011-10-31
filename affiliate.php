@@ -286,7 +286,7 @@ class affiliate {
 				if(!empty($affiliate)) {
 
 					// Check the URL is verified
-					$validated = get_user_meta($affiliate, 'affiliate_referrer_validate', true);
+					$validated = get_user_meta($affiliate, 'affiliate_referrer_validated', true);
 					if(!empty($validated) && $validated == 'yes') {
 						// Update a quick count for this month
 						do_action( 'affiliate_click', $affiliate);
