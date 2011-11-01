@@ -285,9 +285,19 @@ class affiliate {
 				$affiliate = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value='%s'", $referrer) );
 				if(!empty($affiliate)) {
 
-					// Check the URL is verified
-					$validated = get_user_meta($affiliate, 'affiliate_referrer_validated', true);
-					if(!empty($validated) && $validated == 'yes') {
+					if(defined('AFFILIATE_VALIDATE_REFERRER_URLS') && AFFILIATE_VALIDATE_REFERRER_URLS == 'yes' ) {
+						// Check the URL is verified
+						$validated = get_user_meta($affiliate, 'affiliate_referrer_validated', true);
+						if(!empty($validated) && $validated == 'yes') {
+							// Update a quick count for this month
+							do_action( 'affiliate_click', $affiliate);
+							// Store the referrer
+							do_action( 'affiliate_referrer', $affiliate, $referrer );
+
+							// Write the affiliate hash out - valid for 30 days.
+							@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60*60*24*30)), COOKIEPATH, COOKIE_DOMAIN);
+						}
+					} else {
 						// Update a quick count for this month
 						do_action( 'affiliate_click', $affiliate);
 						// Store the referrer

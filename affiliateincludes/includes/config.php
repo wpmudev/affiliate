@@ -8,7 +8,7 @@ if(!defined('AFFILIATE_SETNOCOOKIE')) define('AFFILIATE_SETNOCOOKIE', 'yes');
 if(!defined('AFFILIATE_PAYONCE')) define('AFFILIATE_PAYONCE', 'yes');
 // Force the system to use global tables
 if(!defined('AFFILIATE_USE_BASE_PREFIX_IF_EXISTS')) define('AFFILIATE_USE_BASE_PREFIX_IF_EXISTS', 'no');
-
-if(!defined('AFFILIATE_VALIDATE_REFERRER_URLS')) define('AFFILIATE_VALIDATE_REFERRER_URLS','yes');
+// Force users using the advanced settings and URL have to validate their URL's before they can use them.
+if(!defined('AFFILIATE_VALIDATE_REFERRER_URLS')) define('AFFILIATE_VALIDATE_REFERRER_URLS','no');
 
 ?>
