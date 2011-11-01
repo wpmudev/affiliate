@@ -574,9 +574,7 @@ class affiliateadmin {
 
 						echo stripslashes( $getoption('affiliateadvancedsettingstext', $advsettingstextdefault) );
 
-						?>
-
-							<?php
+					
 								if(!empty($chkmsg)) {
 									if(empty($error)) {
 										// valid

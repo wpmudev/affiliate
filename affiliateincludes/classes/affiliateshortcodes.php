@@ -1105,6 +1105,31 @@ class affiliateshortcodes {
 
 	}
 
+	function is_duplicate_url( $url, $user_id ) {
+		$affiliate = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value='%s' AND user_id != %d", $url, $user_id) );
+
+		if(empty($affiliate)) {
+			return false;
+		} else {
+			return true;
+		}
+
+	}
+
+	function validate_url_for_file( $url, $file ) {
+
+		$fullurl = 'http://' . $url . $file;
+
+		$response = wp_remote_head($fullurl);
+
+		if(!empty($response['response']['code']) && $response['response']['code'] == '200') {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
 	function show_user_details() {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
@@ -1133,10 +1158,36 @@ class affiliateshortcodes {
 			update_user_meta($user_ID, 'affiliate_paypal', $_POST['affiliate_paypal']);
 			if(isset($_POST['affiliate_referrer'])) {
 
-				// Check for duplicates
+				$url = str_replace('http://', '', untrailingslashit($_POST['affiliate_referrer']));
+				// store the update - even though it could be wrong
+				update_user_meta($user_ID, 'affiliate_referrer', $url );
+				// Remove any validated referrers as it may have been changed
+				delete_user_meta($user_ID, 'affiliate_referrer_validated');
 
-				update_user_meta($user_ID, 'affiliate_referrer', str_replace('http://', '', untrailingslashit($_POST['affiliate_referrer'])));
+				// Check for duplicate and if not unique we need to display the open box with an error message
+				if($this->is_duplicate_url($url, $user_ID)) {
+					$error = 'yes';
+					$chkmsg = __('This URL is already in use.','affiliate');
+				} else {
+					// Create the message we are looking for
+					$chkmsg = '';
+					// Check a file with it exists and contains the content
+					if(defined('AFFILIATE_VALIDATE_REFERRER_URLS') && AFFILIATE_VALIDATE_REFERRER_URLS == 'yes' ) {
+						$referrer = $_POST['affiliate_referrer'];
+						$filename = md5('affiliatefilename-' . $user_ID . '-' . $user->user_login . "-" . $referrer) . '.html';
+
+						if($this->validate_url_for_file( trailingslashit($url), $filename)) {
+							update_user_meta($user_ID, 'affiliate_referrer_validated', 'yes');
+							$chkmsg = __('Validated', 'affiliate');
+						} else {
+							$error = 'yes';
+							$chkmsg = __('Not validated', 'affiliate');
+						}
+					}
+				}
+
 			} else {
+				delete_user_meta($user_ID, 'affiliate_referrer_validated');
 				delete_user_meta($user_ID, 'affiliate_referrer');
 			}
 			if(isset($_POST['enable_affiliate']) && addslashes($_POST['enable_affiliate']) == 'yes') {
@@ -1217,13 +1268,13 @@ class affiliateshortcodes {
 
 					echo stripslashes( $getoption('affiliateadvancedsettingstext', $advsettingstextdefault) );
 
-						if(!empty($referrer)) {
-							if(!empty($validreferrer) && $validreferrer == 'yes') {
+						if(!empty($chkmsg)) {
+							if(empty($error)) {
 								// valid
-								$msg = "<span style='color: green;'>" . __('Validated', 'affiliate') . "</span>";
+								$msg = "<span style='color: green;'>" . $chkmsg . "</span>";
 							} else {
 								// not valid
-								$msg = "<span style='color: red;'>" . __('Not validated', 'affiliate') . "</span>";
+								$msg = "<span style='color: red;'>" . $chkmsg . "</span>";
 							}
 						}
 
@@ -1231,9 +1282,27 @@ class affiliateshortcodes {
 
 					<table class="form-table">
 						<tr style='background: transparent;'>
-							<th><label for="affiliate_referrer"><?php _e('Your URL', 'affiliate'); ?></label></th>
+							<th valign='top'><label for="affiliate_referrer"><?php _e('Your URL', 'affiliate'); ?></label></th>
 							<td>
-								http://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo get_user_meta($user_ID, 'affiliate_referrer', true); ?>" class="regular-text" />
+								http://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo get_user_meta($user_ID, 'affiliate_referrer', true); ?>" class="regular-text" /><?php echo "&nbsp;&nbsp;" . $msg;?>
+								<?php
+								if(defined('AFFILIATE_VALIDATE_REFERRER_URLS') && AFFILIATE_VALIDATE_REFERRER_URLS == 'yes' ) {
+									if(!empty($validreferrer) && $validreferrer == 'yes') {}
+									else {
+										// Not valid - generate filename
+										$filename = md5('affiliatefilename-' . $user_ID . '-' . $user->user_login . "-" . $referrer) . '.html';
+
+										// Output message
+										echo "<br/>";
+										_e('You need to validate this URL by uploading a file to the root of the site above with the following name : ','affiliate');
+										echo "<br/>";
+										echo __('Filename : ', 'affiliate') . $filename;
+										echo " <a href='http://" . trailingslashit($referrer) . $filename . "' target=_blank>" . __('[click here to check if the file exists]') . "</a>";
+										echo '<br/><input type="submit" name="Submit" class="button" value="' . __('Validate','affiliate') . '" />';
+									}
+								}
+
+								?>
 							</td>
 						</tr>
 

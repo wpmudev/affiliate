@@ -104,25 +104,25 @@
 
 /* Affiliate login message */
 div.affiliateloginmessage {
-	
+
 }
 
 #affiliateuserdetails div.formholder {
-	width: 90%%; 
-	background-color: #FFFEEB; 
-	margin-left: auto; 
-	margin-right: auto; 
-	border: 1px #e6db55 solid; 
+	width: 90%%;
+	background-color: #FFFEEB;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px #e6db55 solid;
 	padding: 10px;
 }
 
 #affiliateuserdetails div.innerbox.closed {
-	width: 100%; 
+	width: 100%;
 	display: none;
 }
 
 #affiliateuserdetails div.innerbox.open {
-	width: 100%; 
+	width: 100%;
 	display: block;
 }
 
@@ -132,6 +132,7 @@ div.affiliateloginmessage {
 
 #affiliateuserdetails table td, #affiliateuserdetails table th {
 	border: none;
+	vertical-align: top;
 }
 
 
