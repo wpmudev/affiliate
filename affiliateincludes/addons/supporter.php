@@ -16,7 +16,7 @@ add_filter( 'blog_template_exclude_settings', 'affiliate_supporter_new_blog_temp
  * Exclude option from New Blog Template plugin copy
  */
 function affiliate_supporter_new_blog_template_exclude( $and ) {
-	$and .= " AND `option_name` != 'affiliate_referrer' AND `option_name` != 'affiliate_paid'";
+	$and .= " AND `option_name` != 'affiliate_referred_by' AND `option_name` != 'affiliate_paid' AND `option_name` != 'affiliate_referrer' ";
 	return $and;
 }
 
@@ -29,13 +29,13 @@ function affiliate_new_blog( $blog_id, $user_id ) {
 	if(defined( 'AFFILIATEID' )) {
 		// We found an affiliate that referred this blog creator
 		if(function_exists('update_blog_option')) {
-			update_blog_option( $blog_id, 'affiliate_referrer', AFFILIATEID );
+			update_blog_option( $blog_id, 'affiliate_referred_by', AFFILIATEID );
 		}
 
 		if(function_exists('update_user_meta')) {
-			update_user_meta($user_id, 'affiliate_referrer', AFFILIATEID);
+			update_user_meta($user_id, 'affiliate_referred_by', AFFILIATEID);
 		} else {
-			update_usermeta($user_id, 'affiliate_referrer', AFFILIATEID);
+			update_usermeta($user_id, 'affiliate_referred_by', AFFILIATEID);
 		}
 
 	}
@@ -52,7 +52,7 @@ function affiliate_supporter_paid($bid, $amount, $supporterperiod) {
 
 	// Check if the blog is from an affiliate
 	if(function_exists('get_blog_option')) {
-		$aff = get_blog_option( $bid, 'affiliate_referrer', false );
+		$aff = get_blog_option( $bid, 'affiliate_referred_by', false );
 		$paid = get_blog_option( $bid, 'affiliate_paid', 'no' );
 	} else {
 		$aff = false;

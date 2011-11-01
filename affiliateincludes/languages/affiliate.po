@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Affiliate 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-29 00:43+0100\n"
-"PO-Revision-Date: 2011-07-29 00:44+0100\n"
+"POT-Creation-Date: 2011-11-02 00:38+0100\n"
+"PO-Revision-Date: 2011-11-02 00:38+0100\n"
 "Last-Translator: Barry <barry@mapinated.com>\n"
 "Language-Team: Incsub <barry@incsub.com>\n"
 "MIME-Version: 1.0\n"
@@ -13,16 +13,53 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: /Users/barrygetty/Work/wordpress/plugins/affiliate\n"
 
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/addons/membership.php:80
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1723
+msgid "Affiliate settings"
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/addons/membership.php:82
+msgid "Affiliate payment credited for a signup on this subscription"
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/addons/supporter.php:97
+msgid "Supporter payments settings"
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/addons/supporter.php:101
+msgid "1 Month payment"
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/addons/supporter.php:128
+msgid "Affiliate payment for one month."
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/addons/supporter.php:133
+msgid "3 Month payment"
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/addons/supporter.php:160
+msgid "Affiliate payment for three months."
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/addons/supporter.php:166
+msgid "12 Month payment"
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/addons/supporter.php:193
+msgid "Affiliate payment for twelve months."
+msgstr ""
+
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:149
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:151
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:408
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:410
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1057
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1061
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1208
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1210
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1735
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1737
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:433
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:435
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1145
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1149
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1296
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1298
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1834
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1836
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliatedashboard.php:62
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliatedashboard.php:64
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:492
@@ -36,14 +73,14 @@ msgstr ""
 
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:149
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:151
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:408
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:410
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1057
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1068
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1208
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1210
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1735
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1737
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:433
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:435
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1145
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1156
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1296
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1298
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1834
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1836
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliatedashboard.php:62
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliatedashboard.php:64
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:492
@@ -57,14 +94,14 @@ msgstr ""
 
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:149
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:151
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:408
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:410
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1057
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1075
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1208
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1210
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1735
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1737
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:433
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:435
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1145
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1163
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1296
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1298
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1834
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1836
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliatedashboard.php:62
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliatedashboard.php:64
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:492
@@ -95,134 +132,169 @@ msgstr ""
 msgid "Affiliate Banners"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:412
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1212
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1739
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:437
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1300
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1838
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:702
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:753
 msgid "Debits"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:412
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1212
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1739
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:437
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1300
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1838
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:702
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:753
 msgid "Credits"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:412
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1212
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1739
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:437
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1300
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1838
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:702
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:753
 msgid "Payments"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:459
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:474
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1170
+msgid "This URL is already in use."
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:485
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1181
+msgid "Validated"
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:488
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1184
+msgid "Not validated"
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:512
 msgid "Affiliate Referral Report"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:464
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1155
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:516
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1209
 msgid "Hello, Thank you for supporting us</strong>, to view or change any of your affiliate settings click on the edit link."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:464
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1155
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:516
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1209
 msgid "edit"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:473
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:575
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:529
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:663
 msgid ""
 "<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>\n"
 "\t\t\t<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>\n"
 "\t\t\t<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:483
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:585
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1174
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1276
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:539
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:673
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1233
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1365
 msgid "Enable Affiliate links"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:486
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:588
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1120
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1177
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1279
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:542
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:676
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1208
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1236
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1368
 msgid "Yes please"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:487
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:589
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1124
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1178
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1280
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:543
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:677
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1212
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1237
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1369
 msgid "No thanks"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:493
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:595
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1184
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1286
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:549
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:683
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1243
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1375
 msgid "PayPal Email Address"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:511
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1202
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:569
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1263
 msgid "Affiliate Advanced Settings"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:514
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:572
 msgid ""
 "<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>\n"
 "\t\t\t\t\t<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:523
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1214
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:592
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1285
 msgid "Your URL"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:534
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1225
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:604
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1297
+msgid "You need to validate this URL by uploading a file to the root of the site above with the following name : "
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:606
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1299
+msgid "Filename : "
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:607
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1300
+msgid "[click here to check if the file exists]"
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:608
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1301
+msgid "Validate"
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:622
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1314
 msgid "<h3>Affiliate Details</h3>"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:558
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:606
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1149
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1249
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1297
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:646
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:694
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1237
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1338
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1386
 msgid "Update Settings"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:565
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1256
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:653
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1345
 msgid "Hello, why not consider becoming an affiliate?"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:630
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1233
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:718
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1326
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:783
 msgid "Date"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:778
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:789
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:866
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:877
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliatedashboard.php:196
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:944
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:955
 msgid "Top referrers for "
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:781
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:792
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:848
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:859
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:869
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:880
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:936
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:947
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliatedashboard.php:199
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:947
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:958
@@ -231,290 +303,291 @@ msgstr ""
 msgid "Visits"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:822
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:910
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliatedashboard.php:229
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:988
 msgid "<tr><td colspan=\"2\">You have no referred visits this month.</td></tr>"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:845
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:856
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:933
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:944
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1027
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1038
 msgid "Top referrers over past 18 months"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:889
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:977
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateshortcodes.php:1071
 msgid "<tr><td colspan=\"2\">You have no overall referred visits.</td></tr>"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:928
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1016
 msgid "So, you want something more exciting than a straight forward text link?"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:929
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1017
 msgid "Not to worry, we've got banners and buttons galore. To use them simply copy and paste the HTML underneath the graphic that you want to use."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:977
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1065
 msgid "Affiliate payment for"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:987
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1075
 msgid "Affiliate payment for "
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1046
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1134
 msgid "Affiliate settings saved."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1055
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1143
 msgid "Column Settings"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1083
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1171
 msgid "Profile page text"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1085
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1173
 msgid ""
 "<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>\n"
 "<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>\n"
 "<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1091
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1179
 msgid "Affiliate settings profile text"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1097
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1185
 msgid ""
 "<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>\n"
 "<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1102
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1190
 msgid "Affiliate advanced settings profile text"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1110
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1198
 msgid "Banner Settings"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1114
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1202
 msgid "Enable Banners"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1137
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1225
 msgid "Banner Image URLs (one per line)"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1175
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1263
 msgid "Debit has been assigned correctly."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1185
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1273
 msgid "Credit has been assigned correctly."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1195
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1721
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1283
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1820
 msgid "Payment has been assigned correctly."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1224
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1312
 msgid "Details for user : "
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1384
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1316
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1675
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1927
+msgid "linked to "
+msgstr ""
+
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1477
 msgid "Debit user account"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1396
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1441
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1487
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1489
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1534
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1580
 msgid "Period : "
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1406
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1451
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1497
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1499
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1544
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1590
 msgid "Value : "
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1410
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1503
 msgid "Debit"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1429
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1522
 msgid "Credit user account"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1455
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1548
 msgid "Credit"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1475
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1568
 msgid "Set Payment on account"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1501
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1594
 msgid "Payment"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1540
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1633
 msgid "Find user with username"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1543
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1636
 msgid "Search"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1558
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1605
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1797
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1878
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1651
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1704
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1896
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1983
 msgid "Username"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1582
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1829
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1681
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1934
 msgid "Manage Affiliate"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1595
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1694
 msgid "There are no users matching the search criteria."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1622
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1721
 msgid "Affiliate reports"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1623
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1722
 msgid "Manage affiliates"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1624
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/plugins/membership.php:80
-msgid "Affiliate settings"
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1724
+msgid "Manage addons"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1625
-msgid "Manage add ons"
-msgstr ""
-
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1671
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1770
 msgid "Affiliate System Administration"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1706
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1805
 msgid "Payments has been assigned correctly."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1763
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1862
 msgid "Show report for"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1774
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1873
 msgid "Refresh"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1781
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1880
 msgid "Export Payments"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1782
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1827
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1881
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1932
 msgid "Mark as Paid"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1868
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1973
 msgid "There are no results for the selected month."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1903
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:1938
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2008
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2043
 msgid "Referred by"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2031
-msgid "Plugin updated."
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2136
+msgid "Addon updated."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2032
-msgid "Plugin not updated."
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2137
+msgid "Addon not updated."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2034
-msgid "Plugin activated."
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2139
+msgid "Addon activated."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2035
-msgid "Plugin not activated."
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2140
+msgid "Addon not activated."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2037
-msgid "Plugin deactivated."
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2142
+msgid "Addon deactivated."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2038
-msgid "Plugin not deactivated."
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2143
+msgid "Addon not deactivated."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2040
-msgid "Plugin activation toggled."
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2145
+msgid "Addon activation toggled."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2062
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2190
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2167
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2295
 msgid "Bulk Actions"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2063
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2191
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2168
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2296
 msgid "Toggle activation"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2065
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2170
 msgid "Apply"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2079
-msgid "Plugin Name"
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2184
+msgid "Addon Name"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2080
-msgid "Plugin File"
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2185
+msgid "Addon File"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2081
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2163
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2186
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2268
 msgid "Active"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2141
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2246
 msgid " by "
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2149
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2254
 msgid "Deactivate"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2151
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2256
 msgid "Activate"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2165
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2270
 msgid "Inactive"
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2176
-msgid "No Plugns where found for this install."
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2281
+msgid "No Addons where found for this install."
 msgstr ""
 
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2239
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2241
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2344
+#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/classes/affiliateadmin.php:2346
 msgid "Referred"
 msgstr ""
 
@@ -533,37 +606,5 @@ msgstr ""
 
 #: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/includes/functions.php:8
 msgid "Please install the latest version of <a href=\"http://premium.wpmudev.org/project/update-notifications/\" title=\"Download Now &raquo;\">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href=\"http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/\">More information &raquo;</a>"
-msgstr ""
-
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/plugins/membership.php:82
-msgid "Affiliate payment credited for a signup on this subscription"
-msgstr ""
-
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/plugins/supporter.php:97
-msgid "Supporter payments settings"
-msgstr ""
-
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/plugins/supporter.php:101
-msgid "1 Month payment"
-msgstr ""
-
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/plugins/supporter.php:128
-msgid "Affiliate payment for one month."
-msgstr ""
-
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/plugins/supporter.php:133
-msgid "3 Month payment"
-msgstr ""
-
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/plugins/supporter.php:160
-msgid "Affiliate payment for three months."
-msgstr ""
-
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/plugins/supporter.php:166
-msgid "12 Month payment"
-msgstr ""
-
-#: /Users/barrygetty/Work/wordpress/plugins/affiliate/affiliateincludes/plugins/supporter.php:193
-msgid "Affiliate payment for twelve months."
 msgstr ""
 
