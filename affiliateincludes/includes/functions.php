@@ -113,4 +113,5 @@ function load_all_affiliate_addons() {
 		}
 	}
 }
+
 ?>

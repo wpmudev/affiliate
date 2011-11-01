@@ -21,9 +21,9 @@ function affiliate_new_user( $user_id ) {
 	if(defined( 'AFFILIATEID' )) {
 		// We found an affiliate that referred this blog creator
 		if(function_exists('update_user_meta')) {
-			update_user_meta($user_id, 'affiliate_referrer', AFFILIATEID);
+			update_user_meta($user_id, 'affiliate_referred_by', AFFILIATEID);
 		} else {
-			update_usermeta($user_id, 'affiliate_referrer', AFFILIATEID);
+			update_usermeta($user_id, 'affiliate_referred_by', AFFILIATEID);
 		}
 
 	}
@@ -32,10 +32,10 @@ function affiliate_new_user( $user_id ) {
 function affiliate_new_subscription( $tosub_id, $tolevel_id, $to_order, $user_id ) {
 
 	if(function_exists('get_user_meta')) {
-		$aff = get_user_meta($user_id, 'affiliate_referrer', true);
+		$aff = get_user_meta($user_id, 'affiliate_referred_by', true);
 		$paid = get_user_meta($user_id, 'affiliate_paid', true);
 	} else {
-		$aff = get_usermeta($user_id, 'affiliate_referrer');
+		$aff = get_usermeta($user_id, 'affiliate_referred_by');
 		$paid = get_usermeta($user_id, 'affiliate_paid');
 	}
 
