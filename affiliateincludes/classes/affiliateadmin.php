@@ -400,6 +400,9 @@ class affiliateadmin {
 	}
 
 	function is_duplicate_url( $url, $user_id ) {
+
+		if(empty($url)) return false;
+
 		$affiliate = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value='%s' AND user_id != %d", $url, $user_id) );
 
 		if(empty($affiliate)) {
@@ -447,11 +450,11 @@ class affiliateadmin {
 		if(is_multisite()) {
 			$getoption = 'get_site_option';
 			$site = $getoption('site_name');
-			$url = get_blog_option(1,'home');
+			$homeurl = get_blog_option(1,'home');
 		} else {
 			$getoption = 'get_option';
 			$site = $getoption('blogname');
-			$url = $getoption('home');
+			$homeurl = $getoption('home');
 		}
 
 		if(isset($_POST['action']) && addslashes($_POST['action']) == 'update') {
@@ -574,7 +577,7 @@ class affiliateadmin {
 
 						echo stripslashes( $getoption('affiliateadvancedsettingstext', $advsettingstextdefault) );
 
-					
+
 								if(!empty($chkmsg)) {
 									if(empty($error)) {
 										// valid
@@ -594,7 +597,7 @@ class affiliateadmin {
 									http://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo $referrer; ?>" class="regular-text" /><?php echo "&nbsp;&nbsp;" . $msg;?>
 									<?php
 									if(defined('AFFILIATE_VALIDATE_REFERRER_URLS') && AFFILIATE_VALIDATE_REFERRER_URLS == 'yes' ) {
-										if(!empty($validreferrer) && $validreferrer == 'yes') {}
+										if(empty($referrer) || (!empty($validreferrer) && $validreferrer == 'yes')) {}
 										else {
 											// Not valid - generate filename
 											$filename = md5('affiliatefilename-' . $user_ID . '-' . $user->user_login . "-" . $referrer) . '.html';
@@ -621,7 +624,7 @@ class affiliateadmin {
 					?>
 					<p><?php _e('<h3>Affiliate Details</h3>', 'affiliate') ?></p>
 					<p><?php _e(sprintf('In order for us to track your referrals, you should use the following URL to link to our site:'), 'affiliate') ?></p>
-					<p><?php _e(sprintf('<strong>%s?ref=%s</strong>', $url, $reference ), 'affiliate') ?></p>
+					<p><?php _e(sprintf('<strong>%s?ref=%s</strong>', $homeurl, $reference ), 'affiliate') ?></p>
 
 					<?php
 						if(defined('AFFILIATE_CHECKALL') && !empty($referrer)) {
@@ -1667,7 +1670,7 @@ class affiliateadmin {
 					echo '<td valign="top">';
 					$user = get_userdata($result->ID);
 					echo $user->user_login;
-					echo " ( " . get_usermeta($result->ID, 'affiliate_paypal') . " )";
+					echo " ( " . get_user_meta($result->ID, 'affiliate_paypal', true) . " )";
 
 					// Get the affiliate website listing
 					$referrer = get_user_meta($result->ID, 'affiliate_referrer', true);
