@@ -463,7 +463,7 @@ class affiliateadmin {
 
 			update_user_meta($user_ID, 'enable_affiliate', $_POST['enable_affiliate']);
 			update_user_meta($user_ID, 'affiliate_paypal', $_POST['affiliate_paypal']);
-			if(isset($_POST['affiliate_referrer'])) {
+			if(!empty($_POST['affiliate_referrer'])) {
 
 				$url = str_replace('http://', '', untrailingslashit($_POST['affiliate_referrer']));
 				// store the update - even though it could be wrong
