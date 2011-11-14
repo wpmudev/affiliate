@@ -2311,7 +2311,7 @@ class affiliateadmin {
 
 	function get_referred_by( $id ) {
 
-		$sql = $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value = %s", $id );
+		$sql = $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referred_by' AND meta_value = %s", $id );
 
 		$results = $this->db->get_col( $sql );
 
