@@ -2015,24 +2015,24 @@ class affiliateadmin {
 
 	function show_user_affiliate_column( $content, $column_name, $user_id ) {
 
-		if($column_name != 'referred') {
-			return $content;
-		}
+		if($column_name == 'referred') {
 
-		if(function_exists('get_user_meta')) {
-			$affid = get_user_meta($user_id, 'affiliate_referrer', true);
-		} else {
-			$affid = get_usermeta($user_id, 'affiliate_referrer');
-		}
-
-		if(!empty($affid)) {
-			// was referred so get the referrers details
-			$referrer = new WP_User( $affid );
-
-			if(is_network_admin()) {
-				$content .= "<a href='" . network_admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+			if(function_exists('get_user_meta')) {
+				$affid = get_user_meta($user_id, 'affiliate_referred_by', true);
 			} else {
-				$content .= "<a href='" . admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+				$affid = get_usermeta($user_id, 'affiliate_referred_by');
+			}
+
+			if(!empty($affid)) {
+				// was referred so get the referrers details
+				$referrer = new WP_User( $affid );
+
+				if(is_network_admin()) {
+					$content .= "<a href='" . network_admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+				} else {
+					$content .= "<a href='" . admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+				}
+
 			}
 
 		}
