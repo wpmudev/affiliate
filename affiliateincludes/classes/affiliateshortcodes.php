@@ -24,7 +24,7 @@ class affiliateshortcodes {
 		// Grab our own local reference to the database class
 		$this->db =& $wpdb;
 
-		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+		if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
 			// we're activated site wide
 			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
@@ -186,7 +186,8 @@ class affiliateshortcodes {
 							"postfix"				=>	'',
 							"prefix"				=>	'',
 							"wrapwith"				=>	'',
-							"wrapwithclass"			=>	''
+							"wrapwithclass"			=>	'',
+							"bannerlink"			=>	''
 						);
 
 		extract(shortcode_atts($defaults, $atts));
@@ -213,7 +214,7 @@ class affiliateshortcodes {
 		if(!empty($user_ID)) {
 			$html .= "<div id='affiliateuserdetails'>";
 
-			$html .= $this->show_user_details();
+			$html .= $this->show_user_details( $bannerlink );
 
 			$html .= "</div>";
 		}
@@ -707,7 +708,7 @@ class affiliateshortcodes {
 			$columns = $newcolumns;
 		}
 
-		$reference = get_usermeta($user_ID, 'affiliate_reference');
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 
 		if(is_multisite()) {
 			$getoption = 'get_site_option';
@@ -758,7 +759,7 @@ class affiliateshortcodes {
 			$columns = $newcolumns;
 		}
 
-		$reference = get_usermeta($user_ID, 'affiliate_reference');
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 
 		if(is_multisite()) {
 			$getoption = 'get_site_option';
@@ -1130,7 +1131,7 @@ class affiliateshortcodes {
 
 	}
 
-	function show_user_details() {
+	function show_user_details( $bannerlink = '' ) {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
@@ -1326,9 +1327,9 @@ class affiliateshortcodes {
 					}
 
 
-				if($getoption('affiliateenablebanners', 'no') == 'yes') {
+				if($getoption('affiliateenablebanners', 'no') == 'yes' && !empty($bannerlink)) {
 				?>
-				<p><?php _e(sprintf('If you would rather use a banner or button then we have a wide selection of sizes <a href="%s">here</a>.', "profile.php?page=affiliatebanners" ), 'affiliate') ?></p>
+				<p><?php _e(sprintf('If you would rather use a banner or button then we have a wide selection of sizes <a href="%s">here</a>.', $bannerlink ), 'affiliate') ?></p>
 				<?php } ?>
 				<p><?php _e(sprintf('<strong>You can check on your referral totals by viewing the details on this page</strong>' ), 'affiliate') ?></p>
 			<?php
@@ -1408,7 +1409,7 @@ class affiliateshortcodes {
 			return '';
 		}
 
-		$reference = get_usermeta($user_ID, 'affiliate_reference');
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 
 		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$getoption = 'get_site_option';

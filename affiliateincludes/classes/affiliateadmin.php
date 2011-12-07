@@ -24,7 +24,7 @@ class affiliateadmin {
 		// Grab our own local reference to the database class
 		$this->db =& $wpdb;
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+		if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
 			// we're activated site wide
 			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
@@ -353,7 +353,7 @@ class affiliateadmin {
 		add_submenu_page('users.php', __('Affiliate Earnings Report','affiliate'), __('Affiliate Referrals','affiliate'), 'read', "affiliateearnings", array(&$this,'add_profile_report_page'));
 
 		// Add profile menu
-		if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') {
+		if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
 			if($getoption('affiliateenablebanners', 'no') == 'yes') {
 				add_submenu_page('users.php', __('Affiliate Banners','affiliate'), __('Affiliate Banners','affiliate'), 'read', "affiliatebanners", array(&$this,'add_profile_banner_page'));
 			}
@@ -515,7 +515,7 @@ class affiliateadmin {
 		echo "<h2>" . __('Affiliate Referral Report','affiliate') . "</h2>";
 
 			echo "<div style='width: 98%; margin-top: 20px; background-color: #FFFEEB; margin-left: auto; margin-right: auto; margin-bottom: 20px; border: 1px #e6db55 solid; padding: 10px;'>";
-			if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') {
+			if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
 				echo "<strong>" . __('Hello, Thank you for supporting us</strong>, to view or change any of your affiliate settings click on the edit link.','affiliate') . "</strong><a href='#view' id='editaffsettingslink' style='float:right; font-size: 8pt;'>" . __('edit','affiliate') . "</a>";
 
 				if(empty($error)) {
@@ -559,7 +559,7 @@ class affiliateadmin {
 
 				<?php
 
-				if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') {
+				if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
 
 					$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 					$referrer = get_user_meta($user_ID, 'affiliate_referrer', true);
@@ -1000,7 +1000,7 @@ class affiliateadmin {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		$reference = get_usermeta($user_ID, 'affiliate_reference');
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 
 		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$getoption = 'get_site_option';
@@ -1077,7 +1077,7 @@ class affiliateadmin {
 														$id = substr("AFF_PAYMENT_" . strtoupper($user->user_login),0, 30);
 														$notes = __("Affiliate payment for ", "affiliate") . $name;
 
-														$paypal = get_usermeta($affdetails[0], 'affiliate_paypal');
+														$paypal = get_user_meta($affdetails[0], 'affiliate_paypal', true);
 														$amounts = $this->db->get_row( "SELECT debits, credits FROM " . $this->affiliatedata . " WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
 
 														$amount = $amounts->credits - $amounts->debits;
@@ -1312,7 +1312,7 @@ class affiliateadmin {
 
 			$user = get_userdata($user_id);
 
-			echo "<strong>" . __('Details for user : ','affiliate') . $user->user_login . " ( " . get_usermeta($user_id, 'affiliate_paypal') . " )" . "</strong>";
+			echo "<strong>" . __('Details for user : ','affiliate') . $user->user_login . " ( " . get_user_meta($user_id, 'affiliate_paypal', true) . " )" . "</strong>";
 			// Get the affiliate website listing
 			$referrer = get_user_meta($user_id, 'affiliate_referrer', true);
 			if(!empty($referrer)) {
@@ -2017,11 +2017,8 @@ class affiliateadmin {
 
 		if($column_name == 'referred') {
 
-			if(function_exists('get_user_meta')) {
-				$affid = get_user_meta($user_id, 'affiliate_referred_by', true);
-			} else {
-				$affid = get_usermeta($user_id, 'affiliate_referred_by');
-			}
+
+			$affid = get_user_meta($user_id, 'affiliate_referred_by', true);
 
 			if(!empty($affid)) {
 				// was referred so get the referrers details

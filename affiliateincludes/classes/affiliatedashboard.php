@@ -20,7 +20,7 @@ class affiliatedashboard {
 
 		$this->db =& $wpdb;
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+		if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
 			// we're activated site wide
 			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
@@ -169,7 +169,7 @@ class affiliatedashboard {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		if(get_usermeta($user_ID, 'enable_affiliate') == 'yes') {
+		if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
 			wp_add_dashboard_widget( 'affwidgetstats', __( 'Affiliate Report' ), array(&$this, 'dashboard_aff_report'));
 		}
 

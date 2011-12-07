@@ -4,7 +4,7 @@ Plugin Name: Affiliate
 Plugin URI: http://premium.wpmudev.org/project/wordpress-mu-affiliate
 Description: This plugin adds a simple affiliate system to your site.
 Author: Barry
-Version: 2.4.4
+Version: 2.4.5
 Author URI: http://incsub.com
 WDP ID: 106
 */
@@ -37,7 +37,7 @@ class affiliate {
 
 		$this->detect_location(1);
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+		if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
 			// we're activated site wide
 			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
 			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
