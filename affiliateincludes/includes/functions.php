@@ -90,7 +90,7 @@ function load_affiliate_addons() {
 			$aff_plugins = apply_filters('affiliate_available_addons', $aff_plugins);
 
 			foreach( $aff_plugins as $aff_plugin ) {
-				if(in_array($aff_plugin, $plugins)) {
+				if(in_array($aff_plugin, (array) $plugins)) {
 					include_once( affiliate_dir('affiliateincludes/addons/' . $aff_plugin) );
 				}
 			}
