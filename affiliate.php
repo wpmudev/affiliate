@@ -3,9 +3,9 @@
 Plugin Name: Affiliate
 Plugin URI: http://premium.wpmudev.org/project/wordpress-mu-affiliate
 Description: This plugin adds a simple affiliate system to your site.
-Author: Barry
-Version: 2.4.6
-Author URI: http://incsub.com
+Author: Barry (Incsub)
+Version: 2.4.7
+Author URI: http://premium.wpmudev.org
 WDP ID: 106
 */
 
@@ -264,7 +264,7 @@ class affiliate {
 					do_action( 'affiliate_referrer', $affiliate, $referrer );
 
 					// Write the affiliate hash out - valid for 30 days.
-					@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60*60*24*30)), COOKIEPATH, COOKIE_DOMAIN);
+					@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))), COOKIEPATH, COOKIE_DOMAIN);
 				}
 			}
 
@@ -274,7 +274,7 @@ class affiliate {
 			die();
 		}
 
-		if(defined('AFFILIATE_CHECKALL')) {
+		if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes') {
 			// We are here if there isn't a reference passed, so we need to check the referrer.
 			if(!isset( $_COOKIE['affiliate_' . COOKIEHASH]) && isset($_SERVER['HTTP_REFERER'])) {
 				// We haven't already been referred here by someone else - note only the first referrer
@@ -295,7 +295,7 @@ class affiliate {
 							do_action( 'affiliate_referrer', $affiliate, $referrer );
 
 							// Write the affiliate hash out - valid for 30 days.
-							@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60*60*24*30)), COOKIEPATH, COOKIE_DOMAIN);
+							@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))), COOKIEPATH, COOKIE_DOMAIN);
 						}
 					} else {
 						// Update a quick count for this month
@@ -304,11 +304,11 @@ class affiliate {
 						do_action( 'affiliate_referrer', $affiliate, $referrer );
 
 						// Write the affiliate hash out - valid for 30 days.
-						@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60*60*24*30)), COOKIEPATH, COOKIE_DOMAIN);
+						@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))), COOKIEPATH, COOKIE_DOMAIN);
 					}
 
 				} else {
-					if(defined('AFFILIATE_SETNOCOOKIE')) @setcookie('noaffiliate_' . COOKIEHASH, 'notanaff', 0, COOKIEPATH, COOKIE_DOMAIN);
+					if(defined('AFFILIATE_SETNOCOOKIE') && AFFILIATE_SETNOCOOKIE == 'yes') @setcookie('noaffiliate_' . COOKIEHASH, 'notanaff', 0, COOKIEPATH, COOKIE_DOMAIN);
 				}
 			}
 		}

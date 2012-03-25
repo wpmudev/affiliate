@@ -12,5 +12,7 @@ if(!defined('AFFILIATE_USE_BASE_PREFIX_IF_EXISTS')) define('AFFILIATE_USE_BASE_P
 if(!defined('AFFILIATE_VALIDATE_REFERRER_URLS')) define('AFFILIATE_VALIDATE_REFERRER_URLS','no');
 // Use Global tables if network activated
 if(!defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED')) define('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED','yes');
+// The number of days to keep the cookie for
+if(!defined('AFFILIATE_COOKIE_DAYS')) define('AFFILIATE_COOKIE_DAYS',30);
 
 ?>

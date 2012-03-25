@@ -567,7 +567,7 @@ class affiliateadmin {
 
 					$validreferrer = get_user_meta($user_ID, 'affiliate_referrer_validated', true);
 
-					if(defined('AFFILIATE_CHECKALL')) { ?>
+					if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes') { ?>
 
 						<h3><?php _e('Affiliate Advanced Settings', 'affiliate') ?></h3>
 
@@ -627,7 +627,7 @@ class affiliateadmin {
 					<p><?php _e(sprintf('<strong>%s?ref=%s</strong>', $homeurl, $reference ), 'affiliate') ?></p>
 
 					<?php
-						if(defined('AFFILIATE_CHECKALL') && !empty($referrer)) {
+						if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes' && !empty($referrer)) {
 							// We are always going to check for a referer site
 							?>
 							<p><?php _e(sprintf('Alternatively you can just link directly to the URL below from the site you entered in the advanced settings above:'), 'affiliate') ?></p>
@@ -856,6 +856,9 @@ class affiliateadmin {
 
 			echo "<div id='referrerscolumn' style='width: 48%; margin-left: 2%; min-height: 400px; margin-top: 20px; background: #fff; float: left;'>";
 
+			do_action('affiliate_before_profile_graphs', $user_ID);
+			do_action('affiliate_before_visits_table', $user_ID);
+
 			echo "<div id='affvisitgraph' style='width: 100%; min-height: 350px; background-color: #fff; margin-bottom: 20px;'>";
 			echo "</div>";
 
@@ -915,6 +918,10 @@ class affiliateadmin {
 
 			echo "</tbody>";
 			echo "</table>";
+
+			do_action('affiliate_after_visits_table', $user_ID);
+
+			do_action('affiliate_before_topreferrers_table', $user_ID);
 
 			// Top referrers of all time
 
@@ -985,6 +992,10 @@ class affiliateadmin {
 
 
 			echo "</div>";
+
+			do_action('affiliate_after_topreferrers_table', $user_ID);
+
+			do_action('affiliate_after_profile_graphs', $user_ID);
 
 			echo "<div style='clear: both;'></div>";
 

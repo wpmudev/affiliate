@@ -934,6 +934,9 @@ class affiliateshortcodes {
 		}
 
 		ob_start();
+
+		do_action('affiliate_before_visits_table', $user_ID);
+
 		// This months visits table
 		$rows = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatereferrers} WHERE user_id = %d AND period = %s ORDER BY referred DESC LIMIT 0, 15", $user_ID, date("Ym") ) );
 		echo "<div id='visitstable' style=''>";
@@ -993,6 +996,8 @@ class affiliateshortcodes {
 		echo "</table>";
 		echo "</div>";
 
+		do_action('affiliate_after_visits_table', $user_ID);
+
 		$html = ob_get_contents();
 		ob_end_clean();
 
@@ -1010,6 +1015,9 @@ class affiliateshortcodes {
 		}
 
 		ob_start();
+
+		do_action('affiliate_before_topreferrers_table', $user_ID);
+
 		// Build 18 months of years
 		$startat = strtotime(date("Y-m-15"));
 		$years = array();
@@ -1075,6 +1083,8 @@ class affiliateshortcodes {
 		echo "</tbody>";
 		echo "</table>";
 		echo "</div>";
+
+		do_action('affiliate_after_topreferrers_table', $user_ID);
 
 		$html = ob_get_contents();
 		ob_end_clean();
