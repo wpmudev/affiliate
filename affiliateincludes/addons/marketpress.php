@@ -28,11 +28,12 @@ function AM_Paid_order( $order ) {
 	if(!empty($aff_id)) {
 		// We have a referrer - get the total
 		$total_amount = get_post_meta($order->ID, 'mp_order_total', true);
-
-		// calculate the amount to give the referrer
-		$amount = $total_amount;
-
+		// calculate the amount to give the referrer - hardcoded for testing to 30%
+		$amount = ($total_amount / 100) * 30;
+		// run the standard affiliate action to do the recording and assigning
 		do_action('affiliate_purchase', $aff_id, $amount);
+		// record the amount paid / assigned in the meta for the order
+		add_post_meta($order->ID, 'affiliate_marketpress_order_paid', $amount, true);
 	}
 
 }
