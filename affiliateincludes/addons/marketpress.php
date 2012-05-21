@@ -26,7 +26,7 @@ function AM_Paid_order( $order ) {
 	$aff_id = get_post_meta( $order->ID, 'affiliate_marketpress_order_referrered', true);
 
 	if(!empty($aff_id)) {
-		$percentage = get_option('affiliate_mp_percentage', 0)
+		$percentage = get_option('affiliate_mp_percentage', 0);
 		// We have a referrer - get the total
 		$total_amount = get_post_meta($order->ID, 'mp_order_total', true);
 		// calculate the amount to give the referrer - hardcoded for testing to 30%
