@@ -39,4 +39,37 @@ function AM_Paid_order( $order ) {
 }
 add_action( 'mp_order_paid', 'AM_Paid_order' );
 
+function AM_Show_Affiliate_Settings( $settings ) {
+
+	if (isset($_POST['gateway_settings'])) {
+      // Do processing here
+		if( !empty($_POST['affiliate_mp_percentage']) && $_POST['affiliate_mp_percentage'] > 0) {
+			update_option( 'affiliate_mp_percentage', $_POST['affiliate_mp_percentage'] );
+		} else {
+			delete_option( 'affiliate_mp_percentage' );
+		}
+    }
+
+	?>
+		<div id="mp_gateways" class="postbox">
+            <h3 class='hndle'><span><?php _e('Affiliate Settings', 'mp') ?></span></h3>
+            <div class="inside">
+              <table class="form-table">
+                <tr>
+        				<th scope="row"><?php _e('Set percentage to be paid to affiliates', 'affiliate') ?></th>
+        				<td>
+							<?php $percentage = get_option('affiliate_mp_percentage', 0); ?>
+							<input type='text' name='affiliate_mp_percentage' value='<?php echo number_format($percentage, 2); ?>' style='width:5em;'/>&nbsp;<?php _e('%', 'affiliate'); ?>
+                			<?php
+
+                			?>
+        				</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+	<?php
+}
+add_action('mp_gateway_settings', 'AM_Show_Affiliate_Settings');
+
 ?>
