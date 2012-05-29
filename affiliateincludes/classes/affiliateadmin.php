@@ -1056,7 +1056,7 @@ class affiliateadmin {
 
 	function handle_export_link() {
 
-		$page = addslashes($_GET['page']);
+		$page = (isset($_GET['page'])) ? addslashes($_GET['page']) : false;
 
 		if($page == 'affiliatesadmin' && isset($_GET['action'])) {
 
@@ -2328,9 +2328,11 @@ class affiliateadmin {
 
 	function override_referrer_search( &$search ) {
 
-		if(substr($_REQUEST['s'], 0, 9) == 'referrer:') {
+		$s = (!empty($_REQUEST['s'])) ? $_REQUEST['s'] : '';
+
+		if(substr($s, 0, 9) == 'referrer:') {
 			// we have a referrer search so modify it
-			$searchstring = explode( 'referrer:', $_REQUEST['s'] );
+			$searchstring = explode( 'referrer:', $s );
 
 			if(!empty($searchstring[1])) {
 				$user = get_userdatabylogin( $searchstring[1] );
