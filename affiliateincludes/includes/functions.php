@@ -114,4 +114,28 @@ function load_all_affiliate_addons() {
 	}
 }
 
+function aff_get_option( $option, $default = false ) {
+	if(is_multisite() && (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes') ) {
+		return get_site_option( $option, $default);
+	} else {
+		return get_option( $option, $default);
+	}
+}
+
+function aff_update_option( $option, $value = null ) {
+	if(is_multisite() && (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes') ) {
+		return update_site_option( $option, $value);
+	} else {
+		return update_option( $option, $value);
+	}
+}
+
+function aff_delete_option( $option ) {
+	if(is_multisite() && (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes') ) {
+		return delete_site_option( $option );
+	} else {
+		return delete_option( $option );
+	}
+}
+
 ?>

@@ -145,11 +145,8 @@ class affiliateadmin {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		} else {
-			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		}
+
+		$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
 
 		if(isset($_GET['number'])) {
 			$number = intval(addslashes($_GET['number']));
@@ -323,12 +320,6 @@ class affiliateadmin {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		if(is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$getoption = 'get_site_option';
-		} else {
-			$getoption = 'get_option';
-		}
-
 		// Add administration menu
 		if(is_multisite()) {
 			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
@@ -354,7 +345,7 @@ class affiliateadmin {
 
 		// Add profile menu
 		if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
-			if($getoption('affiliateenablebanners', 'no') == 'yes') {
+			if(aff_get_option('affiliateenablebanners', 'no') == 'yes') {
 				add_submenu_page('users.php', __('Affiliate Banners','affiliate'), __('Affiliate Banners','affiliate'), 'read', "affiliatebanners", array(&$this,'add_profile_banner_page'));
 			}
 		}
@@ -432,11 +423,8 @@ class affiliateadmin {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		} else {
-			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		}
+		$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
+
 		$headings = array_merge($headings, array( __('Debits','affiliate'), __('Credits','affiliate'), __('Payments','affiliate') ));
 
 		$newcolumns = apply_filters('affiliate_column_names', $headings);
@@ -448,13 +436,11 @@ class affiliateadmin {
 		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 
 		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$getoption = 'get_site_option';
-			$site = $getoption('site_name');
+			$site = aff_get_option('site_name');
 			$homeurl = get_blog_option(1,'home');
 		} else {
-			$getoption = 'get_option';
-			$site = $getoption('blogname');
-			$homeurl = $getoption('home');
+			$site = aff_get_option('blogname');
+			$homeurl = aff_get_option('home');
 		}
 
 		if(isset($_POST['action']) && addslashes($_POST['action']) == 'update') {
@@ -533,7 +519,7 @@ class affiliateadmin {
 			<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
 			<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>", 'affiliate');
 
-				echo stripslashes( $getoption('affiliatesettingstext', $settingstextdefault) );
+				echo stripslashes( aff_get_option('affiliatesettingstext', $settingstextdefault) );
 
 				?>
 
@@ -575,7 +561,7 @@ class affiliateadmin {
 						$advsettingstextdefault = __("<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>
 					<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>", 'affiliate');
 
-						echo stripslashes( $getoption('affiliateadvancedsettingstext', $advsettingstextdefault) );
+						echo stripslashes( aff_get_option('affiliateadvancedsettingstext', $advsettingstextdefault) );
 
 
 								if(!empty($chkmsg)) {
@@ -637,7 +623,7 @@ class affiliateadmin {
 						}
 
 
-					if($getoption('affiliateenablebanners', 'no') == 'yes') {
+					if(aff_get_option('affiliateenablebanners', 'no') == 'yes') {
 					?>
 					<p><?php _e(sprintf('If you would rather use a banner or button then we have a wide selection of sizes <a href="%s">here</a>.', "profile.php?page=affiliatebanners" ), 'affiliate') ?></p>
 					<?php } ?>
@@ -667,7 +653,7 @@ class affiliateadmin {
 			<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
 			<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>", 'affiliate');
 
-				echo stripslashes( $getoption('affiliatesettingstext', $settingstextdefault) );
+				echo stripslashes( aff_get_option('affiliatesettingstext', $settingstextdefault) );
 
 				?>
 
@@ -1014,13 +1000,11 @@ class affiliateadmin {
 		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 
 		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$getoption = 'get_site_option';
-			$site = $getoption('site_name');
+			$site = aff_get_option('site_name');
 			$url = get_blog_option(1,'home');
 		} else {
-			$getoption = 'get_option';
-			$site = $getoption('blogname');
-			$url = $getoption('home');
+			$site = aff_get_option('blogname');
+			$url = aff_get_option('home');
 		}
 
 		?>
@@ -1032,7 +1016,7 @@ class affiliateadmin {
 
 		<?php
 
-		$banners = $getoption('affiliatebannerlinks');
+		$banners = aff_get_option('affiliatebannerlinks');
 		foreach((array) $banners as $banner) {
 
 			?>
@@ -1113,14 +1097,6 @@ class affiliateadmin {
 
 	function handle_affiliate_settings_panel() {
 
-		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$getoption = 'get_site_option';
-			$updateoption = 'update_site_option';
-		} else {
-			$getoption = 'get_option';
-			$updateoption = 'update_option';
-		}
-
 		if(addslashes($_GET['action']) == 'updateaffiliateoptions') {
 			check_admin_referer('affiliateoptions');
 
@@ -1129,19 +1105,19 @@ class affiliateadmin {
 			$headings[] = $_POST['signups'];
 			$headings[] = $_POST['paidmembers'];
 
-			$updateoption('affiliateheadings', $headings);
+			aff_update_option('affiliateheadings', $headings);
 
-			$updateoption('affiliatesettingstext', $_POST['affiliatesettingstext']);
-			$updateoption('affiliateadvancedsettingstext', $_POST['affiliateadvancedsettingstext']);
+			aff_update_option('affiliatesettingstext', $_POST['affiliatesettingstext']);
+			aff_update_option('affiliateadvancedsettingstext', $_POST['affiliateadvancedsettingstext']);
 
-			$updateoption('affiliateenablebanners', $_POST['affiliateenablebanners']);
+			aff_update_option('affiliateenablebanners', $_POST['affiliateenablebanners']);
 
 			$banners = split( "\n", stripslashes($_POST['affiliatebannerlinks']));
 
 			foreach($banners as $key => $b) {
 				$banners[$key] = trim($b);
 			}
-			$updateoption('affiliatebannerlinks', $banners);
+			aff_update_option('affiliatebannerlinks', $banners);
 
 			do_action('affililate_settings_form_update');
 
@@ -1156,7 +1132,7 @@ class affiliateadmin {
 
 		echo '<h3>' . __('Column Settings', 'affiliate') . '</h3>';
 
-		$headings = $getoption( 'affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')) );
+		$headings = aff_get_option( 'affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')) );
 
 		echo '<table class="form-table">';
 		echo '<tr>';
@@ -1192,7 +1168,7 @@ class affiliateadmin {
 		echo '<tr valign="top">';
 		echo '<th scope="row">' . __('Affiliate settings profile text', 'affiliate') . '</th>';
 		echo '<td>';
-		echo '<textarea name="affiliatesettingstext" id="affiliatesettingstext" cols="60" rows="10">' . stripslashes( $getoption('affiliatesettingstext', $settingstextdefault) ) . '</textarea>';
+		echo '<textarea name="affiliatesettingstext" id="affiliatesettingstext" cols="60" rows="10">' . stripslashes( aff_get_option('affiliatesettingstext', $settingstextdefault) ) . '</textarea>';
 		echo '</td>';
 		echo '</tr>';
 
@@ -1203,7 +1179,7 @@ class affiliateadmin {
 		echo '<tr valign="top">';
 		echo '<th scope="row">' . __('Affiliate advanced settings profile text', 'affiliate') . '</th>';
 		echo '<td>';
-		echo '<textarea name="affiliateadvancedsettingstext" id="affiliateadvancedsettingstext" cols="60" rows="10">' . stripslashes( $getoption('affiliateadvancedsettingstext', $advsettingstextdefault) ) . '</textarea>';
+		echo '<textarea name="affiliateadvancedsettingstext" id="affiliateadvancedsettingstext" cols="60" rows="10">' . stripslashes( aff_get_option('affiliateadvancedsettingstext', $advsettingstextdefault) ) . '</textarea>';
 		echo '</td>';
 		echo '</tr>';
 
@@ -1218,11 +1194,11 @@ class affiliateadmin {
 
 			echo "<select name='affiliateenablebanners'>";
 			echo "<option value='yes'";
-			if($getoption('affiliateenablebanners', 'no') == 'yes') echo "selected = 'selected'";
+			if(aff_get_option('affiliateenablebanners', 'no') == 'yes') echo "selected = 'selected'";
 			echo '>' . __('Yes please', 'affiliate') . "</option>";
 
 			echo "<option value='no'";
-			if($getoption('affiliateenablebanners', 'no') == 'no') echo "selected = 'selected'";
+			if(aff_get_option('affiliateenablebanners', 'no') == 'no') echo "selected = 'selected'";
 			echo '>' . __('No thanks', 'affiliate') . "</option>";
 
 			echo "</select>";
@@ -1230,7 +1206,7 @@ class affiliateadmin {
 			echo '</td>';
 			echo '</tr>';
 
-			$banners = $getoption('affiliatebannerlinks');
+			$banners = aff_get_option('affiliatebannerlinks');
 			if(is_array($banners)) {
 				$banners = implode("\n", $banners);
 			}
@@ -1306,11 +1282,8 @@ class affiliateadmin {
 
 			}
 
-			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-				$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-			} else {
-				$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-			}
+			$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
+
 			$headings = array_merge($headings, array( __('Debits','affiliate'), __('Credits','affiliate'), __('Payments','affiliate') ));
 
 			$newcolumns = apply_filters('affiliate_column_names', $headings);
@@ -1844,11 +1817,8 @@ class affiliateadmin {
 				}
 
 
-			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-				$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-			} else {
-				$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-			}
+			$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
+
 			$headings = array_merge($headings, array( __('Debits','affiliate'), __('Credits','affiliate'), __('Payments','affiliate') ));
 
 			$newcolumns = apply_filters('affiliate_column_names', $headings);
@@ -2027,7 +1997,6 @@ class affiliateadmin {
 	function show_user_affiliate_column( $content, $column_name, $user_id ) {
 
 		if($column_name == 'referred') {
-
 
 			$affid = get_user_meta($user_id, 'affiliate_referred_by', true);
 
@@ -2363,7 +2332,5 @@ class affiliateadmin {
 	}
 
 }
-
-$affadmin = new affiliateadmin();
 
 ?>

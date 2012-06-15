@@ -58,11 +58,8 @@ class affiliatedashboard {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		} else {
-			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		}
+		$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
+
 		$results = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatedata} WHERE user_id = %d ORDER BY period DESC LIMIT 0, 18", $user_ID ) );
 
 		$startat = strtotime(date("Y-m-15"));
@@ -236,7 +233,5 @@ class affiliatedashboard {
 	}
 
 }
-
-$affdash = new affiliatedashboard();
 
 ?>

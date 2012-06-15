@@ -489,11 +489,7 @@ class affiliateshortcodes {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		} else {
-			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		}
+		$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
 
 		if(isset($_GET['number'])) {
 			$number = intval(addslashes($_GET['number']));
@@ -695,11 +691,8 @@ class affiliateshortcodes {
 			return '';
 		}
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		} else {
-			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		}
+		$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
+
 		$headings = array_merge($headings, array( __('Debits','affiliate'), __('Credits','affiliate'), __('Payments','affiliate') ));
 
 		$newcolumns = apply_filters('affiliate_column_names', $headings);
@@ -711,13 +704,11 @@ class affiliateshortcodes {
 		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 
 		if(is_multisite()) {
-			$getoption = 'get_site_option';
-			$site = $getoption('site_name');
+			$site = aff_get_option('site_name');
 			$url = get_blog_option(1,'home');
 		} else {
-			$getoption = 'get_option';
-			$site = $getoption('blogname');
-			$url = $getoption('home');
+			$site = aff_get_option('blogname');
+			$url = aff_get_option('home');
 		}
 
 		ob_start();
@@ -746,11 +737,8 @@ class affiliateshortcodes {
 			return '';
 		}
 
-		if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$headings = get_site_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		} else {
-			$headings = get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-		}
+		$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
+
 		$headings = array_merge($headings, array( __('Debits','affiliate'), __('Credits','affiliate'), __('Payments','affiliate') ));
 
 		$newcolumns = apply_filters('affiliate_column_names', $headings);
@@ -762,13 +750,11 @@ class affiliateshortcodes {
 		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 
 		if(is_multisite()) {
-			$getoption = 'get_site_option';
-			$site = $getoption('site_name');
+			$site = aff_get_option('site_name');
 			$url = get_blog_option(1,'home');
 		} else {
-			$getoption = 'get_option';
-			$site = $getoption('blogname');
-			$url = $getoption('home');
+			$site = aff_get_option('blogname');
+			$url = aff_get_option('home');
 		}
 
 		$results = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatedata} WHERE user_id = %d ORDER BY period DESC", $user_ID ) );
@@ -1150,13 +1136,11 @@ class affiliateshortcodes {
 		}
 
 		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$getoption = 'get_site_option';
-			$site = $getoption('site_name');
+			$site = aff_get_option('site_name');
 			$url = get_blog_option(1,'home');
 		} else {
-			$getoption = 'get_option';
-			$site = $getoption('blogname');
-			$url = $getoption('home');
+			$site = aff_get_option('blogname');
+			$url = aff_get_option('home');
 		}
 
 		ob_start();
@@ -1235,7 +1219,7 @@ class affiliateshortcodes {
 		<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
 		<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>";
 
-			echo stripslashes( $getoption('affiliatesettingstext', $settingstextdefault) );
+			echo stripslashes( aff_get_option('affiliatesettingstext', $settingstextdefault) );
 
 			?>
 
@@ -1277,7 +1261,7 @@ class affiliateshortcodes {
 					$advsettingstextdefault = "<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>
 				<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>";
 
-					echo stripslashes( $getoption('affiliateadvancedsettingstext', $advsettingstextdefault) );
+					echo stripslashes( aff_get_option('affiliateadvancedsettingstext', $advsettingstextdefault) );
 
 						if(!empty($chkmsg)) {
 							if(empty($error)) {
@@ -1337,7 +1321,7 @@ class affiliateshortcodes {
 					}
 
 
-				if($getoption('affiliateenablebanners', 'no') == 'yes' && !empty($bannerlink)) {
+				if(aff_get_option('affiliateenablebanners', 'no') == 'yes' && !empty($bannerlink)) {
 				?>
 				<p><?php _e(sprintf('If you would rather use a banner or button then we have a wide selection of sizes <a href="%s">here</a>.', $bannerlink ), 'affiliate') ?></p>
 				<?php } ?>
@@ -1367,7 +1351,7 @@ class affiliateshortcodes {
 		<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
 		<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>";
 
-			echo stripslashes( $getoption('affiliatesettingstext', $settingstextdefault) );
+			echo stripslashes( aff_get_option('affiliatesettingstext', $settingstextdefault) );
 
 			?>
 
@@ -1422,18 +1406,16 @@ class affiliateshortcodes {
 		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 
 		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			$getoption = 'get_site_option';
-			$site = $getoption('site_name');
+			$site = aff_get_option('site_name');
 			$url = get_blog_option(1,'home');
 		} else {
-			$getoption = 'get_option';
-			$site = $getoption('blogname');
-			$url = $getoption('home');
+			$site = aff_get_option('blogname');
+			$url = aff_get_option('home');
 		}
 
 		ob_start();
 
-		$banners = $getoption('affiliatebannerlinks');
+		$banners = aff_get_option('affiliatebannerlinks');
 		foreach((array) $banners as $banner) {
 
 			?>
@@ -1507,7 +1489,5 @@ class affiliateshortcodes {
 
 
 }
-
-$affshortcode = new affiliateshortcodes();
 
 ?>
