@@ -4,7 +4,7 @@ Plugin Name: Affiliate
 Plugin URI: http://premium.wpmudev.org/project/wordpress-mu-affiliate
 Description: This plugin adds a simple affiliate system to your site.
 Author: Barry (Incsub)
-Version: 2.5
+Version: 3.0
 Author URI: http://premium.wpmudev.org
 WDP ID: 106
 */
