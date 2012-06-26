@@ -384,7 +384,7 @@ class affiliateadmin {
 		}
 
 		// Admin user report page
-		if( (isset($_GET['page']) && addslashes($_GET['page']) == 'affiliatesadmin') && ( isset($_GET['subpage']) && addslashes($_GET['subpage']) == 'users') && isset($_GET['id'])) {
+		if( (isset($_GET['page']) && addslashes($_GET['page']) == 'affiliatesadminmanage') && ( isset($_GET['subpage']) && addslashes($_GET['subpage']) == 'users') && isset($_GET['id'])) {
 			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
 
 			wp_enqueue_script('aff_js', affiliate_url('affiliateincludes/js/affiliateadminuserreport.js'), array('jquery'));
@@ -1375,7 +1375,7 @@ class affiliateadmin {
 				$period = date('Ym', $rdate);
 				$place = 10 - $n;
 
-				echo "<tr $bgcolour class='$class periods' id='period-$place'>";
+				echo "<tr class='periods' id='period-$place'>";
 				echo '<td valign="top">';
 				echo date("M", $rdate) . '<br/>' . date("Y", $rdate);
 				echo '</td>';
@@ -1504,7 +1504,7 @@ class affiliateadmin {
 
 			echo "<tbody>";
 
-					echo "<tr class='$class' style='$style'>";
+					echo "<tr class='' style=''>";
 					echo "<td style='padding: 5px;'>";
 					echo __('Period : ','affiliate');
 					echo '<select name="debitperiod" id="debitperiod">';
@@ -1520,7 +1520,7 @@ class affiliateadmin {
 					echo '<input type="text" name="debitvalue" value="" style="width: 6em;"/>';
 					echo "</td>";
 					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
-					echo "<input type='submit' name='debitaccount' value='" . __('Debit','affiliate') . "' class='button' />";
+					echo "<input type='submit' name='debitaccount' value='" . __('Add Debit','affiliate') . "' class='button-primary' />";
 					echo "</td>";
 					echo "</tr>";
 
@@ -1549,7 +1549,7 @@ class affiliateadmin {
 
 			echo "<tbody>";
 
-					echo "<tr class='$class' style='$style'>";
+					echo "<tr class='' style=''>";
 					echo "<td style='padding: 5px;'>";
 					echo __('Period : ','affiliate');
 					echo '<select name="creditperiod" id="creditperiod">';
@@ -1565,7 +1565,7 @@ class affiliateadmin {
 					echo '<input type="text" name="creditvalue" value="" style="width: 6em;"/>';
 					echo "</td>";
 					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
-					echo "<input type='submit' name='creditaccount' value='" . __('Credit','affiliate') . "' class='button' />";
+					echo "<input type='submit' name='creditaccount' value='" . __('Add Credit','affiliate') . "' class='button-primary' />";
 					echo "</td>";
 					echo "</tr>";
 
@@ -1595,7 +1595,7 @@ class affiliateadmin {
 
 			echo "<tbody>";
 
-					echo "<tr class='$class' style='$style'>";
+					echo "<tr class='' style=''>";
 					echo "<td style='padding: 5px;'>";
 					echo __('Period : ','affiliate');
 					echo '<select name="payperiod" id="payperiod">';
@@ -1611,7 +1611,7 @@ class affiliateadmin {
 					echo '<input type="text" name="payvalue" value="" style="width: 6em;" />';
 					echo "</td>";
 					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
-					echo "<input type='submit' name='payaccount' value='" . __('Payment','affiliate') . "' class='button' />";
+					echo "<input type='submit' name='payaccount' value='" . __('Add Payment','affiliate') . "' class='button-primary' />";
 					echo "</td>";
 					echo "</tr>";
 
@@ -1941,7 +1941,7 @@ class affiliateadmin {
 					$actions = array();
 					$actions[] = "<a href='?page=$page&amp;action=makepayment&amp;id=". $result->user_id . "-" . $result->period ."&amp;reportperiod=" . $reportperiod . "' class='edit'>" . __('Mark as Paid','affiliate') . "</a>";
 
-					$actions[] = "<a href='?page=$page&amp;subpage=users&amp;id=". $result->user_id . "' class='edit'>" . __('Manage Affiliate','affiliate') . "</a>";
+					$actions[] = "<a href='?page=affiliatesadminmanage&amp;subpage=users&amp;id=". $result->user_id . "' class='edit'>" . __('Manage Affiliate','affiliate') . "</a>";
 
 
 					echo '<div class="row-actions">';
