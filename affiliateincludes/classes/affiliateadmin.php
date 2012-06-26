@@ -14,8 +14,11 @@ class affiliateadmin {
 	// The page on the public side of the site that has details of the affiliate plan
 	var $affiliateinformationpage = 'affiliates';
 
-	var $affiliatedata = '';
-	var $affiliatereferrers = '';
+	var $tables = array('affiliatedata','affiliatereferrers','affiliaterecords');
+
+	var $affiliatedata;
+	var $affiliatereferrers;
+	var $affiliaterecords;
 
 	function __construct() {
 
@@ -24,18 +27,17 @@ class affiliateadmin {
 		// Grab our own local reference to the database class
 		$this->db =& $wpdb;
 
-		if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
-			// we're activated site wide
-			$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
-			$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
-		} else {
-			if(defined('AFFILIATE_USE_BASE_PREFIX_IF_EXISTS') && AFFILIATE_USE_BASE_PREFIX_IF_EXISTS == 'yes' && !empty($this->db->base_prefix)) {
-				$this->affiliatedata = $this->db->base_prefix . 'affiliatedata';
-				$this->affiliatereferrers = $this->db->base_prefix . 'affiliatereferrers';
+		foreach ($this->tables as $table) {
+			if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
+				// we're activated site wide
+				$this->$table = $this->db->base_prefix . $table;
 			} else {
-				// we're only activated on a blog level so put the admin menu in the main area
-				$this->affiliatedata = $this->db->prefix . 'affiliatedata';
-				$this->affiliatereferrers = $this->db->prefix . 'affiliatereferrers';
+				if(defined('AFFILIATE_USE_BASE_PREFIX_IF_EXISTS') && AFFILIATE_USE_BASE_PREFIX_IF_EXISTS == 'yes' && !empty($this->db->base_prefix)) {
+					$this->$table = $this->db->base_prefix . $table;
+				} else {
+					// we're only activated on a blog level so put the admin menu in the main area
+					$this->$table = $this->db->prefix . $table;
+				}
 			}
 		}
 
@@ -120,6 +122,18 @@ class affiliateadmin {
 
 			$this->db->query($sql);
 		}
+
+		/*
+		CREATE TABLE `wp_affiliaterecords` (
+		  `user_id` bigint(20) unsigned NOT NULL,
+		  `period` varchar(6) DEFAULT NULL,
+		  `affiliatearea` varchar(50) DEFAULT NULL,
+		  `area_id` bigint(20) DEFAULT NULL,
+		  `affiliatenote` text,
+		  KEY `user_id` (`user_id`),
+		  KEY `period` (`period`)
+		)
+		*/
 
 	}
 
