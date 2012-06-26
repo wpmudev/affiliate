@@ -2,7 +2,7 @@
 // Front end and reporting part of the affiliate system
 class affiliate {
 
-	var $build = 1;
+	var $build = 5;
 
 	var $db;
 
@@ -42,6 +42,14 @@ class affiliate {
 					$this->$table = $this->db->prefix . $table;
 				}
 			}
+		}
+
+		$installed = aff_get_option('Aff_Installed', false);
+
+		if($installed === false || $installed != $this->build) {
+			$this->install();
+
+			aff_update_option('Aff_Installed', $this->build);
 		}
 
 		register_activation_hook(__FILE__, array(&$this, 'install'));
@@ -96,6 +104,20 @@ class affiliate {
 			  	`url` varchar(250) default NULL,
 			  	`referred` bigint(20) default '0',
 			  	UNIQUE KEY `user_id` (`user_id`,`period`,`url`)
+				)";
+
+			$this->db->query($sql);
+		}
+
+		if($this->db->get_var( "SHOW TABLES LIKE '" . $this->affiliaterecords . "' ") != $this->affiliaterecords) {
+			 $sql = "CREATE TABLE `" . $this->affiliaterecords . "` (
+			  	`user_id` bigint(20) unsigned NOT NULL,
+				  `period` varchar(6) DEFAULT NULL,
+				  `affiliatearea` varchar(50) DEFAULT NULL,
+				  `area_id` bigint(20) DEFAULT NULL,
+				  `affiliatenote` text,
+				  KEY `user_id` (`user_id`),
+				  KEY `period` (`period`)
 				)";
 
 			$this->db->query($sql);

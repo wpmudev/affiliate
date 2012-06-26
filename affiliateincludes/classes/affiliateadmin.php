@@ -3,7 +3,7 @@
 // Administration side of the affiliate system
 class affiliateadmin {
 
-	var $build = 4;
+	var $build = 5;
 
 	var $db;
 
@@ -41,12 +41,12 @@ class affiliateadmin {
 			}
 		}
 
-		$installed = get_option('Aff_Installed', false);
+		$installed = aff_get_option('Aff_Installed', false);
 
 		if($installed === false || $installed != $this->build) {
 			$this->install();
 
-			update_option('Aff_Installed', $this->build);
+			aff_update_option('Aff_Installed', $this->build);
 		}
 
 		register_activation_hook(__FILE__, array(&$this, 'install'));
@@ -123,17 +123,20 @@ class affiliateadmin {
 			$this->db->query($sql);
 		}
 
-		/*
-		CREATE TABLE `wp_affiliaterecords` (
-		  `user_id` bigint(20) unsigned NOT NULL,
-		  `period` varchar(6) DEFAULT NULL,
-		  `affiliatearea` varchar(50) DEFAULT NULL,
-		  `area_id` bigint(20) DEFAULT NULL,
-		  `affiliatenote` text,
-		  KEY `user_id` (`user_id`),
-		  KEY `period` (`period`)
-		)
-		*/
+		if($this->db->get_var( "SHOW TABLES LIKE '" . $this->affiliaterecords . "' ") != $this->affiliaterecords) {
+			 $sql = "CREATE TABLE `" . $this->affiliaterecords . "` (
+			  	`user_id` bigint(20) unsigned NOT NULL,
+				  `period` varchar(6) DEFAULT NULL,
+				  `affiliatearea` varchar(50) DEFAULT NULL,
+				  `area_id` bigint(20) DEFAULT NULL,
+				  `affiliatenote` text,
+				  KEY `user_id` (`user_id`),
+				  KEY `period` (`period`)
+				)";
+
+			$this->db->query($sql);
+		}
+
 
 	}
 
