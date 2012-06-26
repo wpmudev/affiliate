@@ -145,7 +145,6 @@ class affiliateadmin {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
-
 		$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
 
 		if(isset($_GET['number'])) {
@@ -317,6 +316,8 @@ class affiliateadmin {
 
 	function add_menu_items() {
 
+		global $submenu;
+
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
@@ -326,19 +327,27 @@ class affiliateadmin {
 				// we're activated site wide so put the admin menu in the network area
 				if(function_exists('is_network_admin')) {
 					if(is_network_admin()) {
-						add_submenu_page('index.php', __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+						add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
 					}
 				}
 			} else {
 				// we're only activated on a blog level so put the admin menu in the main area
 				if(!function_exists('is_network_admin')) {
-					add_submenu_page('index.php', __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+					add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
 				} elseif(!is_network_admin()) {
-					add_submenu_page('index.php', __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+					add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
 				}
 			}
 		} else {
-			add_submenu_page('index.php', __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'));
+			add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
+		}
+
+		add_submenu_page( 'affiliatesadmin', __('Manage Affiliates', 'affiliate'), __('Manage Affiliates', 'affiliate'), 'manage_options', 'affiliatesadminmanage', array(&$this,'handle_affiliates_panel') );
+		add_submenu_page( 'affiliatesadmin', __('Settings', 'affiliate'), __('Settings', 'affiliate'), 'manage_options', 'affiliatesadminsettings', array(&$this,'handle_affiliates_panel') );
+		add_submenu_page( 'affiliatesadmin', __('Add-ons', 'affiliate'), __('Add-ons', 'affiliate'), 'manage_options', 'affiliatesadminaddons', array(&$this,'handle_affiliates_panel') );
+
+		if(isset($submenu['affiliatesadmin'])) {
+			$submenu['affiliatesadmin'][0][0] = __('Affiliate Reports', 'affiliate');
 		}
 
 		add_submenu_page('users.php', __('Affiliate Earnings Report','affiliate'), __('Affiliate Referrals','affiliate'), 'read', "affiliateearnings", array(&$this,'add_profile_report_page'));
@@ -375,7 +384,7 @@ class affiliateadmin {
 		}
 
 		// Admin user report page
-		if(isset($_GET['page']) && addslashes($_GET['page']) == 'affiliatesadmin' && addslashes($_GET['subpage']) == 'users' && isset($_GET['id'])) {
+		if( (isset($_GET['page']) && addslashes($_GET['page']) == 'affiliatesadmin') && ( isset($_GET['subpage']) && addslashes($_GET['subpage']) == 'users') && isset($_GET['id'])) {
 			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
 
 			wp_enqueue_script('aff_js', affiliate_url('affiliateincludes/js/affiliateadminuserreport.js'), array('jquery'));
@@ -1097,7 +1106,7 @@ class affiliateadmin {
 
 	function handle_affiliate_settings_panel() {
 
-		if(addslashes($_GET['action']) == 'updateaffiliateoptions') {
+		if(isset($_GET['action']) && addslashes($_GET['action']) == 'updateaffiliateoptions') {
 			check_admin_referer('affiliateoptions');
 
 			$headings = array();
@@ -1124,13 +1133,18 @@ class affiliateadmin {
 			echo '<div id="message" class="updated fade"><p>' . __('Affiliate settings saved.','affiliate') . '</p></div>';
 		}
 
-		$page = addslashes($_GET['page']);
-		$subpage = addslashes($_GET['subpage']);
+		$page = (isset($_GET['page'])) ? addslashes($_GET['page']) : '';
+		$subpage = (isset($_GET['subpage'])) ? addslashes($_GET['subpage']) : '';
+
+		echo '<div  id="poststuff" class=class="metabox-holder m-settings">';
 
 		echo '<form method="post" action="?page=' . $page . '&amp;subpage=' . $subpage . '&amp;action=updateaffiliateoptions">';
 		wp_nonce_field( "affiliateoptions" );
 
-		echo '<h3>' . __('Column Settings', 'affiliate') . '</h3>';
+		echo '<div class="postbox">';
+		echo '<h3 class="hndle" style="cursor:auto;"><span>' . __('Column Settings', 'affiliate') . '</span></h3>';
+
+		echo '<div class="inside">';
 
 		$headings = aff_get_option( 'affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')) );
 
@@ -1158,7 +1172,13 @@ class affiliateadmin {
 
 		echo '</table>';
 
-		echo '<h3>' . __('Profile page text', 'affiliate') . '</h3>';
+		echo '</div>';
+		echo '</div>';
+
+		echo '<div class="postbox">';
+		echo '<h3 class="hndle" style="cursor:auto;"><span>' . __('Profile page text', 'affiliate') . '</span></h3>';
+
+		echo '<div class="inside">';
 
 		$settingstextdefault = __("<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
 <p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
@@ -1168,7 +1188,8 @@ class affiliateadmin {
 		echo '<tr valign="top">';
 		echo '<th scope="row">' . __('Affiliate settings profile text', 'affiliate') . '</th>';
 		echo '<td>';
-		echo '<textarea name="affiliatesettingstext" id="affiliatesettingstext" cols="60" rows="10">' . stripslashes( aff_get_option('affiliatesettingstext', $settingstextdefault) ) . '</textarea>';
+		$args = array("textarea_name" => "affiliatesettingstext");
+		wp_editor( stripslashes( aff_get_option('affiliatesettingstext', $settingstextdefault) ), "affiliatesettingstext", $args );
 		echo '</td>';
 		echo '</tr>';
 
@@ -1179,13 +1200,20 @@ class affiliateadmin {
 		echo '<tr valign="top">';
 		echo '<th scope="row">' . __('Affiliate advanced settings profile text', 'affiliate') . '</th>';
 		echo '<td>';
-		echo '<textarea name="affiliateadvancedsettingstext" id="affiliateadvancedsettingstext" cols="60" rows="10">' . stripslashes( aff_get_option('affiliateadvancedsettingstext', $advsettingstextdefault) ) . '</textarea>';
+		$args = array("textarea_name" => "affiliateadvancedsettingstext");
+		wp_editor( stripslashes( aff_get_option('affiliateadvancedsettingstext', $advsettingstextdefault) ), "affiliateadvancedsettingstext", $args );
 		echo '</td>';
 		echo '</tr>';
 
 		echo '</table>';
 
-		echo '<h3>' . __('Banner Settings', 'affiliate') . '</h3>';
+		echo '</div>';
+		echo '</div>';
+
+		echo '<div class="postbox">';
+		echo '<h3 class="hndle" style="cursor:auto;"><span>' . __('Banner Settings', 'affiliate') . '</span></h3>';
+
+		echo '<div class="inside">';
 
 			echo '<table class="form-table">';
 			echo '<tr>';
@@ -1220,13 +1248,18 @@ class affiliateadmin {
 
 			echo '</table>';
 
+			echo '</div>';
+			echo '</div>';
+
 
 		do_action('affililate_settings_form');
 
 		echo '<p class="submit">';
-		echo '<input type="submit" name="Submit" value="' . __('Update Settings','affiliate') . '" /></p>';
+		echo '<input type="submit" name="Submit" value="' . __('Update Settings','affiliate') . '" class="button-primary" /></p>';
 
 		echo '</form>';
+
+		echo '</div>';
 
 		echo "</div>";
 
@@ -1618,7 +1651,11 @@ class affiliateadmin {
 				echo '<div class="alignleft">';
 
 				echo __('Find user with username','affiliate') . '&nbsp;';
-				echo '<input type="text" name="username" value="' . addslashes($_POST['username']) . '" />';
+				if(!empty($_POST['username'])) {
+					echo '<input type="text" name="username" value="' . addslashes($_POST['username']) . '" />';
+				} else {
+					echo '<input type="text" name="username" value="" />';
+				}
 				echo '&nbsp;';
 				echo '<input type="submit" value="' . __('Search') . '" name="allaction_search" class="button-secondary" />';
 
@@ -1642,10 +1679,10 @@ class affiliateadmin {
 			echo '</thead>';
 
 			echo '<tbody id="the-list">';
-			if($userlist) {
+			if(!empty($userlist)) {
 				foreach($userlist as $result) {
 
-					echo "<tr $bgcolour class='$class'>";
+					echo "<tr class=''>";
 
 					// Check boxes
 					echo '<th scope="row" class="check-column">';
@@ -1675,7 +1712,7 @@ class affiliateadmin {
 				}
 			} else {
 
-				echo "<tr $bgcolour class='$class'>";
+				echo "<tr class=''>";
 
 				echo '<td colspan="2" valign="top">';
 				echo __('There are no users matching the search criteria.','affiliate');
@@ -1705,68 +1742,57 @@ class affiliateadmin {
 
 		global $page, $subpage;
 
-		$apages = array(	''			=>	__('Affiliate reports', 'affiliate'),
-							'users'		=>	__('Manage affiliates', 'affiliate'),
-							'settings'	=>	__('Affiliate settings', 'affiliate'),
-							'addons'	=>	__('Manage addons', 'affiliate')
-						);
-
-
-
-		$actions = array();
-
-		foreach($apages as $akey => $apage) {
-			$url = '<a href="?page=' . $page;
-			if(!empty($akey)) {
-				$url .= '&amp;subpage=' . $akey;
-			}
-			$url .= '" class="rbutton">';
-			if($subpage == $akey) {
-				$url .= '<strong>';
-			}
-			$url .= $apage;
-			if($subpage == $akey) {
-				$url .= '</strong>';
-			}
-			$url .= '</a>';
-
-			$actions[] = $url;
-
+		$tab = $page;
+		if( empty($tab) ) {
+			$tab = 'affiliatesadmin';
 		}
 
+		$menus = array();
+		$menus['affiliatesadmin'] = __('Affiliate reports', 'affiliate');
+		$menus['affiliatesadminmanage'] = __('Manage affiliates', 'affiliate');
+		$menus['affiliatesadminsettings'] = __('Affiliate settings', 'affiliate');
+		$menus['affiliatesadminaddons'] = __('Manage add-ons', 'affiliate');
 
-		echo '<ul class="subsubsub">';
-		echo '<li>';
-		echo implode(' | </li><li>', $actions);
-		echo '</li>';
-		echo '</ul>';
-		echo '<br clear="all" />';
+		$menus = apply_filters('affiliate_menus', $menus);
+		?>
+
+		<h3 class="nav-tab-wrapper">
+			<?php
+				foreach($menus as $key => $menu) {
+					?>
+					<a class="nav-tab<?php if($tab == $key) echo ' nav-tab-active'; ?>" href="admin.php?page=<?php echo $key; ?>"><?php echo $menu; ?></a>
+					<?php
+				}
+
+			?>
+		</h3>
+
+		<?php
 
 	}
 
 	function handle_affiliates_panel() {
 
-		global $page, $subpage;
+		global $page;
 
-		wp_reset_vars( array('page', 'subpage') );
+		wp_reset_vars( array('page') );
 
 		$page = addslashes($_GET['page']);
-		$subpage = addslashes($_GET['subpage']);
 
-		echo "<div class='wrap'>";
+		echo "<div class='wrap nosubsub'>";
 		echo "<h2>" . __('Affiliate System Administration','affiliate') . "</h2>";
 
 		$this->show_affiliates_panel_menu();
 
-		if(!empty($subpage)) {
-			switch($subpage) {
-				case 'settings':
+		if(!empty($page) && $page != 'affiliatesadmin') {
+			switch($page) {
+				case 'affiliatesadminsettings':
 							$this->handle_affiliate_settings_panel();
 							break;
-				case 'users':
+				case 'affiliatesadminmanage':
 							$this->handle_affiliate_users_panel();
 							break;
-				case 'addons':
+				case 'affiliatesadminaddons':
 							$this->handle_addons_panel();
 							break;
 				default:
@@ -1893,7 +1919,7 @@ class affiliateadmin {
 			if($results) {
 				foreach($results as $result) {
 
-					echo "<tr $bgcolour class='$class'>";
+					echo "<tr class=''>";
 
 					// Check boxes
 					echo '<th scope="row" class="check-column">';
@@ -2162,7 +2188,6 @@ class affiliateadmin {
 				wp_original_referer_field(true, 'previous'); wp_nonce_field('bulk-addons');
 
 				$columns = array(	"name"		=>	__('Addon Name', 'affiliate'),
-									"file" 		=> 	__('Addon File','affiliate'),
 									"active"	=>	__('Active','affiliate')
 								);
 
@@ -2223,7 +2248,7 @@ class affiliateadmin {
 							<tr valign="middle" class="alternate" id="plugin-<?php echo $plugin; ?>">
 								<th class="check-column" scope="row"><input type="checkbox" value="<?php echo esc_attr($plugin); ?>" name="plugincheck[]"></th>
 								<td class="column-name">
-									<strong><?php echo esc_html($plugin_data['Name']) . "</strong>" . __(' by ', 'affiliate') . "<a href='" . esc_attr($plugin_data['AuthorURI']) . "'>" . esc_html($plugin_data['Author']) . "</a>"; ?>
+									<strong><?php echo esc_html($plugin_data['Name']) . "</strong>"; ?>
 									<?php if(!empty($plugin_data['Description'])) {
 										?><br/><?php echo esc_html($plugin_data['Description']);
 										}
@@ -2239,9 +2264,6 @@ class affiliateadmin {
 									<br><div class="row-actions"><?php echo implode(" | ", $actions); ?></div>
 									</td>
 
-								<td class="column-name">
-									<?php echo esc_html($plugin); ?>
-									</td>
 								<td class="column-active">
 									<?php
 										if(in_array($plugin, $active)) {

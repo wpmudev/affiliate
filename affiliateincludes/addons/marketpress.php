@@ -55,6 +55,7 @@ function AM_Show_Affiliate_Settings( $settings ) {
 		<div id="mp_gateways" class="postbox">
             <h3 class='hndle'><span><?php _e('Affiliate Settings', 'mp') ?></span></h3>
             <div class="inside">
+			  <span class="description">Be sure to enter a shipping price for every option or those customers may get free shipping.</span>
               <table class="form-table">
                 <tr>
         				<th scope="row"><?php _e('Set percentage to be paid to affiliates', 'affiliate') ?></th>

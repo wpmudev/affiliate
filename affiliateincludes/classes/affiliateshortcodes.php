@@ -668,7 +668,7 @@ class affiliateshortcodes {
 		}
 
 		// Admin user report page
-		if(isset($_GET['page']) && addslashes($_GET['page']) == 'affiliatesadmin' && addslashes($_GET['subpage']) == 'users' && isset($_GET['id'])) {
+		if( (isset($_GET['page']) && addslashes($_GET['page']) == 'affiliatesadmin') && (isset($_GET['subpage']) && addslashes($_GET['subpage']) == 'users') && isset($_GET['id'])) {
 			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
 			wp_enqueue_script('aff_js', affiliate_url('affiliateincludes/js/affiliateadminuserreport.js'), array('jquery'));
 
