@@ -26,7 +26,7 @@ function AM_Paid_order( $order ) {
 	$aff_id = get_post_meta( $order->ID, 'affiliate_marketpress_order_referrered', true);
 
 	if(!empty($aff_id)) {
-		$percentage = get_option('affiliate_mp_percentage', 0);
+		$percentage = aff_get_option('affiliate_mp_percentage', 0);
 		// We have a referrer - get the total
 		$total_amount = get_post_meta($order->ID, 'mp_order_total', true);
 		// calculate the amount to give the referrer - hardcoded for testing to 30%
@@ -45,9 +45,9 @@ function AM_Show_Affiliate_Settings( $settings ) {
 	if (isset($_POST['gateway_settings'])) {
       // Do processing here
 		if( !empty($_POST['affiliate_mp_percentage']) && $_POST['affiliate_mp_percentage'] > 0) {
-			update_option( 'affiliate_mp_percentage', $_POST['affiliate_mp_percentage'] );
+			aff_update_option( 'affiliate_mp_percentage', $_POST['affiliate_mp_percentage'] );
 		} else {
-			delete_option( 'affiliate_mp_percentage' );
+			aff_delete_option( 'affiliate_mp_percentage' );
 		}
     }
 
@@ -55,12 +55,12 @@ function AM_Show_Affiliate_Settings( $settings ) {
 		<div id="mp_gateways" class="postbox">
             <h3 class='hndle'><span><?php _e('Affiliate Settings', 'mp') ?></span></h3>
             <div class="inside">
-			  <span class="description">Be sure to enter a shipping price for every option or those customers may get free shipping.</span>
+			  <span class="description"><?php _e('You can set the global commision amount paid to affiliates for referred purchases below. Set it to 0 for no payments.','affiliate'); ?></span>
               <table class="form-table">
                 <tr>
         				<th scope="row"><?php _e('Set percentage to be paid to affiliates', 'affiliate') ?></th>
         				<td>
-							<?php $percentage = get_option('affiliate_mp_percentage', 0); ?>
+							<?php $percentage = aff_get_option('affiliate_mp_percentage', 0); ?>
 							<input type='text' name='affiliate_mp_percentage' value='<?php echo number_format($percentage, 2); ?>' style='width:5em;'/>&nbsp;<?php _e('%', 'affiliate'); ?>
                 			<?php
 

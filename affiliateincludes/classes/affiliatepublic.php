@@ -59,7 +59,7 @@ class affiliate {
 		// Global generic functions
 		add_action('affiliate_click', array(&$this, 'record_click'), 10, 1);
 		add_action('affiliate_signup', array(&$this, 'record_signup'), 10);
-		add_action('affiliate_purchase', array(&$this, 'record_complete'), 10, 2);
+		add_action('affiliate_purchase', array(&$this, 'record_complete'), 10, 5);
 
 		add_action('affiliate_credit', array(&$this, 'record_credit'), 10, 2);
 		add_action('affiliate_debit', array(&$this, 'record_debit'), 10, 2);
@@ -188,7 +188,7 @@ class affiliate {
 
 	}
 
-	function record_complete($user_id, $amount = false) {
+	function record_complete($user_id, $amount = false, $area = false, $area_id = false, $note = false) {
 
 		if( !empty($user_id) && is_numeric($user_id) && $amount ) {
 
