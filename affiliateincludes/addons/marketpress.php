@@ -41,7 +41,7 @@ function AM_Paid_order( $order ) {
 		// calculate the amount to give the referrer - hardcoded for testing to 30%
 		$amount = ($total_amount / 100) * $percentage;
 		// run the standard affiliate action to do the recording and assigning
-		do_action('affiliate_purchase', $aff_id, $amount);
+		do_action('affiliate_purchase', $aff_id, $amount, 'marketpress', $order->ID, 'Affiliate payment for MarketPress order.');
 		// record the amount paid / assigned in the meta for the order
 		add_post_meta($order->ID, 'affiliate_marketpress_order_paid', $amount, true);
 	}

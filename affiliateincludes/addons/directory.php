@@ -68,7 +68,7 @@ function dr_affiliate_new_paid( $affiliate_settings, $user_id, $billing_type ) {
 			$amount = 0;
 		}
 
-		do_action( 'affiliate_purchase', $aff, $amount );
+		do_action( 'affiliate_purchase', $aff, $amount, 'directory', $user_id, 'Directory referral for user.' );
 
 		if ( defined( 'AFFILIATE_PAYONCE' ) && AFFILIATE_PAYONCE == 'yes' ) {
 
