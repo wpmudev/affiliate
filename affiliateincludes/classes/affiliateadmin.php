@@ -2203,7 +2203,7 @@ class affiliateadmin {
 			<div class="clear"></div>
 
 			<?php
-				wp_original_referer_field(true, 'previous'); wp_nonce_field('bulk-addons');
+				wp_original_referer_field(true, 'previous'); wp_nonce_field('bulk-addon');
 
 				$columns = array(	"name"		=>	__('Addon Name', 'affiliate'),
 									"active"	=>	__('Active','affiliate')
