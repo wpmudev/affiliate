@@ -6,24 +6,33 @@ Author: Barry (Incsub)
 Author URI: http://premium.wpmudev.org
 */
 
-//New order is a signup
-function AM_New_order( $order ) {
+function AM_Record_affiliate() {
+
+	global $current_user;
 
 	// Call the affiliate action
 	do_action( 'affiliate_signup' );
 
 	if(defined( 'AFFILIATEID' )) {
 		// We found an affiliate that referred this order creation - so add a meta to the order recording it
-		add_post_meta($order->ID, 'affiliate_marketpress_order_referrered', AFFILIATEID, true);
+
+		if(!empty($_SESSION['mp_shipping_info'])) {
+			$_SESSION['mp_shipping_info']['affiliate_referrer'] = AFFILIATEID;
+		}
+
 	}
 
 }
-add_action( 'mp_new_order', 'AM_New_order' );
+add_action( 'mp_shipping_process', 'AM_Record_affiliate' );
 
 // Paid order is a complete
 function AM_Paid_order( $order ) {
 	// Check for the affiliate referrer if there is one
-	$aff_id = get_post_meta( $order->ID, 'affiliate_marketpress_order_referrered', true);
+	$shipping_info = get_post_meta( $order->ID, 'mp_shipping_info', true);
+
+	if(isset($shipping_info['affiliate_referrer'])) {
+		$aff_id = $shipping_info['affiliate_referrer'];
+	}
 
 	if(!empty($aff_id)) {
 		$percentage = aff_get_option('affiliate_mp_percentage', 0);
