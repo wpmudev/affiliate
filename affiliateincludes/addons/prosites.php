@@ -1,10 +1,4 @@
 <?php
-/*
-Plugin Name: Pro-sites add-on
-Description: Affiliate system plugin for the WordPress Pro-sites plugin
-Author: Barry (Incsub)
-Author URI: http://caffeinatedb.com
-*/
 
 add_action('wpmu_new_blog', 'affiliate_new_blog', 10, 2);
 add_action('supporter_payment_processed', 'affiliate_supporter_paid', 10, 3);
