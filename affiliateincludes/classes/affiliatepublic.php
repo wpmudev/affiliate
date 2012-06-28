@@ -200,6 +200,10 @@ class affiliate {
 			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, completes, credits, lastupdated) VALUES (%d, %s, %d, %01.2f, now()) ON DUPLICATE KEY UPDATE completes = completes + %d, credits = credits + %01.2f ", $user_id, $period, 1, $amount, 1, $amount );
 			$queryresult = $this->db->query($sql);
 
+			if( !empty($area) && $area !== false ) {
+				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note ) );
+			}
+
 		}
 
 	}
