@@ -80,6 +80,8 @@ class affiliateshortcodes {
 
 		add_shortcode('affiliatebanners', array(&$this, 'do_affiliatebanners_shortcode') );
 
+		add_shortcode('affiliatedebugforcepayment', array(&$this, 'do_affiliateforcepayment_shortcode') );
+
 		// Check for shortcodes in any posts
 		add_action( 'template_redirect', array(&$this, 'check_for_shortcodes') );
 
@@ -1471,6 +1473,56 @@ class affiliateshortcodes {
 
 		$html .= $prefix;
 		$html .= $this->output_banners();
+		$html .= $postfix;
+
+		if(!empty($wrapwith)) {
+			$html .= "</{$wrapwith}>";
+		}
+
+		$html .= $postfix;
+		if(!empty($item)) {
+			$html .= "</{$item}>";
+		}
+		if(!empty($holder)) {
+			$html .= "</{$holder}>";
+		}
+
+		return $html;
+	}
+
+	function do_affiliateforcepayment_shortcode($atts, $content = null, $code = "") {
+		global $wp_query;
+
+		$defaults = array(	"holder"				=>	'',
+							"holderclass"			=>	'',
+							"item"					=>	'',
+							"itemclass"				=>	'',
+							"postfix"				=>	'',
+							"prefix"				=>	'',
+							"wrapwith"				=>	'',
+							"wrapwithclass"			=>	''
+						);
+
+		extract(shortcode_atts($defaults, $atts));
+
+		$html = '';
+
+		if(!empty($holder)) {
+			$html .= "<{$holder} class='{$holderclass}'>";
+		}
+		if(!empty($item)) {
+			$html .= "<{$item} class='{$itemclass}'>";
+		}
+		$html .= $prefix;
+
+		if(!empty($wrapwith)) {
+			$html .= "<{$wrapwith} class='{$wrapwithclass}'>";
+		}
+
+		$html .= $prefix;
+
+		do_action('affiliate_purchase', 1, 21.75, 'marketpress', 1, 'Affiliate payment for MarketPress order.');
+
 		$html .= $postfix;
 
 		if(!empty($wrapwith)) {

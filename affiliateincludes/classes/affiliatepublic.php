@@ -116,6 +116,7 @@ class affiliate {
 				  `affiliatearea` varchar(50) DEFAULT NULL,
 				  `area_id` bigint(20) DEFAULT NULL,
 				  `affiliatenote` text,
+				  `amount` decimal(10,2) DEFAULT NULL,
 				  KEY `user_id` (`user_id`),
 				  KEY `period` (`period`)
 				)";
@@ -201,7 +202,7 @@ class affiliate {
 			$queryresult = $this->db->query($sql);
 
 			if( !empty($area) && $area !== false ) {
-				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note ) );
+				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount ) );
 			}
 
 		}

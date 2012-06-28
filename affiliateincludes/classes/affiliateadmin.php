@@ -130,6 +130,7 @@ class affiliateadmin {
 				  `affiliatearea` varchar(50) DEFAULT NULL,
 				  `area_id` bigint(20) DEFAULT NULL,
 				  `affiliatenote` text,
+				  `amount` decimal(10,2) DEFAULT NULL,
 				  KEY `user_id` (`user_id`),
 				  KEY `period` (`period`)
 				)";
