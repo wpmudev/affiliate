@@ -2,7 +2,7 @@
 // Front end and reporting part of the affiliate system
 class affiliate {
 
-	var $build = 5;
+	var $build = 6;
 
 	var $db;
 

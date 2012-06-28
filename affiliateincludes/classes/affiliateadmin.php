@@ -3,7 +3,7 @@
 // Administration side of the affiliate system
 class affiliateadmin {
 
-	var $build = 5;
+	var $build = 6;
 
 	var $db;
 
