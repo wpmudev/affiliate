@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Affiliated debugging
+Plugin Name: Affiliate debugging
 Description: Adds in a debug system to the affiliate plugin to help track down potential cookie issues
 Author: Barry (Incsub)
 Author URI: http://premium.wpmudev.org
