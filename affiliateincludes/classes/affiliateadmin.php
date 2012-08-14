@@ -464,10 +464,10 @@ class affiliateadmin {
 
 		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$site = aff_get_option('site_name');
-			$homeurl = get_blog_option(1,'home');
+			$siteurl = get_blog_option(1,'home');
 		} else {
 			$site = aff_get_option('blogname');
-			$homeurl = aff_get_option('home');
+			$siteurl = aff_get_option('home');
 		}
 
 		if(isset($_POST['action']) && addslashes($_POST['action']) == 'update') {
@@ -620,7 +620,7 @@ class affiliateadmin {
 											_e('You need to validate this URL by uploading a file to the root of the site above with the following name : ','affiliate');
 											echo "<br/>";
 											echo __('Filename : ', 'affiliate') . $filename;
-											echo " <a href='http://" . trailingslashit($referrer) . $filename . "' target=_blank>" . __('[click here to check if the file exists]') . "</a>";
+											echo " <a href='http://" . trailingslashit($referrer) . $filename . "' target=_blank>" . __('[click here to check if the file exists]', 'affiliate') . "</a>";
 											echo '<br/><input type="submit" name="Submit" class="button" value="' . __('Validate','affiliate') . '" />';
 										}
 									}
@@ -636,15 +636,15 @@ class affiliateadmin {
 					}
 					?>
 					<p><?php _e('<h3>Affiliate Details</h3>', 'affiliate') ?></p>
-					<p><?php _e(sprintf('In order for us to track your referrals, you should use the following URL to link to our site:'), 'affiliate') ?></p>
-					<p><?php _e(sprintf('<strong>%s?ref=%s</strong>', $homeurl, $reference ), 'affiliate') ?></p>
+					<p><?php _e('In order for us to track your referrals, you should use the following URL to link to our site:', 'affiliate'); ?></p>
+					<p><?php echo sprintf(__('<strong>%s?ref=%s</strong>', 'affiliate'), $siteurl, $reference ); ?></p>
 
 					<?php
 						if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes' && !empty($referrer)) {
 							// We are always going to check for a referer site
 							?>
-							<p><?php _e(sprintf('Alternatively you can just link directly to the URL below from the site you entered in the advanced settings above:'), 'affiliate') ?></p>
-							<p><?php _e(sprintf('<strong>%s</strong>', $url ), 'affiliate') ?></p>
+							<p><?php _e('Alternatively you can just link directly to the URL below from the site you entered in the advanced settings above:', 'affiliate'); ?></p>
+							<p><?php echo sprintf(__('<strong>%s</strong>', 'affiliate'), $siteurl ); ?></p>
 							<?php
 
 						}
@@ -652,9 +652,9 @@ class affiliateadmin {
 
 					if(aff_get_option('affiliateenablebanners', 'no') == 'yes') {
 					?>
-					<p><?php _e(sprintf('If you would rather use a banner or button then we have a wide selection of sizes <a href="%s">here</a>.', "profile.php?page=affiliatebanners" ), 'affiliate') ?></p>
+					<p><?php echo sprintf(__('If you would rather use a banner or button then we have a wide selection of sizes <a href="%s">here</a>.', 'affiliate'), "profile.php?page=affiliatebanners" ); ?></p>
 					<?php } ?>
-					<p><?php _e(sprintf('<strong>You can check on your referral totals by viewing the details on this page</strong>' ), 'affiliate') ?></p>
+					<p><?php _e('<strong>You can check on your referral totals by viewing the details on this page</strong>', 'affiliate'); ?></p>
 				<?php
 				}
 
