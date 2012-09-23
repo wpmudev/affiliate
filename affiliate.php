@@ -4,7 +4,7 @@ Plugin Name: Affiliate
 Plugin URI: http://premium.wpmudev.org/project/wordpress-mu-affiliate
 Description: This plugin adds a simple affiliate system to your site.
 Author: Barry (Incsub)
-Version: 3.0.3
+Version: 3.0.4
 Author URI: http://premium.wpmudev.org
 WDP ID: 106
 */
@@ -26,15 +26,13 @@ if(is_admin()) {
 
 	$affadmin = new affiliateadmin();
 	$affdash = new affiliatedashboard();
-} else {
-	include_once('affiliateincludes/classes/affiliatepublic.php');
-
-	$affiliate = new affiliate();
 }
 
-// Include the new shortcodes class for both areas
+// Include the public and shortcode classes for both public and admin areas
+include_once('affiliateincludes/classes/affiliatepublic.php');
 include_once('affiliateincludes/classes/affiliateshortcodes.php');
 
+$affiliate = new affiliate();
 $affshortcode = new affiliateshortcodes();
 
 
