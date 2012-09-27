@@ -62,6 +62,8 @@ function affiliate_supporter_paid($bid, $amount, $supporterperiod) {
 						break;
 			case '12':	$amount = $getoption( "supporter_12_whole_payment", 0 ) . '.' . $getoption( "supporter_12_partial_payment", 0 );
 						break;
+			case 'bulk':	$amount = $getoption( "supporter_bulk_whole_payment", 0 ) . '.' . $getoption( "supporter_bulk_partial_payment", 0 );
+						break;
 			default:
 						$amount = 0;
 						break;
@@ -188,7 +190,40 @@ function affiliate_supporter_payment_settings() {
 
 	echo '</td>';
 	echo '</tr>';
+	
+	echo '<tr>';
+	echo '<th scope="row" valign="top">' . __('Bulk Upgrades payment', 'affiliate') . '</th>';
+	echo '<td valign="top">'; ?>
+		<select name="$supporter_bulk_whole_payment">
+		<?php
+			$supporter_bulk_whole_payment = $getoption( "supporter_bulk_whole_payment" );
+			$counter = 0;
+			for ( $counter = 1; $counter <= 300; $counter += 1) {
+                echo '<option value="' . $counter . '"' . ($counter == $supporter_bulk_whole_payment ? ' selected' : '') . '>' . $counter . '</option>' . "\n";
+			}
+        ?>
+        </select>
+        .
+		<select name="supporter_bulk_partial_payment">
+		<?php
+			$supporter_bulk_partial_payment = $getoption( "supporter_bulk_partial_payment" );
+			$counter = 0;
+            echo '<option value="00"' . ('00' == $supporter_bulk_partial_payment ? ' selected' : '') . '>00</option>' . "\n";
+			for ( $counter = 1; $counter <= 99; $counter += 1) {
+				if ( $counter < 10 ) {
+					$number = '0' . $counter;
+				} else {
+					$number = $counter;
+				}
+                echo '<option value="' . $number . '"' . ($number == $supporter_bulk_partial_payment ? ' selected' : '') . '>' . $number . '</option>' . "\n";
+			}
+        ?>
+        </select>
+        <br /><?php _e('Affiliate payment for bulk upgrades.');
 
+	echo '</td>';
+	echo '</tr>';
+	
 	echo '</table>';
 }
 
@@ -206,6 +241,8 @@ function affiliate_supporter_payment_settings_update() {
 	$updateoption( "supporter_3_partial_payment", $_POST[ 'supporter_3_partial_payment' ] );
 	$updateoption( "supporter_12_whole_payment", $_POST[ 'supporter_12_whole_payment' ] );
 	$updateoption( "supporter_12_partial_payment", $_POST[ 'supporter_12_partial_payment' ] );
+	$updateoption( "supporter_bulk_whole_payment", $_POST[ 'supporter_bulk_whole_payment' ] );
+	$updateoption( "supporter_bulk_partial_payment", $_POST[ 'supporter_bulk_partial_payment' ] );
 
 }
 
