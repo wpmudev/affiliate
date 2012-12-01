@@ -2344,7 +2344,7 @@ class affiliateadmin {
 			$searchstring = explode( 'referrer:', $s );
 
 			if(!empty($searchstring[1])) {
-				$user = get_userdatabylogin( $searchstring[1] );
+				$user = get_user_by( 'login',$searchstring[1] );
 				if($user) {
 					$referred = $this->get_referred_by( $user->ID );
 
