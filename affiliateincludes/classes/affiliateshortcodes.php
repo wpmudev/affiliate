@@ -961,7 +961,7 @@ class affiliateshortcodes {
 			$class = 'alternate';
 			foreach($rows as $r) {
 
-				echo "<tr class='$class' style='$style'>";
+				echo "<tr class='$class' style=''>";
 				echo "<td style='padding: 5px;'>";
 				echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
 				echo "</td>";
@@ -1049,7 +1049,7 @@ class affiliateshortcodes {
 			$class = 'alternate';
 			foreach($rows as $r) {
 
-				echo "<tr class='$class' style='$style'>";
+				echo "<tr class='$class' style=''>";
 				echo "<td style='padding: 5px;'>";
 				echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
 				echo "</td>";
@@ -1283,7 +1283,12 @@ class affiliateshortcodes {
 						<tr style='background: transparent;'>
 							<th valign='top'><label for="affiliate_referrer"><?php _e('Your URL', 'affiliate'); ?></label></th>
 							<td>
-								http://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo get_user_meta($user_ID, 'affiliate_referrer', true); ?>" class="regular-text" /><?php echo "&nbsp;&nbsp;" . $msg;?>
+								http://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo get_user_meta($user_ID, 'affiliate_referrer', true); ?>" class="regular-text" />
+								<?php 	echo "&nbsp;&nbsp;";
+								 		if (isset($msg)) {
+											echo $msg;
+										}
+								?>
 								<?php
 								if(defined('AFFILIATE_VALIDATE_REFERRER_URLS') && AFFILIATE_VALIDATE_REFERRER_URLS == 'yes' ) {
 									if(!empty($validreferrer) && $validreferrer == 'yes') {}
