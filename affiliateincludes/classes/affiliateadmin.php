@@ -2141,15 +2141,17 @@ class affiliateadmin {
 
 			case 'bulk-toggle':
 								check_admin_referer('bulk-addon');
-								foreach($_GET['addoncheck'] AS $key) {
-									$found = array_search($key, $active);
-									if($found !== false) {
-										unset($active[$found]);
-									} else {
-										$active[] = $key;
+								if( is_array($_GET['plugincheck'])) {
+									foreach($_GET['plugincheck'] AS $key) {
+										$found = array_search($key, $active);
+										if($found !== false) {
+											unset($active[$found]);
+										} else {
+											$active[] = $key;
+										}
 									}
+									update_option('affiliate_activated_addons', array_unique($active));
 								}
-								update_option('affiliate_activated_addons', array_unique($active));
 								return 7;
 								break;
 
