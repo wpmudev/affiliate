@@ -261,6 +261,11 @@ class affiliate {
 	function handle_affiliate_link() {
 
 		if(isset($_COOKIE['noaffiliate_' . COOKIEHASH])) {
+			if(isset($_GET['ref'])) {
+				// redirect to the none affiliate url anyway, just to be tidy
+				$this->redirect( remove_query_arg( array('ref') ) );
+			}
+			// If there isn't a ref set then return because we don't want to do anything
 			return true;
 		}
 
@@ -289,7 +294,6 @@ class affiliate {
 			// The cookie is set so redirect to the page called but without the ref in the url
 			// for SEO reasons.
 			$this->redirect( remove_query_arg( array('ref') ) );
-			die();
 		}
 
 		if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes') {
@@ -362,7 +366,10 @@ class affiliate {
 
 			header("Location: $location", true, $status);
 		}
+		// Ensure we have an exit
+		exit;
 	}
+
 
 }
 

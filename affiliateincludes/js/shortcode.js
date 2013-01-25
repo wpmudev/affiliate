@@ -13,11 +13,11 @@ function showTooltip(x, y, contents) {
 
 function affSetWidth() {
 	var width = jQuery('#affdashgraph').parents('div.wrap').width();
-	jQuery('#affdashgraph').width((width - 15) + 'px');
+	//jQuery('#affdashgraph').width((width - 15) + 'px');
 
 	//affvisitgraph
 	var colwidth = jQuery('#affvisitgraph').parents('div#referrerscolumn').width();
-	jQuery('#affvisitgraph').width((colwidth - 10) + 'px');
+	//jQuery('#affvisitgraph').width((colwidth - 10) + 'px');
 }
 
 function affReBuildChart(chart, ticks) {

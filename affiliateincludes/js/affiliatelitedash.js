@@ -13,7 +13,7 @@ function showTooltip(x, y, contents) {
 
 function affSetWidth() {
 	var width = jQuery('#affdashgraph').parents('div.inside').width();
-	jQuery('#affdashgraph').width((width - 20) + 'px');
+	//jQuery('#affdashgraph').width((width - 20) + 'px');
 }
 
 function affReBuildChart(chart, ticks) {

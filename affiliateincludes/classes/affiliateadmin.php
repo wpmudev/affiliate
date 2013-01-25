@@ -1504,7 +1504,7 @@ class affiliateadmin {
 
 			echo "<div id='referrerscolumn' style='width: 48%; margin-left: 2%; min-height: 400px; margin-top: 20px; background: #fff; float: left;'>";
 
-			echo "<div id='affdashgraph' style='height: 300px; background-color: #fff; margin-left: 0px; margin-right: 10px; margin-bottom: 20px;'>" . "</div>";
+			echo "<div id='affdashgraph' style='height: 300px; width: 100%; background-color: #fff; margin-left: 0px; margin-right: 10px; margin-bottom: 20px;'>" . "</div>";
 
 			// Add credit and debits table and form
 
@@ -1835,7 +1835,12 @@ class affiliateadmin {
 													foreach($_POST['allpayments'] as $affiliate) {
 														$affdetails = explode('-', $affiliate);
 														if(count($affdetails) == 2) {
-															$affected = $this->db->query( "UPDATE " . $this->affiliatedata . " SET payments = payments + (credits - debits), lastupdated = '" . current_time('mysql', true) . "' WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
+															if(defined('AFFILIATE_ORIGINAL_PAYMENT_CALCULATION') && AFFILIATE_ORIGINAL_PAYMENT_CALCULATION == true) {
+																$affected = $this->db->query( "UPDATE " . $this->affiliatedata . " SET payments = payments + (credits - debits), lastupdated = '" . current_time('mysql', true) . "' WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
+															} else {
+																$affected = $this->db->query( "UPDATE " . $this->affiliatedata . " SET payments = (credits - debits), lastupdated = '" . current_time('mysql', true) . "' WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
+															}
+
 														}
 													}
 													echo '<div id="message" class="updated fade"><p>' . __('Payments has been assigned correctly.', 'affiliate') . '</p></div>';
@@ -1851,7 +1856,11 @@ class affiliateadmin {
 												$affdetails = explode('-', $affiliate);
 
 												if(count($affdetails) == 2) {
-													$affected = $this->db->query( "UPDATE " . $this->affiliatedata . " SET payments = payments + (credits - debits), lastupdated = '" . current_time('mysql', true) . "' WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
+													if(defined('AFFILIATE_ORIGINAL_PAYMENT_CALCULATION') && AFFILIATE_ORIGINAL_PAYMENT_CALCULATION == true) {
+														$affected = $this->db->query( "UPDATE " . $this->affiliatedata . " SET payments = payments + (credits - debits), lastupdated = '" . current_time('mysql', true) . "' WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
+													} else {
+														$affected = $this->db->query( "UPDATE " . $this->affiliatedata . " SET payments = (credits - debits), lastupdated = '" . current_time('mysql', true) . "' WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
+													}
 													if($affected) {
 														echo '<div id="message" class="updated fade"><p>' . __('Payment has been assigned correctly.', 'affiliate') . '</p></div>';
 													}
@@ -1923,7 +1932,7 @@ class affiliateadmin {
 			echo '<thead>';
 			echo '<tr>';
 
-					echo '<th scope="col" class="check-column"></th>';
+					echo '<th scope="col" class="check-column"><input type="checkbox" label="check all" /></th>';
 
 					echo '<th scope="col">';
 					echo __('Username','affiliate');
@@ -1942,6 +1951,11 @@ class affiliateadmin {
 			if($results) {
 				foreach($results as $result) {
 
+					$user = get_userdata($result->user_id);
+					if(empty($user)) {
+						continue;
+					}
+
 					echo "<tr class=''>";
 
 					// Check boxes
@@ -1950,7 +1964,7 @@ class affiliateadmin {
 					echo '</th>';
 
 					echo '<td valign="top">';
-					$user = get_userdata($result->user_id);
+
 					echo $user->user_login;
 					echo " ( " . get_user_meta($result->user_id, 'affiliate_paypal', true) . " )";
 
@@ -2011,17 +2025,17 @@ class affiliateadmin {
 			echo '</tbody>';
 			echo '<tfoot>';
 			echo '<tr>';
-				echo '<th scope="col" class="check-column"></th>';
-					echo '<th scope="col">';
-					echo __('Username','affiliate');
+				echo '<th scope="col" class="check-column"><input type="checkbox" label="check all" /></th>';
+				echo '<th scope="col">';
+				echo __('Username','affiliate');
+				echo '</th>';
+				reset($columns);
+				foreach($columns as $column) {
+					echo '<th scope="col" class="num">';
+					echo $column;
 					echo '</th>';
-					reset($columns);
-					foreach($columns as $column) {
-						echo '<th scope="col" class="num">';
-						echo $column;
-						echo '</th>';
-					}
-				echo '</tr>';
+				}
+			echo '</tr>';
 			echo '</tfoot>';
 
 			echo '</table>';
@@ -2283,7 +2297,7 @@ class affiliateadmin {
 										if(in_array($plugin, $active)) {
 											$actions['toggle'] = "<span class='edit activate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=deactivate&amp;addon=" . $plugin . "", 'toggle-addon-' . $plugin) . "'>" . __('Deactivate', 'affiliate') . "</a></span>";
 										} else {
-											$actions['toggle'] = "<span class='edit deactivate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=activate&amp;addon=" . $plugin . "", 'toggle-addon-' . $plugin) . "'>" . __('Activate', 'affiliate') . "</a></span>";
+											$actions['toggle'] = "<span class='edit deactivate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=activate&amp;addon=" . $plugin . "", 'toggle-addon-' . $plugin) . "'>" . ((function_exists('is_network_admin') && is_network_admin()) ? __('Network Activate', 'affiliate') : __('Activate', 'affiliate')) . "</a></span>";
 										}
 									?>
 									<br><div class="row-actions"><?php echo implode(" | ", $actions); ?></div>

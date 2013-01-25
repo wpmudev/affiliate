@@ -13,7 +13,7 @@ function showTooltip(x, y, contents) {
 
 function affSetWidth() {
 	var width = jQuery('#affdashgraph').parents('#clickscolumn').width();
-	jQuery('#affdashgraph').width((width - 15) + 'px');
+	//jQuery('#affdashgraph').width((width - 15) + 'px');
 
 }
 
