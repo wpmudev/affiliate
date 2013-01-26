@@ -1141,10 +1141,14 @@ class affiliateshortcodes {
 
 		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 			$site = aff_get_option('site_name');
+			// switch to use new option
 			$siteurl = get_blog_option(1,'home');
+			$affiliatelinkurl = aff_get_option( 'affiliatelinkurl', $siteurl );
 		} else {
 			$site = aff_get_option('blogname');
+			// switch to use new option
 			$siteurl = aff_get_option('home');
+			$affiliatelinkurl = aff_get_option( 'affiliatelinkurl', $siteurl );
 		}
 
 		ob_start();
@@ -1317,7 +1321,7 @@ class affiliateshortcodes {
 				?>
 				<p><?php _e('<h3>Affiliate Details</h3>', 'affiliate') ?></p>
 				<p><?php _e('In order for us to track your referrals, you should use the following URL to link to our site:', 'affiliate'); ?></p>
-				<p><?php echo sprintf(__('<strong>%s?ref=%s</strong>', 'affiliate'), $siteurl, $reference ); ?></p>
+				<p><?php echo sprintf(__('<strong>%s?ref=%s</strong>', 'affiliate'), $affiliatelinkurl, $reference ); ?></p>
 
 				<?php
 					if(defined('AFFILIATE_CHECKALL') && !empty($referrer)) {
@@ -1422,17 +1426,35 @@ class affiliateshortcodes {
 			$url = aff_get_option('home');
 		}
 
+		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+			$site = aff_get_option('site_name');
+			// switch to use new option
+			$siteurl = get_blog_option(1,'home');
+			$affiliatelinkurl = aff_get_option( 'affiliatelinkurl', $siteurl );
+		} else {
+			$site = aff_get_option('blogname');
+			// switch to use new option
+			$siteurl = aff_get_option('home');
+			$affiliatelinkurl = aff_get_option( 'affiliatelinkurl', $siteurl );
+		}
+
 		ob_start();
 
 		$banners = aff_get_option('affiliatebannerlinks');
 		foreach((array) $banners as $banner) {
-
+			// Split the string in case there is a | in there
+			$advbanner = explode("|", $banner);
+			if(count($advbanner) == 1) {
+				$advbanner[] = $affiliatelinkurl;
+			}
+			// Trim the array so that it removes none text characters
+			array_map('trim', $advbanner);
 			?>
-			<img src='<?php echo $banner; ?>' />
+			<img src='<?php echo $advbanner[0]; ?>' />
 			<br/><br/>
 			<textarea cols='80' rows='5'><?php
-				echo sprintf("<a href='%s?ref=%s'>\n", $url, $reference);
-				echo "<img src='" . $banner . "' alt='" . htmlentities(stripslashes($site),ENT_QUOTES, 'UTF-8') . "' title='Check out " . htmlentities(stripslashes($site),ENT_QUOTES, 'UTF-8') . "' />\n";
+				echo sprintf("<a href='%s?ref=%s'>\n", $advbanner[1], $reference);
+				echo "<img src='" . $advbanner[0] . "' alt='" . htmlentities(stripslashes($site),ENT_QUOTES, 'UTF-8') . "' title='Check out " . htmlentities(stripslashes($site),ENT_QUOTES, 'UTF-8') . "' />\n";
 				echo "</a>";
 			?></textarea>
 			<br/><br/>
