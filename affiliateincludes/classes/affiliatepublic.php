@@ -2,7 +2,7 @@
 // Front end and reporting part of the affiliate system
 class affiliate {
 
-	var $build = 6;
+	var $build = 7;
 
 	var $db;
 
@@ -80,6 +80,7 @@ class affiliate {
 	}
 
 	function install() {
+
 		if($this->db->get_var( "SHOW TABLES LIKE '" . $this->affiliatedata . "' ") != $this->affiliatedata) {
 			 $sql = "CREATE TABLE `" . $this->affiliatedata . "` (
 			  	`user_id` bigint(20) default NULL,
@@ -122,6 +123,54 @@ class affiliate {
 				)";
 
 			$this->db->query($sql);
+		}
+
+		if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
+
+			// We need to check for a transfer across from old options to new ones
+			$option = aff_get_option('affiliateheadings', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliateheadings');
+				aff_update_option('affiliateheadings', $option);
+			}
+
+			$option = aff_get_option('affiliatesettingstext', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliatesettingstext');
+				aff_update_option('affiliatesettingstext', $option);
+			}
+
+			$option = aff_get_option('affiliateadvancedsettingstext', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliateadvancedsettingstext');
+				aff_update_option('affiliateadvancedsettingstext', $option);
+			}
+
+			$option = aff_get_option('affiliateenablebanners', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliateenablebanners');
+				aff_update_option('affiliateenablebanners', $option);
+			}
+
+			$option = aff_get_option('affiliatelinkurl', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliatelinkurl');
+				aff_update_option('affiliatelinkurl', $option);
+			}
+
+			$option = aff_get_option('affiliatebannerlinks', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliatebannerlinks');
+				aff_update_option('affiliatebannerlinks', $option);
+			}
+
+			$option = aff_get_option('affiliate_activated_addons', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliate_activated_addons');
+				aff_update_option('affiliate_activated_addons', $option);
+			}
+
+
 		}
 
 	}
