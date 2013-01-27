@@ -9,8 +9,6 @@ Author URI: http://premium.wpmudev.org
 WDP ID: 106
 */
 
-
-
 require_once('affiliateincludes/includes/config.php');
 require_once('affiliateincludes/includes/functions.php');
 // Set up my location

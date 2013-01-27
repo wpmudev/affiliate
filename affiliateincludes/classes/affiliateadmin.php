@@ -3,7 +3,7 @@
 // Administration side of the affiliate system
 class affiliateadmin {
 
-	var $build = 6;
+	var $build = 7;
 
 	var $db;
 
@@ -136,6 +136,54 @@ class affiliateadmin {
 				)";
 
 			$this->db->query($sql);
+		}
+
+		if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
+
+			// We need to check for a transfer across from old options to new ones
+			$option = aff_get_option('affiliateheadings', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliateheadings');
+				aff_update_option('affiliateheadings', $option);
+			}
+
+			$option = aff_get_option('affiliatesettingstext', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliatesettingstext');
+				aff_update_option('affiliatesettingstext', $option);
+			}
+
+			$option = aff_get_option('affiliateadvancedsettingstext', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliateadvancedsettingstext');
+				aff_update_option('affiliateadvancedsettingstext', $option);
+			}
+
+			$option = aff_get_option('affiliateenablebanners', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliateenablebanners');
+				aff_update_option('affiliateenablebanners', $option);
+			}
+
+			$option = aff_get_option('affiliatelinkurl', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliatelinkurl');
+				aff_update_option('affiliatelinkurl', $option);
+			}
+
+			$option = aff_get_option('affiliatebannerlinks', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliatebannerlinks');
+				aff_update_option('affiliatebannerlinks', $option);
+			}
+
+			$option = aff_get_option('affiliate_activated_addons', false );
+			if( $option == false ) {
+				$option = get_blog_option(1, 'affiliate_activated_addons');
+				aff_update_option('affiliate_activated_addons', $option);
+			}
+
+
 		}
 
 
@@ -2169,7 +2217,7 @@ class affiliateadmin {
 			}
 		}
 
-		$active = get_option('affiliate_activated_addons', array());
+		$active = aff_get_option('affiliate_activated_addons', array());
 
 		switch(addslashes($action)) {
 
@@ -2180,7 +2228,7 @@ class affiliateadmin {
 									$found = array_search($key, $active);
 									if($found !== false) {
 										unset($active[$found]);
-										update_option('affiliate_activated_addons', array_unique($active));
+										aff_update_option('affiliate_activated_addons', array_unique($active));
 										return 5;
 									} else {
 										return 6;
@@ -2194,7 +2242,7 @@ class affiliateadmin {
 
 									if(!in_array($key, $active)) {
 										$active[] = $key;
-										update_option('affiliate_activated_addons', array_unique($active));
+										aff_update_option('affiliate_activated_addons', array_unique($active));
 										return 3;
 									} else {
 										return 4;
@@ -2213,7 +2261,7 @@ class affiliateadmin {
 											$active[] = $key;
 										}
 									}
-									update_option('affiliate_activated_addons', array_unique($active));
+									aff_update_option('affiliate_activated_addons', array_unique($active));
 								}
 								return 7;
 								break;
@@ -2283,7 +2331,7 @@ class affiliateadmin {
 
 				$plugins = get_affiliate_addons();
 
-				$active = get_option('affiliate_activated_addons', array());
+				$active = aff_get_option('affiliate_activated_addons', array());
 
 			?>
 
