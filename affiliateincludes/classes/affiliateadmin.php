@@ -564,7 +564,7 @@ class affiliateadmin {
 			if(isset($_POST['enable_affiliate']) && addslashes($_POST['enable_affiliate']) == 'yes') {
 				// Set up the affiliation details
 				// Store a record of the reference
-				$reference = $user->user_login . '-' . strrev(sprintf('%02d', $user_ID + 35));
+				$reference = $user->user_login . '-' . strrev(sprintf('%02d', $user_ID + (int) AFFILIATE_REFERENCE_KEY));
 				update_user_meta($user_ID, 'affiliate_reference', $reference);
 				update_user_meta($user_ID, 'affiliate_hash', 'aff' . md5(AUTH_SALT . $reference));
 			} else {
