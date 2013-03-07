@@ -2143,7 +2143,11 @@ class affiliateadmin {
 
 					// Check boxes
 					echo '<th scope="row" class="check-column">';
-					echo '<input type="checkbox" id="payment-'. $result->user_id . "-" . $result->period .'" name="allpayments[]" value="'. $result->user_id . "-" . $result->period .'" />';
+
+					if( $this->approved_affiliate( $result->user_id ) ) {
+						echo '<input type="checkbox" id="payment-'. $result->user_id . "-" . $result->period .'" name="allpayments[]" value="'. $result->user_id . "-" . $result->period .'" />';
+					}
+
 					echo '</th>';
 
 					echo '<td valign="top">';
@@ -2159,8 +2163,9 @@ class affiliateadmin {
 
 						// Quick links
 					$actions = array();
-					$actions[] = "<a href='?page=$page&amp;action=makepayment&amp;id=". $result->user_id . "-" . $result->period ."&amp;reportperiod=" . $reportperiod . "' class='edit'>" . __('Mark as Paid','affiliate') . "</a>";
-
+					if( $this->approved_affiliate( $result->user_id ) ) {
+						$actions[] = "<a href='?page=$page&amp;action=makepayment&amp;id=". $result->user_id . "-" . $result->period ."&amp;reportperiod=" . $reportperiod . "' class='edit'>" . __('Mark as Paid','affiliate') . "</a>";
+					}
 					$actions[] = "<a href='?page=affiliatesadminmanage&amp;subpage=users&amp;id=". $result->user_id . "' class='edit'>" . __('Manage Affiliate','affiliate') . "</a>";
 
 
@@ -2573,6 +2578,23 @@ class affiliateadmin {
 		}
 
 		return $actions;
+	}
+
+	// Function to return a true / false if the user is an affiliate that can be paid out.
+	function approved_affiliate( $user_id ) {
+		if(aff_get_option('affiliateenableapproval', 'no') == 'yes') {
+			$app = get_user_meta( $user_id, 'affiliateapproved', true );
+
+			if(!empty($app) && $app == 'yes') {
+				return true;
+			} else {
+				// Not set or a no
+				return false;
+			}
+
+		} else {
+			return true;
+		}
 	}
 
 }
