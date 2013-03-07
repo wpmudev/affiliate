@@ -1205,6 +1205,7 @@ class affiliateadmin {
 			aff_update_option('affiliateadvancedsettingstext', $_POST['affiliateadvancedsettingstext']);
 
 			aff_update_option('affiliateenablebanners', $_POST['affiliateenablebanners']);
+			aff_update_option('affiliateenableapproval', $_POST['affiliateenableapproval']);
 
 			if(!empty($_POST['affiliatelinkurl'])) {
 				aff_update_option('affiliatelinkurl', $_POST['affiliatelinkurl']);
@@ -1335,41 +1336,74 @@ class affiliateadmin {
 
 		echo '<div class="inside">';
 
+		echo '<table class="form-table">';
+		echo '<tr>';
+		echo '<th valign="top" scope="row">' . __('Enable Banners','affiliate') . '</th>';
+		echo '<td valign="top">';
+
+		echo "<select name='affiliateenablebanners'>";
+		echo "<option value='yes'";
+		if(aff_get_option('affiliateenablebanners', 'no') == 'yes') echo "selected = 'selected'";
+		echo '>' . __('Yes please', 'affiliate') . "</option>";
+
+		echo "<option value='no'";
+		if(aff_get_option('affiliateenablebanners', 'no') == 'no') echo "selected = 'selected'";
+		echo '>' . __('No thanks', 'affiliate') . "</option>";
+
+		echo "</select>";
+
+		echo '</td>';
+		echo '</tr>';
+
+		$banners = aff_get_option('affiliatebannerlinks');
+		if(is_array($banners)) {
+			$banners = implode("\n", $banners);
+		}
+
+		echo '<tr valign="top">';
+		echo '<th scope="row">' . __('Banner Image URLs (one per line)', 'affiliate') . '</th>';
+		echo '<td>';
+		echo '<textarea name="affiliatebannerlinks" id="affiliatebannerlinks" cols="60" rows="10">' . stripslashes( $banners ) . '</textarea>';
+		echo '</td>';
+		echo '</tr>';
+
+		echo '</table>';
+
+		echo '</div>';
+		echo '</div>';
+
+		echo '<div class="postbox">';
+		echo '<h3 class="hndle" style="cursor:auto;"><span>' . __('Approval Settings', 'affiliate') . '</span></h3>';
+
+		echo '<div class="inside">';
+
+			echo '<p class="description">';
+			_e('If you want to delay payouts to affiliates until they have been manually approved then set this option below. ','affiliate');
+			_e('Affiliates will still be able to generate leads, whilst they are waiting to be approved.','affiliate');
+			echo '</p>';
+
 			echo '<table class="form-table">';
 			echo '<tr>';
-			echo '<th valign="top" scope="row">' . __('Enable Banners','affiliate') . '</th>';
+			echo '<th valign="top" scope="row">' . __('Pay only approved affiliates','affiliate') . '</th>';
 			echo '<td valign="top">';
 
-			echo "<select name='affiliateenablebanners'>";
+			echo "<select name='affiliateenableapproval'>";
 			echo "<option value='yes'";
-			if(aff_get_option('affiliateenablebanners', 'no') == 'yes') echo "selected = 'selected'";
+			if(aff_get_option('affiliateenableapproval', 'no') == 'yes') echo "selected = 'selected'";
 			echo '>' . __('Yes please', 'affiliate') . "</option>";
 
 			echo "<option value='no'";
-			if(aff_get_option('affiliateenablebanners', 'no') == 'no') echo "selected = 'selected'";
+			if(aff_get_option('affiliateenableapproval', 'no') == 'no') echo "selected = 'selected'";
 			echo '>' . __('No thanks', 'affiliate') . "</option>";
 
 			echo "</select>";
 
 			echo '</td>';
 			echo '</tr>';
-
-			$banners = aff_get_option('affiliatebannerlinks');
-			if(is_array($banners)) {
-				$banners = implode("\n", $banners);
-			}
-
-			echo '<tr valign="top">';
-			echo '<th scope="row">' . __('Banner Image URLs (one per line)', 'affiliate') . '</th>';
-			echo '<td>';
-			echo '<textarea name="affiliatebannerlinks" id="affiliatebannerlinks" cols="60" rows="10">' . stripslashes( $banners ) . '</textarea>';
-			echo '</td>';
-			echo '</tr>';
-
 			echo '</table>';
 
-			echo '</div>';
-			echo '</div>';
+		echo '</div>';
+		echo '</div>';
 
 
 		do_action('affililate_settings_form');
@@ -1430,6 +1464,14 @@ class affiliateadmin {
 						check_admin_referer('find-user');
 						$userlist = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->users} WHERE user_login = %s", addslashes($_POST['username']) ) );
 						//print_r($userlist);
+						break;
+					case 'approveuser':
+						check_admin_referer('approve-user-' . $user_id);
+						if( $_POST['userapproved'] == 'yes' ) {
+							update_user_meta( $user_id, 'affiliateapproved', 'yes' );
+						} else {
+							update_user_meta( $user_id, 'affiliateapproved', 'no' );
+						}
 						break;
 				}
 
@@ -1602,6 +1644,50 @@ class affiliateadmin {
 			echo "<div id='referrerscolumn' style='width: 48%; margin-left: 2%; min-height: 400px; margin-top: 20px; background: #fff; float: left;'>";
 
 			echo "<div id='affdashgraph' style='height: 300px; width: 100%; background-color: #fff; margin-left: 0px; margin-right: 10px; margin-bottom: 20px;'>" . "</div>";
+
+
+			// Enable / disbale affiliate
+			if(aff_get_option('affiliateenableapproval', 'no') == 'yes') {
+				echo "<form action='' method='post'>";
+				wp_nonce_field( 'approve-user-' . $user_id );
+				echo '<input type="hidden" name="action" value="approveuser" />';
+				echo '<input type="hidden" name="userid" id="approveuserid" value="' . $user_id . '" />';
+				echo "<table class='widefat'>";
+
+				echo "<thead>";
+					echo "<tr>";
+					echo "<th scope='col'>";
+					echo  __('Approve user account','affiliate');
+					echo "</th>";
+					echo "<th scope='col' style='width: 3em;'>";
+					echo '&nbsp;';
+					echo "</th>";
+					echo "</tr>";
+				echo "</thead>";
+
+				echo "<tbody>";
+						$app = get_user_meta( $user_id, 'affiliateapproved', true );
+						if(empty($app)) $app = 'no';
+						echo "<tr class='' style=''>";
+						echo "<td style='padding: 5px;'>";
+						echo __('User is ','affiliate');
+						echo '<select name="userapproved" id="userapproved">';
+							echo '<option value="no" ' . selected($app, 'no', false) . '>' . __('not approved','affiliate') . "</option>";
+							echo '<option value="yes" ' . selected($app, 'yes', false) . '>' . __('approved','affiliate') . "</option>";
+						echo '</select>&nbsp;';
+						echo __(' to receive affiliate payments.','affiliate');
+						echo "</td>";
+						echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
+						echo "<input type='submit' name='approveaccount' value='" . __('Update','affiliate') . "' class='button-primary' />";
+						echo "</td>";
+						echo "</tr>";
+
+				echo "</tbody>";
+				echo "</table>";
+				echo "</form>";
+
+				echo "<br/>";
+			}
 
 			// Add credit and debits table and form
 

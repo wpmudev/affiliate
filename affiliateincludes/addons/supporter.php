@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Supporter add-on
-Description: Affiliate system plugin for the WordPress Supporter plugin
+Plugin Name: Pro-sites basic add-on
+Description: Affiliate system plugin for the WordPress Pro-Sites plugin
 Author: Barry (Incsub)
-Author URI: http://caffeinatedb.com
+Author URI: http://premium.wpmudev.org
 */
 
 add_action('wpmu_new_blog', 'affiliate_new_blog', 10, 2);
