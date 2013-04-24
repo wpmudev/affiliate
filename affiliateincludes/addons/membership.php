@@ -46,10 +46,36 @@ function affiliate_new_subscription( $tosub_id, $tolevel_id, $to_order, $user_id
 		$whole = get_option( "membership_whole_payment_" . $tosub_id, 0);
 		$partial = get_option( "membership_partial_payment_" . $tosub_id, 0);
 
-		if(!empty($whole) || !empty($partial)) {
-			$amount = $whole . '.' . $partial;
-		} else {
-			$amount = 0;
+		$type = get_option( "membership_payment_type_" . $sub_id, 'actual' );
+
+		switch( $type ) {
+			case 'actual':		if(!empty($whole) || !empty($partial)) {
+									$amount = $whole . '.' . $partial;
+								} else {
+									$amount = 0;
+								}
+								break;
+
+			case 'percentage':	// Calculate the charge for this subscription / level / order
+								$sub = new M_Subscription( $tosub_id );
+								$level = $sub->get_level_at( $tolevel_id, $to_order );
+								if(!empty($level)) {
+									// We have a level so we need to get the charge
+									$percentage = $whole . '.' . $partial;
+
+									$levelprice = $level->level_price;
+									$floatprice = floatval( $levelprice );
+									if($floatprice > 0) {
+										// We have a positive value to check against
+										$amount = ($floatprice / 100) * floatval($percentage);
+										$amount = round($amount, 2, PHP_ROUND_HALF_DOWN);
+									} else {
+										$amount = 0;
+									}
+								} else {
+									$amount = 0;
+								}
+								break;
 		}
 
 		do_action('affiliate_purchase', $aff, $amount);
@@ -72,10 +98,14 @@ function affiliate_membership_subscription_update( $sub_id ) {
 
 	update_option( "membership_whole_payment_" . $sub_id, (int) $_POST['membership_whole_payment'] );
 	update_option( "membership_partial_payment_" . $sub_id, (int) $_POST['membership_partial_payment'] );
+	update_option( "membership_payment_type_" . $sub_id, $_POST['membership_payment_type'] );
 
 }
 
 function affiliate_membership_subscription_settings( $sub_id ) {
+
+	global $M_options;
+
 	?>
 	<h3><?php _e('Affiliate settings','affiliate'); ?></h3>
 	<div class='sub-details'>
@@ -105,6 +135,14 @@ function affiliate_membership_subscription_settings( $sub_id ) {
 		}
     ?>
     </select>
+	&nbsp;
+	<?php
+	$membership_payment_type = get_option( "membership_payment_type_" . $sub_id, 'actual' );
+	?>
+	<select name="membership_payment_type">
+		<option value='actual' <?php selected( $membership_payment_type, 'actual');  ?>><?php echo esc_html($M_options['paymentcurrency']); ?></option>
+		<option value='percentage' <?php selected( $membership_payment_type, 'percentage');  ?>><?php _e('%','membership'); ?></option>
+	</select>
 	</div>
 	<?php
 }

@@ -6,11 +6,12 @@ Author: Barry (Incsub)
 Author URI: http://premium.wpmudev.org
 */
 
-add_action('wpmu_new_blog', 'affiliate_new_blog', 10, 2);
-add_action('supporter_payment_processed', 'affiliate_supporter_paid', 10, 3);
-add_action('affililate_settings_form', 'affiliate_supporter_payment_settings');
-add_action('affililate_settings_form_update', 'affiliate_supporter_payment_settings_update');
+add_action( 'wpmu_new_blog', 'affiliate_new_blog', 10, 2 );
+add_action( 'supporter_payment_processed', 'affiliate_supporter_paid', 10, 3 );
 add_filter( 'blog_template_exclude_settings', 'affiliate_supporter_new_blog_template_exclude' );
+
+add_action( 'psts_settings_page', 'affiliate_prosites_settings' );
+add_action( 'psts_settings_process', 'affiliate_prosites_settings_update' );
 
 /*
  * Exclude option from New Blog Template plugin copy
@@ -86,119 +87,7 @@ function affiliate_supporter_paid($bid, $amount, $supporterperiod) {
 	}
 }
 
-function affiliate_supporter_payment_settings() {
-
-	if(function_exists('get_site_option')) {
-		$getoption = 'get_site_option';
-	} else {
-		$getoption = 'get_option';
-	}
-
-	echo '<h3>' . __('Supporter payments settings', 'affiliate') . '</h3>';
-
-	echo '<table class="form-table">';
-	echo '<tr>';
-	echo '<th scope="row" valign="top">' . __('1 Month payment', 'affiliate') . '</th>';
-	echo '<td valign="top">'; ?>
-		<select name="supporter_1_whole_payment">
-		<?php
-			$supporter_1_whole_payment = $getoption( "supporter_1_whole_payment" );
-			$counter = 0;
-			for ( $counter = 1; $counter <= 300; $counter += 1) {
-                echo '<option value="' . $counter . '"' . ($counter == $supporter_1_whole_payment ? ' selected' : '') . '>' . $counter . '</option>' . "\n";
-			}
-        ?>
-        </select>
-        .
-		<select name="supporter_1_partial_payment">
-		<?php
-			$supporter_1_partial_payment = $getoption( "supporter_1_partial_payment" );
-			$counter = 0;
-            echo '<option value="00"' . ('00' == $supporter_1_partial_payment ? ' selected' : '') . '>00</option>' . "\n";
-			for ( $counter = 1; $counter <= 99; $counter += 1) {
-				if ( $counter < 10 ) {
-					$number = '0' . $counter;
-				} else {
-					$number = $counter;
-				}
-                echo '<option value="' . $number . '"' . ($number == $supporter_1_partial_payment ? ' selected' : '') . '>' . $number . '</option>' . "\n";
-			}
-        ?>
-        </select>
-        <br /><?php _e('Affiliate payment for one month.');
-	echo '</td>';
-	echo '</tr>';
-
-	echo '<tr>';
-	echo '<th scope="row" valign="top">' . __('3 Month payment', 'affiliate') . '</th>';
-	echo '<td valign="top">'; ?>
-		<select name="supporter_3_whole_payment">
-		<?php
-			$supporter_3_whole_payment = $getoption( "supporter_3_whole_payment" );
-			$counter = 0;
-			for ( $counter = 1; $counter <= 300; $counter += 1) {
-                echo '<option value="' . $counter . '"' . ($counter == $supporter_3_whole_payment ? ' selected' : '') . '>' . $counter . '</option>' . "\n";
-			}
-        ?>
-        </select>
-        .
-		<select name="supporter_3_partial_payment">
-		<?php
-			$supporter_3_partial_payment = $getoption( "supporter_3_partial_payment" );
-			$counter = 0;
-            echo '<option value="00"' . ('00' == $supporter_3_partial_payment ? ' selected' : '') . '>00</option>' . "\n";
-			for ( $counter = 1; $counter <= 99; $counter += 1) {
-				if ( $counter < 10 ) {
-					$number = '0' . $counter;
-				} else {
-					$number = $counter;
-				}
-                echo '<option value="' . $number . '"' . ($number == $supporter_3_partial_payment ? ' selected' : '') . '>' . $number . '</option>' . "\n";
-			}
-        ?>
-        </select>
-        <br /><?php _e('Affiliate payment for three months.');
-
-	echo '</td>';
-	echo '</tr>';
-
-	echo '<tr>';
-	echo '<th scope="row" valign="top">' . __('12 Month payment', 'affiliate') . '</th>';
-	echo '<td valign="top">'; ?>
-		<select name="supporter_12_whole_payment">
-		<?php
-			$supporter_12_whole_payment = $getoption( "supporter_12_whole_payment" );
-			$counter = 0;
-			for ( $counter = 1; $counter <= 300; $counter += 1) {
-                echo '<option value="' . $counter . '"' . ($counter == $supporter_12_whole_payment ? ' selected' : '') . '>' . $counter . '</option>' . "\n";
-			}
-        ?>
-        </select>
-        .
-		<select name="supporter_12_partial_payment">
-		<?php
-			$supporter_12_partial_payment = $getoption( "supporter_12_partial_payment" );
-			$counter = 0;
-            echo '<option value="00"' . ('00' == $supporter_12_partial_payment ? ' selected' : '') . '>00</option>' . "\n";
-			for ( $counter = 1; $counter <= 99; $counter += 1) {
-				if ( $counter < 10 ) {
-					$number = '0' . $counter;
-				} else {
-					$number = $counter;
-				}
-                echo '<option value="' . $number . '"' . ($number == $supporter_12_partial_payment ? ' selected' : '') . '>' . $number . '</option>' . "\n";
-			}
-        ?>
-        </select>
-        <br /><?php _e('Affiliate payment for twelve months.');
-
-	echo '</td>';
-	echo '</tr>';
-
-	echo '</table>';
-}
-
-function affiliate_supporter_payment_settings_update() {
+function affiliate_prosites_settings_update() {
 
 	if(function_exists('get_site_option')) {
 		$updateoption = 'update_site_option';
@@ -213,7 +102,152 @@ function affiliate_supporter_payment_settings_update() {
 	$updateoption( "supporter_12_whole_payment", $_POST[ 'supporter_12_whole_payment' ] );
 	$updateoption( "supporter_12_partial_payment", $_POST[ 'supporter_12_partial_payment' ] );
 
+	$updateoption( "supporter_1_payment_type", $_POST[ 'supporter_1_payment_type' ] );
+	$updateoption( "supporter_3_payment_type", $_POST[ 'supporter_3_payment_type' ] );
+	$updateoption( "supporter_12_payment_type", $_POST[ 'supporter_12_payment_type' ] );
+
 }
 
+function affiliate_prosites_settings() {
+
+	global $psts;
+
+	if(function_exists('get_site_option')) {
+		$getoption = 'get_site_option';
+	} else {
+		$getoption = 'get_option';
+	}
+
+	?>
+	<div class="postbox">
+        <h3 class="hndle" style="cursor:auto;"><span><?php _e('Affiliate Settings', 'affiliate') ?></span></h3>
+        <div class="inside">
+          <table class="form-table">
+            <tr valign="top">
+            <th scope="row"><?php _e('1 Month payment', 'affiliate'); ?></th>
+            <td>
+				<select name="supporter_1_whole_payment">
+				<?php
+					$supporter_1_whole_payment = $getoption( "supporter_1_whole_payment" );
+					$counter = 0;
+					for ( $counter = 0; $counter <= 300; $counter += 1) {
+		                echo '<option value="' . $counter . '"' . ($counter == $supporter_1_whole_payment ? ' selected' : '') . '>' . $counter . '</option>' . "\n";
+					}
+		        ?>
+		        </select>
+		        .
+				<select name="supporter_1_partial_payment">
+				<?php
+					$supporter_1_partial_payment = $getoption( "supporter_1_partial_payment" );
+					$counter = 0;
+		            echo '<option value="00"' . ('00' == $supporter_1_partial_payment ? ' selected' : '') . '>00</option>' . "\n";
+					for ( $counter = 1; $counter <= 99; $counter += 1) {
+						if ( $counter < 10 ) {
+							$number = '0' . $counter;
+						} else {
+							$number = $counter;
+						}
+		                echo '<option value="' . $number . '"' . ($number == $supporter_1_partial_payment ? ' selected' : '') . '>' . $number . '</option>' . "\n";
+					}
+		        ?>
+		        </select>
+				&nbsp;
+				<?php
+				$supporter_1_payment_type = $getoption( "supporter_1_payment_type", 'actual' );
+				?>
+				<select name="supporter_1_payment_type">
+					<option value='actual' <?php selected( $supporter_1_payment_type, 'actual');  ?>><?php echo esc_html($psts->get_setting('currency')); ?></option>
+					<option value='percentage' <?php selected( $supporter_1_payment_type, 'percentage');  ?>><?php _e('%','membership'); ?></option>
+				</select>
+		        <br /><?php _e('Affiliate payment for one month.'); ?>
+            </td>
+            </tr>
+
+			<tr valign="top">
+            <th scope="row"><?php _e('3 Month payment', 'affiliate'); ?></th>
+            <td>
+				<select name="supporter_3_whole_payment">
+				<?php
+					$supporter_3_whole_payment = $getoption( "supporter_3_whole_payment" );
+					$counter = 0;
+					for ( $counter = 0; $counter <= 300; $counter += 1) {
+		                echo '<option value="' . $counter . '"' . ($counter == $supporter_3_whole_payment ? ' selected' : '') . '>' . $counter . '</option>' . "\n";
+					}
+		        ?>
+		        </select>
+		        .
+				<select name="supporter_3_partial_payment">
+				<?php
+					$supporter_3_partial_payment = $getoption( "supporter_3_partial_payment" );
+					$counter = 0;
+		            echo '<option value="00"' . ('00' == $supporter_3_partial_payment ? ' selected' : '') . '>00</option>' . "\n";
+					for ( $counter = 1; $counter <= 99; $counter += 1) {
+						if ( $counter < 10 ) {
+							$number = '0' . $counter;
+						} else {
+							$number = $counter;
+						}
+		                echo '<option value="' . $number . '"' . ($number == $supporter_3_partial_payment ? ' selected' : '') . '>' . $number . '</option>' . "\n";
+					}
+		        ?>
+		        </select>
+				&nbsp;
+				<?php
+				$supporter_3_payment_type = $getoption( "supporter_3_payment_type", 'actual' );
+				?>
+				<select name="supporter_3_payment_type">
+					<option value='actual' <?php selected( $supporter_3_payment_type, 'actual');  ?>><?php echo esc_html($psts->get_setting('currency')); ?></option>
+					<option value='percentage' <?php selected( $supporter_3_payment_type, 'percentage');  ?>><?php _e('%','membership'); ?></option>
+				</select>
+		        <br /><?php _e('Affiliate payment for three months.'); ?>
+            </td>
+            </tr>
+
+			<tr valign="top">
+            <th scope="row"><?php _e('12 Month payment', 'affiliate'); ?></th>
+            <td>
+				<select name="supporter_12_whole_payment">
+				<?php
+					$supporter_12_whole_payment = $getoption( "supporter_12_whole_payment" );
+					$counter = 0;
+					for ( $counter = 0; $counter <= 300; $counter += 1) {
+		                echo '<option value="' . $counter . '"' . ($counter == $supporter_12_whole_payment ? ' selected' : '') . '>' . $counter . '</option>' . "\n";
+					}
+		        ?>
+		        </select>
+		        .
+				<select name="supporter_12_partial_payment">
+				<?php
+					$supporter_12_partial_payment = $getoption( "supporter_12_partial_payment" );
+					$counter = 0;
+		            echo '<option value="00"' . ('00' == $supporter_12_partial_payment ? ' selected' : '') . '>00</option>' . "\n";
+					for ( $counter = 1; $counter <= 99; $counter += 1) {
+						if ( $counter < 10 ) {
+							$number = '0' . $counter;
+						} else {
+							$number = $counter;
+						}
+		                echo '<option value="' . $number . '"' . ($number == $supporter_12_partial_payment ? ' selected' : '') . '>' . $number . '</option>' . "\n";
+					}
+		        ?>
+		        </select>
+				&nbsp;
+				<?php
+				$supporter_12_payment_type = $getoption( "supporter_12_payment_type", 'actual' );
+				?>
+				<select name="supporter_12_payment_type">
+					<option value='actual' <?php selected( $supporter_12_payment_type, 'actual');  ?>><?php echo esc_html($psts->get_setting('currency')); ?></option>
+					<option value='percentage' <?php selected( $supporter_12_payment_type, 'percentage');  ?>><?php _e('%','membership'); ?></option>
+				</select>
+		        <br /><?php _e('Affiliate payment for twelve months.'); ?>
+            </td>
+            </tr>
+
+          </table>
+        </div>
+      </div>
+	<?php
+
+}
 
 ?>
