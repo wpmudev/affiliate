@@ -209,7 +209,7 @@ class affiliate {
 	function record_click($user_id) {
 
 		// Record the click in the affiliate table - v0.2+
-		$period = date(Ym);
+		$period = date('Ym');
 
 		$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, uniques, lastupdated) VALUES (%d, %s, %d, now()) ON DUPLICATE KEY UPDATE uniques = uniques + %d", $user_id, $period, 1, 1 );
 		$queryresult = $this->db->query($sql);
@@ -332,7 +332,12 @@ class affiliate {
 					do_action( 'affiliate_click', $affiliate);
 
 					// Grab the referrer
-					$referrer = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+					if(isset($_SERVER['HTTP_REFERER'])) {
+						$referrer = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+					} else {
+						$referrer = '';
+					}
+
 					do_action( 'affiliate_referrer', $affiliate, $referrer );
 
 					// Write the affiliate hash out - valid for 30 days.

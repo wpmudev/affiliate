@@ -62,12 +62,14 @@ function affiliate_new_subscription( $tosub_id, $tolevel_id, $to_order, $user_id
 								if(!empty($level)) {
 									// We have a level so we need to get the charge
 									$percentage = $whole . '.' . $partial;
-
 									$levelprice = $level->level_price;
+
 									$floatprice = floatval( $levelprice );
-									if($floatprice > 0) {
+									$floatpercentage = floatval( $percentage );
+
+									if( $floatprice > 0 && $floatpercentage > 0 ) {
 										// We have a positive value to check against
-										$amount = ($floatprice / 100) * floatval($percentage);
+										$amount = ($floatprice / 100) * floatval($floatpercentage);
 										$amount = round($amount, 2, PHP_ROUND_HALF_DOWN);
 									} else {
 										$amount = 0;

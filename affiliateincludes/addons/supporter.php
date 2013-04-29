@@ -7,7 +7,7 @@ Author URI: http://premium.wpmudev.org
 */
 
 add_action( 'wpmu_new_blog', 'affiliate_new_blog', 10, 2 );
-add_action( 'supporter_payment_processed', 'affiliate_supporter_paid', 10, 3 );
+add_action( 'supporter_payment_processed', 'affiliate_supporter_paid', 10, 4 );
 add_filter( 'blog_template_exclude_settings', 'affiliate_supporter_new_blog_template_exclude' );
 
 add_action( 'psts_settings_page', 'affiliate_prosites_settings' );
@@ -43,7 +43,7 @@ function affiliate_new_blog( $blog_id, $user_id ) {
 
 }
 
-function affiliate_supporter_paid($bid, $amount, $supporterperiod) {
+function affiliate_supporter_paid($bid, $periodamount, $period, $level) {
 
 	if(function_exists('get_site_option')) {
 		$getoption = 'get_site_option';
@@ -61,14 +61,62 @@ function affiliate_supporter_paid($bid, $amount, $supporterperiod) {
 
 	if($aff && $paid != 'yes') {
 
-		switch($supporterperiod) {
+		switch($period) {
 
-			case '1':	$amount = $getoption( "supporter_1_whole_payment", 0 ) . '.' . $getoption( "supporter_1_partial_payment", 0 );
+			case '1':	$supporter_1_payment_type = $getoption( "supporter_1_payment_type", 'actual' );
+						$affamount = $getoption( "supporter_1_whole_payment", 0 ) . '.' . $getoption( "supporter_1_partial_payment", 0 );
+
+						if($supporter_1_payment_type == 'percentage') {
+							$floatpercentage = floatval( $affamount );
+							$floatamount = floatval( $periodamount );
+							// We are on a percentage payment so calculate the amount we need to charge
+
+							if($floatamount > 0 && $floatpercentage > 0) {
+								// We have a positive value to check against - need to check if there is an affiliate
+								$amount = ($floatamount / 100) * floatval($floatpercentage);
+								$amount = round($amount, 2, PHP_ROUND_HALF_DOWN);
+							} else {
+								$amount = 0;
+							}
+						}
 						break;
-			case '3':	$amount = $getoption( "supporter_3_whole_payment", 0 ) . '.' . $getoption( "supporter_3_partial_payment", 0 );
+
+			case '3':	$supporter_3_payment_type = $getoption( "supporter_3_payment_type", 'actual' );
+						$affamount = $getoption( "supporter_3_whole_payment", 0 ) . '.' . $getoption( "supporter_3_partial_payment", 0 );
+
+						if($supporter_3_payment_type == 'percentage') {
+							$floatpercentage = floatval( $affamount );
+							$floatamount = floatval( $periodamount );
+							// We are on a percentage payment so calculate the amount we need to charge
+
+							if($floatamount > 0 && $floatpercentage > 0) {
+								// We have a positive value to check against - need to check if there is an affiliate
+								$amount = ($floatamount / 100) * floatval($floatpercentage);
+								$amount = round($amount, 2, PHP_ROUND_HALF_DOWN);
+							} else {
+								$amount = 0;
+							}
+						}
 						break;
-			case '12':	$amount = $getoption( "supporter_12_whole_payment", 0 ) . '.' . $getoption( "supporter_12_partial_payment", 0 );
+
+			case '12':	$supporter_12_payment_type = $getoption( "supporter_12_payment_type", 'actual' );
+						$affamount = $getoption( "supporter_12_whole_payment", 0 ) . '.' . $getoption( "supporter_12_partial_payment", 0 );
+
+						if($supporter_12_payment_type == 'percentage') {
+							$floatpercentage = floatval( $affamount );
+							$floatamount = floatval( $periodamount );
+							// We are on a percentage payment so calculate the amount we need to charge
+
+							if($floatamount > 0 && $floatpercentage > 0) {
+								// We have a positive value to check against - need to check if there is an affiliate
+								$amount = ($floatamount / 100) * floatval($floatpercentage);
+								$amount = round($amount, 2, PHP_ROUND_HALF_DOWN);
+							} else {
+								$amount = 0;
+							}
+						}
 						break;
+
 			default:
 						$amount = 0;
 						break;
