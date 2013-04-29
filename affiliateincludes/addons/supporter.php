@@ -78,6 +78,8 @@ function affiliate_supporter_paid($bid, $periodamount, $period, $level) {
 							} else {
 								$amount = 0;
 							}
+						} else {
+							$amount = $affamount;
 						}
 						break;
 
@@ -96,6 +98,8 @@ function affiliate_supporter_paid($bid, $periodamount, $period, $level) {
 							} else {
 								$amount = 0;
 							}
+						} else {
+							$amount = $affamount;
 						}
 						break;
 
@@ -114,6 +118,8 @@ function affiliate_supporter_paid($bid, $periodamount, $period, $level) {
 							} else {
 								$amount = 0;
 							}
+						} else {
+							$amount = $affamount;
 						}
 						break;
 

@@ -226,7 +226,7 @@ class affiliate {
 
 			if($user_id) {
 
-				$period = date(Ym);
+				$period = date('Ym');
 
 				$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, signups, lastupdated) VALUES (%d, %s, %d, now()) ON DUPLICATE KEY UPDATE signups = signups + %d", $user_id, $period, 1, 1 );
 				$queryresult = $this->db->query($sql);
@@ -242,7 +242,7 @@ class affiliate {
 
 		if( !empty($user_id) && is_numeric($user_id) && $amount ) {
 
-			$period = date(Ym);
+			$period = date('Ym');
 
 			// Need to get the amount paid and calculate the commision
 			$amount = number_format($amount, 2);
@@ -262,7 +262,7 @@ class affiliate {
 
 		if( !empty($user_id) && is_numeric($user_id) && $amount ) {
 
-			$period = date(Ym);
+			$period = date('Ym');
 
 			// Need to get the amount paid and calculate the commision
 			$amount = number_format($amount, 2);
@@ -278,7 +278,7 @@ class affiliate {
 
 		if( !empty($user_id) && is_numeric($user_id) && $amount ) {
 
-			$period = date(Ym);
+			$period = date('Ym');
 
 			// Need to get the amount paid and calculate the commision
 			$amount = number_format($amount, 2);
@@ -294,7 +294,7 @@ class affiliate {
 
 		if( !empty($user_id) && is_numeric($user_id) && $url ) {
 
-			$period = date(Ym);
+			$period = date('Ym');
 
 			// Need to get the amount paid and calculate the commision
 			$amount = number_format($amount, 2);
