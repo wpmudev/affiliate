@@ -46,7 +46,7 @@ function affiliate_new_subscription( $tosub_id, $tolevel_id, $to_order, $user_id
 		$whole = get_option( "membership_whole_payment_" . $tosub_id, 0);
 		$partial = get_option( "membership_partial_payment_" . $tosub_id, 0);
 
-		$type = get_option( "membership_payment_type_" . $sub_id, 'actual' );
+		$type = get_option( "membership_payment_type_" . $tosub_id, 'actual' );
 
 		switch( $type ) {
 			case 'actual':		if(!empty($whole) || !empty($partial)) {
@@ -59,6 +59,7 @@ function affiliate_new_subscription( $tosub_id, $tolevel_id, $to_order, $user_id
 			case 'percentage':	// Calculate the charge for this subscription / level / order
 								$sub = new M_Subscription( $tosub_id );
 								$level = $sub->get_level_at( $tolevel_id, $to_order );
+
 								if(!empty($level)) {
 									// We have a level so we need to get the charge
 									$percentage = $whole . '.' . $partial;
@@ -69,7 +70,7 @@ function affiliate_new_subscription( $tosub_id, $tolevel_id, $to_order, $user_id
 
 									if( $floatprice > 0 && $floatpercentage > 0 ) {
 										// We have a positive value to check against
-										$amount = ($floatprice / 100) * floatval($floatpercentage);
+										$amount = ($floatprice / 100) * $floatpercentage;
 										$amount = round($amount, 2, PHP_ROUND_HALF_DOWN);
 									} else {
 										$amount = 0;

@@ -73,7 +73,7 @@ function affiliate_supporter_paid($bid, $periodamount, $period, $level) {
 
 							if($floatamount > 0 && $floatpercentage > 0) {
 								// We have a positive value to check against - need to check if there is an affiliate
-								$amount = ($floatamount / 100) * floatval($floatpercentage);
+								$amount = ($floatamount / 100) * $floatpercentage;
 								$amount = round($amount, 2, PHP_ROUND_HALF_DOWN);
 							} else {
 								$amount = 0;
@@ -93,7 +93,7 @@ function affiliate_supporter_paid($bid, $periodamount, $period, $level) {
 
 							if($floatamount > 0 && $floatpercentage > 0) {
 								// We have a positive value to check against - need to check if there is an affiliate
-								$amount = ($floatamount / 100) * floatval($floatpercentage);
+								$amount = ($floatamount / 100) * $floatpercentage;
 								$amount = round($amount, 2, PHP_ROUND_HALF_DOWN);
 							} else {
 								$amount = 0;
@@ -113,7 +113,7 @@ function affiliate_supporter_paid($bid, $periodamount, $period, $level) {
 
 							if($floatamount > 0 && $floatpercentage > 0) {
 								// We have a positive value to check against - need to check if there is an affiliate
-								$amount = ($floatamount / 100) * floatval($floatpercentage);
+								$amount = ($floatamount / 100) * $floatpercentage;
 								$amount = round($amount, 2, PHP_ROUND_HALF_DOWN);
 							} else {
 								$amount = 0;
