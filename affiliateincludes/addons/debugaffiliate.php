@@ -10,10 +10,6 @@ class affiliate_debugger {
 
 	var $db;
 
-	function affiliate_debugger() {
-		$this->__construct();
-	}
-
 	function __construct() {
 
 		global $wpdb;
@@ -25,6 +21,10 @@ class affiliate_debugger {
 
 		// Add the debugging message
 		add_action('wp_footer', array( &$this, 'add_affiliate_notice'), 99 );
+	}
+
+	function affiliate_debugger() {
+		$this->__construct();
 	}
 
 	function add_affiliate_styles() {
