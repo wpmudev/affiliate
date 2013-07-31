@@ -133,4 +133,16 @@ function aff_delete_option( $option ) {
 	}
 }
 
+function aff_build_reference( $user ) {
+
+	if(defined('AFFILIATE_REFERENCE_PREFIX') && AFFILIATE_REFERENCE_PREFIX != '' ) {
+		$ref = AFFILIATE_REFERENCE_PREFIX . '-' . strrev(sprintf('%02d', $user->ID + (int) AFFILIATE_REFERENCE_KEY));
+	} else {
+		$ref = $user->user_login . '-' . strrev(sprintf('%02d', $user->ID + (int) AFFILIATE_REFERENCE_KEY));
+	}
+
+	return $ref;
+
+}
+
 ?>

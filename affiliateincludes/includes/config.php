@@ -18,4 +18,7 @@ if(!defined('AFFILIATE_COOKIE_DAYS')) define('AFFILIATE_COOKIE_DAYS',30);
 // The key used to make the affiliate reference code
 if(!defined('AFFILIATE_REFERENCE_KEY')) define('AFFILIATE_REFERENCE_KEY',35);
 
+if(!defined('AFFILIATE_REFERENCE_PREFIX')) define('AFFILIATE_REFERENCE_PREFIX', '');
+
+
 ?>
