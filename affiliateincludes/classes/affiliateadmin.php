@@ -1830,115 +1830,34 @@ class affiliateadmin {
 			echo "<div style='clear: both;'></div>";
 		}
  		else {
-			// Get the page
+			// Get the listing page
+			require_once('affiliates-list-table.php');
+
+			$aff_list_table = new Affiliates_List_Table();
+
+			$pagenum = $aff_list_table->get_pagenum();
+			$aff_list_table->prepare_items();
+
+			$total_pages = $aff_list_table->get_pagination_arg( 'total_pages' );
+			if ( $pagenum > $total_pages && $total_pages > 0 ) {
+				wp_redirect( add_query_arg( 'paged', $total_pages ) );
+				exit;
+			}
+
 			$page = addslashes($_GET['page']);
 
-			// Have we submitted a query?
-			if(isset($_POST['action'])) {
+			$aff_list_table->views(); ?>
 
-				switch(addslashes($_POST['action'])) {
+			<form action="" method="get">
+			<?php
+				echo '<input type="hidden" name="page" value="' . $page . '" />';
 
-					case 'findusers':
-						check_admin_referer('find-user');
-						$userlist = $this->db->get_results( "SELECT * FROM {$this->db->users} WHERE user_login LIKE '%" . mysql_real_escape_string($_POST['username']) . "%'" );
-						break;
-				}
+				$aff_list_table->search_box( __( 'Search Users' ), 'user' );
+			?>
 
-			}
-
-			// No user sent so display a pick user form
-			echo '<form id="form-affiliate-list" action="" method="post">';
-			echo '<input type="hidden" name="action" value="findusers" />';
-			echo '<input type="hidden" name="page" value="' . $page . '" />';
-			wp_nonce_field( 'find-user' );
-
-			echo '<div class="tablenav">';
-
-				echo '<div class="alignleft">';
-
-				echo __('Find user with username','affiliate') . '&nbsp;';
-				if(!empty($_POST['username'])) {
-					echo '<input type="text" name="username" value="' . addslashes($_POST['username']) . '" />';
-				} else {
-					echo '<input type="text" name="username" value="" />';
-				}
-				echo '&nbsp;';
-				echo '<input type="submit" value="' . __('Search') . '" name="allaction_search" class="button-secondary" />';
-
-				echo '<br class="clear" />';
-				echo '</div>';
-
-			echo '</div>';
-
-
-			echo '<table cellpadding="3" cellspacing="3" class="widefat" style="width: 100%;">';
-			echo '<thead>';
-			echo '<tr>';
-
-					echo '<th scope="col" class="check-column"></th>';
-
-					echo '<th scope="col">';
-					echo __('Username','affiliate');
-					echo '</th>';
-
-			echo '</tr>';
-			echo '</thead>';
-
-			echo '<tbody id="the-list">';
-			if(!empty($userlist)) {
-				foreach($userlist as $result) {
-
-					echo "<tr class=''>";
-
-					// Check boxes
-					echo '<th scope="row" class="check-column">';
-					echo '</th>';
-
-					echo '<td valign="top">';
-					$user = get_userdata($result->ID);
-					echo $user->user_login;
-					echo " ( " . get_user_meta($result->ID, 'affiliate_paypal', true) . " )";
-
-					// Get the affiliate website listing
-					$referrer = get_user_meta($result->ID, 'affiliate_referrer', true);
-					if(!empty($referrer)) {
-						echo " " . __('linked to ', 'affiliate') . "<a href='http://{$referrer}'>" . $referrer . "</a>";
-					}
-
-						// Quick links
-					$actions = array();
-
-					$actions[] = "<a href='?page=$page&amp;subpage=users&amp;id=". $result->ID . "' class='edit'>" . __('Manage Affiliate','affiliate') . "</a>";
-
-					echo '<div class="row-actions">';
-					echo implode(' | ', $actions);
-					echo '</div>';
-					echo '</td>';
-					echo '</tr>';
-				}
-			} else {
-
-				echo "<tr class=''>";
-
-				echo '<td colspan="2" valign="top">';
-				echo __('There are no users matching the search criteria.','affiliate');
-				echo '</td>';
-				echo '</tr>';
-			}
-
-			echo '</tbody>';
-			echo '<tfoot>';
-			echo '<tr>';
-				echo '<th scope="col" class="check-column"></th>';
-					echo '<th scope="col">';
-					echo __('Username','affiliate');
-					echo '</th>';
-				echo '</tr>';
-			echo '</tfoot>';
-
-			echo '</table>';
-
-			echo '</form>';
+			<?php $aff_list_table->display(); ?>
+			</form>
+			<?php
 		}
 
 
