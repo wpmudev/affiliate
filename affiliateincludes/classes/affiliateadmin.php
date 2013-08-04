@@ -387,30 +387,36 @@ class affiliateadmin {
 		$user = wp_get_current_user();
 		$user_ID = $user->ID;
 
+		if(function_exists('is_network_admin') && is_network_admin()) {
+			$capabilty = 'manage_network_options';
+		} else {
+			$capabilty = 'manage_options';
+		}
+
 		// Add administration menu
 		if(is_multisite()) {
 			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
 				// we're activated site wide so put the admin menu in the network area
 				if(function_exists('is_network_admin')) {
 					if(is_network_admin()) {
-						add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
+						add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), $capabilty, 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
 					}
 				}
 			} else {
 				// we're only activated on a blog level so put the admin menu in the main area
 				if(!function_exists('is_network_admin')) {
-					add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
+					add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), $capabilty, 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
 				} elseif(!is_network_admin()) {
-					add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
+					add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), $capabilty, 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
 				}
 			}
 		} else {
-			add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), 'manage_options', 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
+			add_menu_page( __('Affiliates', 'affiliate'), __('Affiliates', 'affiliate'), $capabilty, 'affiliatesadmin', array(&$this,'handle_affiliates_panel'), affiliate_url('affiliateincludes/images/affiliatelogo.png'));
 		}
 
-		add_submenu_page( 'affiliatesadmin', __('Manage Affiliates', 'affiliate'), __('Manage Affiliates', 'affiliate'), 'manage_options', 'affiliatesadminmanage', array(&$this,'handle_affiliates_panel') );
-		add_submenu_page( 'affiliatesadmin', __('Settings', 'affiliate'), __('Settings', 'affiliate'), 'manage_options', 'affiliatesadminsettings', array(&$this,'handle_affiliates_panel') );
-		add_submenu_page( 'affiliatesadmin', __('Add-ons', 'affiliate'), __('Add-ons', 'affiliate'), 'manage_options', 'affiliatesadminaddons', array(&$this,'handle_affiliates_panel') );
+		add_submenu_page( 'affiliatesadmin', __('Manage Affiliates', 'affiliate'), __('Manage Affiliates', 'affiliate'), $capabilty, 'affiliatesadminmanage', array(&$this,'handle_affiliates_panel') );
+		add_submenu_page( 'affiliatesadmin', __('Settings', 'affiliate'), __('Settings', 'affiliate'), $capabilty, 'affiliatesadminsettings', array(&$this,'handle_affiliates_panel') );
+		add_submenu_page( 'affiliatesadmin', __('Add-ons', 'affiliate'), __('Add-ons', 'affiliate'), $capabilty, 'affiliatesadminaddons', array(&$this,'handle_affiliates_panel') );
 
 		if(isset($submenu['affiliatesadmin'])) {
 			$submenu['affiliatesadmin'][0][0] = __('Affiliate Reports', 'affiliate');
