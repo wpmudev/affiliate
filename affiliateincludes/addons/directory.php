@@ -88,7 +88,7 @@ function dr_affiliate_new_paid( $affiliate_settings, $user_id, $billing_type ) {
 function dr_affiliate_settings( $affiliate_settings ) {
 
     $dr_recurring_whole_payment     = ( isset( $affiliate_settings['cost']['dr_recurring_whole_payment'] ) ) ? $affiliate_settings['cost']['dr_recurring_whole_payment'] : '0';
-    $dr_recurring_partial_payment   = ( isset( $affiliate_settings['cost']['dr_recurring_partial_payment'] ) ) ? $affiliate_settings['cost']['dr_recurring_partial_payment'] : '00';
+    $dr_recurring_partial_payment   = ( isset( $affiliate_settings['cost']['dr_recurring_partial_payment'] ) ) ? $affiliate_settings['cost']['dr_recurring_partial_payment'] : '00';		    	     						
     $dr_one_time_whole_payment      = ( isset( $affiliate_settings['cost']['dr_one_time_whole_payment'] ) ) ? $affiliate_settings['cost']['dr_one_time_whole_payment'] : '0';
     $dr_one_time_partial_payment    = ( isset( $affiliate_settings['cost']['dr_one_time_partial_payment'] ) ) ? $affiliate_settings['cost']['dr_one_time_partial_payment'] : '00';
 
