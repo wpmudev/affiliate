@@ -92,9 +92,7 @@ class affiliate {
 			  	`credits` decimal(10,2) default '0.00',
 			  	`payments` decimal(10,2) default '0.00',
 			  	`lastupdated` datetime default '0000-00-00 00:00:00',
-			  	UNIQUE KEY `user_period` (`user_id`,`period`),
-			  	KEY `period` (`period`),
-			  	KEY `user_id` (`user_id`)
+			  	UNIQUE KEY `user_period` (`user_id`,`period`)
 				)";
 
 			$this->db->query($sql);
