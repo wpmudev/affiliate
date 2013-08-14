@@ -95,6 +95,17 @@ class affiliateadmin {
 
 
 		if($this->db->get_var( "SHOW TABLES LIKE '" . $this->affiliatedata . "' ") != $this->affiliatedata) {
+
+			$charset_collate = '';
+
+			if ( ! empty($this->db->charset) ) {
+				$charset_collate = "DEFAULT CHARACTER SET " . $this->db->charset;
+			}
+
+			if ( ! empty($this->db->collate) ) {
+				$charset_collate .= " COLLATE " . $this->db->collate;
+			}
+
 			 $sql = "CREATE TABLE `" . $this->affiliatedata . "` (
 			  	`user_id` bigint(20) default NULL,
 			  	`period` varchar(6) default NULL,
@@ -106,7 +117,7 @@ class affiliateadmin {
 			  	`payments` decimal(10,2) default '0.00',
 			  	`lastupdated` datetime default '0000-00-00 00:00:00',
 			  	UNIQUE KEY `user_period` (`user_id`,`period`)
-				)";
+				) $charset_collate;";
 
 			$this->db->query($sql);
 
@@ -116,7 +127,7 @@ class affiliateadmin {
 			  	`url` varchar(250) default NULL,
 			  	`referred` bigint(20) default '0',
 			  	UNIQUE KEY `user_id` (`user_id`,`period`,`url`)
-				)";
+				) $charset_collate;";
 
 			$this->db->query($sql);
 		}
@@ -131,7 +142,7 @@ class affiliateadmin {
 				  `amount` decimal(10,2) DEFAULT NULL,
 				  KEY `user_id` (`user_id`),
 				  KEY `period` (`period`)
-				)";
+				) $charset_collate;";
 
 			$this->db->query($sql);
 		}
