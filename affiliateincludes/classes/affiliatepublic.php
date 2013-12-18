@@ -2,7 +2,7 @@
 // Front end and reporting part of the affiliate system
 class affiliate {
 
-	var $build = 7;
+	//var $build = 7;
 
 	var $db;
 
@@ -31,8 +31,8 @@ class affiliate {
 		$this->detect_location(1);
 
 		foreach ($this->tables as $table) {
-			if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
-				// we're activated site wide
+			if ((affiliate_is_plugin_active_for_network()) 
+			 && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {// we're activated site wide
 				$this->$table = $this->db->base_prefix . $table;
 			} else {
 				if(defined('AFFILIATE_USE_BASE_PREFIX_IF_EXISTS') && AFFILIATE_USE_BASE_PREFIX_IF_EXISTS == 'yes' && !empty($this->db->base_prefix)) {
@@ -44,31 +44,37 @@ class affiliate {
 			}
 		}
 
-		$installed = aff_get_option('Aff_Installed', false);
+		//$installed = aff_get_option('Aff_Installed', false);
 
-		if($installed === false || $installed != $this->build) {
-			$this->install();
+		//if($installed === false || $installed != $this->build) {
+		//	$this->install();
+		//
+		//	aff_update_option('Aff_Installed', $this->build);
+		//}
 
-			aff_update_option('Aff_Installed', $this->build);
-		}
-
-		register_activation_hook(__FILE__, array(&$this, 'install'));
+		//register_activation_hook(__FILE__, array(&$this, 'install'));
 
 		add_action( 'init', array(&$this, 'handle_affiliate_link' ) );
 
 		// Global generic functions
-		add_action('affiliate_click', array(&$this, 'record_click'), 10, 1);
-		add_action('affiliate_signup', array(&$this, 'record_signup'), 10);
-		add_action('affiliate_purchase', array(&$this, 'record_complete'), 10, 5);
+		add_action('affiliate_click', array(&$this, 'record_click'), 10, 6);
+		add_action('affiliate_signup', array(&$this, 'record_signup'), 10, 6);
+		add_action('affiliate_purchase', array(&$this, 'record_purchase'), 10, 6);
 
 		add_action('affiliate_credit', array(&$this, 'record_credit'), 10, 2);
 		add_action('affiliate_debit', array(&$this, 'record_debit'), 10, 2);
 
 		add_action('affiliate_referrer', array(&$this, 'record_referrer'), 10, 2);
 
-		// Include affiliate plugins
-		load_affiliate_addons();
+		add_action('user_register', array(&$this, 'user_register'), 10);
+		add_action('wpmu_activate_user', array(&$this, 'wpmu_activate_user'), 10, 3);
 
+		add_filter('add_signup_meta', array(&$this, 'add_signup_meta'), 10);
+		add_action('wpmu_activate_blog', array(&$this, 'wpmu_activate_blog'), 10, 5);
+
+		// Include affiliate plugins 
+		if (!is_admin()) // We only need to load if we are not in admin. 
+			load_affiliate_addons();
 	}
 
 	function __destruct() {
@@ -80,7 +86,8 @@ class affiliate {
 	}
 
 	function install() {
-
+		return; // The install is done via the admin class on plugin activation. WTF is this doing here?
+		
 		// This shouldn't really need to be called as the admin area will set up the tables - but just in case
 		if($this->db->get_var( "SHOW TABLES LIKE '" . $this->affiliatedata . "' ") != $this->affiliatedata) {
 
@@ -135,7 +142,8 @@ class affiliate {
 			$this->db->query($sql);
 		}
 
-		if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
+		if ((affiliate_is_plugin_active_for_network()) 
+		 && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
 
 			// We need to check for a transfer across from old options to new ones
 			$option = aff_get_option('affiliateheadings', false );
@@ -179,10 +187,7 @@ class affiliate {
 				$option = get_blog_option(1, 'affiliate_activated_addons');
 				aff_update_option('affiliate_activated_addons', $option);
 			}
-
-
 		}
-
 	}
 
 	function detect_location($level = 1) {
@@ -214,102 +219,240 @@ class affiliate {
 
 	}
 
-	// Recording of affiliate information
+	function user_register( $new_user_id ) {
+		// The user_register hook is only for regular (non-Multisite) systems. Fro Multisite see wpmu_activate_user
+		if (is_multisite()) return;
+		
+		
+		$affiliate_user_id = $this->get_affiliate_user_id_from_hash();
+		if (!empty($affiliate_user_id)) {
+			
+			//echo "trace<pre>"; print_r(debug_print_backtrace()); echo "</pre>";
+			$affiliate_referred_by = get_user_meta($new_user_id, 'affiliate_referred_by', true);
+			if (!$affiliate_referred_by) {
+			
+				// Call the affiliate action
+				$meta = array(
+					'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
+					'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+					'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+					//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+				);
+			
+				//echo "blog_details<pre>"; print_r($blog_details); echo "</pre>";
+				$note = __('User', 'affiliate');
+				do_action( 'affiliate_signup', $affiliate_user_id, false, 'signup:user', $new_user_id, $note, $meta); 
 
-	function record_click($user_id) {
-
-		// Record the click in the affiliate table - v0.2+
-		$period = date('Ym');
-
-		$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, uniques, lastupdated) VALUES (%d, %s, %d, now()) ON DUPLICATE KEY UPDATE uniques = uniques + %d", $user_id, $period, 1, 1 );
-		$queryresult = $this->db->query($sql);
-
+				update_user_meta($new_user_id, 'affiliate_referred_by', $affiliate_user_id);
+			}
+		}		
 	}
+	
+	function wpmu_activate_user($new_user_id, $new_user_password, $new_blog_meta) {
+		// Check if this signup was from an affiliate referal. 
+		if (isset($new_blog_meta['affiliate_referred_by'])) {
+			$affiliate_referred_by = get_user_meta($new_user_id, 'affiliate_referred_by', true);
+			if (!$affiliate_referred_by) {
+			
+				$affiliate_user_id = intval($new_blog_meta['affiliate_referred_by']);
+			
+				// Call the affiliate action
+				$meta = array(
+					'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
+					'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+					'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+					//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+				);
+			
+				//echo "blog_details<pre>"; print_r($blog_details); echo "</pre>";
+				$note = __('User', 'affiliate');
+				do_action( 'affiliate_signup', $affiliate_user_id, false, 'signup:user', $new_user_id, $note, $meta); 
 
-	function record_signup( $user_id = false ) {
+				update_user_meta($new_user_id, 'affiliate_referred_by', $affiliate_user_id);
+			}
+		}		
+	}
+	
+	function wpmu_activate_blog($new_blog_id, $new_user_id, $new_user_password, $new_blog_title, $new_blog_meta) {
+		// Check if this signup was from an affiliate referal. 
+		if (isset($new_blog_meta['affiliate_referred_by'])) {
+			$affiliate_user_id = intval($new_blog_meta['affiliate_referred_by']);
+			
+			// Call the affiliate action
+			$meta = array(
+				'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
+				'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+				'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+				//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+			);
+			
+			$note = __('Blog', 'affiliate');
+			do_action( 'affiliate_signup', $affiliate_user_id, false, 'signup:blog', $new_blog_id, $note, $meta); 
 
+			update_blog_option( $new_blog_id, 'affiliate_referred_by', $affiliate_user_id );
+
+			$this->wpmu_activate_user($new_user_id, '', $new_blog_meta);
+		}
+	}
+	
+	function add_signup_meta($meta) {
+		//echo "meta<pre>"; print_r($meta); echo "</pre>";
+		$affiliate_user_id = $this->get_affiliate_user_id_from_hash();
+		if (!empty($affiliate_user_id)) {
+			$meta['affiliate_referred_by'] = $affiliate_user_id;
+		}
+		return $meta;
+	}
+	
+	function get_affiliate_user_id_from_hash() {
+		
+		//echo 'in '. __FUNCTION__ .': '. __LINE__ .'<br />';
+		
+		//echo "_COOKIE<pre>"; print_r($_COOKIE); echo "</pre>";
+		//echo "COOKIEHASH[". COOKIEHASH ."]<br />";
+		
 		if(isset( $_COOKIE['affiliate_' . COOKIEHASH])) {
 			// Get the cookie hash so we know who the referrer is
 			$hash = addslashes($_COOKIE['affiliate_' . COOKIEHASH]);
+			//echo "hash[". $hash ."]<br />";
+			$sql_str = $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_hash' AND meta_value = %s", $hash);
+			//echo "sql_str[". $sql_str ."]<br />";
+			//die();
+			return $this->db->get_var( $sql_str );
+		} //else {
+		//	echo "COOKIE not set<br />";
+		//}
+	}
 
-			$user_id = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_hash' AND meta_value = %s", $hash) );
+	// Recording of affiliate information
 
-			if($user_id) {
+	function record_click($affiliate_user_id, $amount = false, $area = false, $area_id = false, $note = false, $meta = false ) {
+		if (!$affiliate_user_id) {
+			$affiliate_user_id = $this->get_affiliate_user_id_from_hash();
+		}
+		
+		if($affiliate_user_id) {
+		
+			// Record the click in the affiliate table - v0.2+
+			$period = date('Ym');
 
-				$period = date('Ym');
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, uniques, lastupdated) VALUES (%d, %s, %d, now()) ON DUPLICATE KEY UPDATE uniques = uniques + %d", $affiliate_user_id, $period, 1, 1 );
+			$queryresult = $this->db->query($sql);
 
-				$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, signups, lastupdated) VALUES (%d, %s, %d, now()) ON DUPLICATE KEY UPDATE signups = signups + %d", $user_id, $period, 1, 1 );
-				$queryresult = $this->db->query($sql);
+			if( $area !== false ) {
+				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affiliate_user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount, 'meta' => maybe_serialize($meta) ) );
+			}
+		}
+	}
 
-				if(!defined( 'AFFILIATEID' )) define( 'AFFILIATEID', $user_id );
+	function record_signup( $affiliate_user_id = false, $amount = false, $area = false, $area_id = false, $note = false, $meta = false ) {
 
+		if (!affiliate_user_id) {
+			if(defined( 'AFFILIATEID' )) {
+				$affiliate_user_id = AFFILIATEID;
+			} else {
+				$affiliate_user_id = $this->get_affiliate_user_id_from_hash();
 			}
 		}
 
+		if($affiliate_user_id) {
+
+			$period = date('Ym');
+
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, signups, lastupdated) VALUES (%d, %s, %d, now()) ON DUPLICATE KEY UPDATE signups = signups + %d", $affiliate_user_id, $period, 1, 1 );
+			$queryresult = $this->db->query($sql);
+			
+			if(!defined( 'AFFILIATEID' )) {
+				define( 'AFFILIATEID', $affiliate_user_id );
+			}
+			if( !empty($area) && $area !== false ) {
+				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affiliate_user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount, 'meta' => maybe_serialize($meta) ) );
+			}			
+		}
 	}
 
-	function record_complete($user_id, $amount = false, $area = false, $area_id = false, $note = false) {
-
-		if( !empty($user_id) && is_numeric($user_id) && $amount ) {
+	function record_purchase($affiliate_user_id = false, $amount = false, $area = false, $area_id = false, $note = false, $meta = false) {
+		
+		if (!$affiliate_user_id) {
+			$affiliate_user_id = $this->get_affiliate_user_id_from_hash();
+		}
+		
+		if( !(empty($affiliate_user_id)) && (is_numeric($affiliate_user_id))) {
 
 			$period = date('Ym');
 
 			// Need to get the amount paid and calculate the commision
 			$amount = number_format($amount, 2, '.', '');
 
-			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, completes, credits, lastupdated) VALUES (%d, %s, %d, %01.2f, now()) ON DUPLICATE KEY UPDATE completes = completes + %d, credits = credits + %01.2f ", $user_id, $period, 1, $amount, 1, $amount );
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, completes, credits, lastupdated) VALUES (%d, %s, %d, %01.2f, now()) ON DUPLICATE KEY UPDATE completes = completes + %d, credits = credits + %01.2f ", $affiliate_user_id, $period, 1, $amount, 1, $amount );
+			//echo "sql[". $sql ."]<br />";
 			$queryresult = $this->db->query($sql);
 
 			if( !empty($area) && $area !== false ) {
-				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount ) );
+				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affiliate_user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount, 'meta' => maybe_serialize($meta) ) );
 			}
-
+			//die();
 		}
-
 	}
 
-	function record_credit($user_id, $amount = false) {
 
-		if( !empty($user_id) && is_numeric($user_id) && $amount ) {
+	function record_credit($affiliate_user_id, $amount = false) {
+
+		if( !empty($affiliate_user_id) && is_numeric($affiliate_user_id) && $amount ) {
 
 			$period = date('Ym');
 
 			// Need to get the amount paid and calculate the commision
 			$amount = number_format($amount, 2, '.', '');
 
-			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, credits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE credits = credits + %01.2f ", $user_id, $period, $amount, $amount );
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, credits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE credits = credits + %01.2f ", $affiliate_user_id, $period, $amount, $amount );
 			$queryresult = $this->db->query($sql);
-
+			
+			$meta = array(
+				'current_user_id'	=>	get_current_user_id(),
+				'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+				'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+				//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+			);
+			
+			$this->db->insert( $this->affiliaterecords, array( $affiliate_user_id, $period, 'credit', false, false, 'amount' => $amount, 'meta' => maybe_serialize($meta) ) );
 		}
-
 	}
 
-	function record_debit($user_id, $amount = false) {
+	function record_debit($affiliate_user_id, $amount = false) {
 
-		if( !empty($user_id) && is_numeric($user_id) && $amount ) {
+		if( !empty($affiliate_user_id) && is_numeric($affiliate_user_id) && $amount ) {
 
 			$period = date('Ym');
 
 			// Need to get the amount paid and calculate the commision
 			$amount = number_format($amount, 2, '.', '');
 
-			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, debits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE debits = debits + %01.2f ", $user_id, $period, $amount, $amount );
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, debits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE debits = debits + %01.2f ", $affiliate_user_id, $period, $amount, $amount );
 			$queryresult = $this->db->query($sql);
 
+			$meta = array(
+				'current_user_id'	=>	get_current_user_id(),
+				'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+				'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+				//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+			);
+			$this->db->insert( $this->affiliaterecords, array( $affiliate_user_id, $period, 'debit', false, false, 'amount' => $amount, 'meta' => maybe_serialize($meta) ) );
+			//echo "db<pre>"; print_r($this->db); echo "</pre>";
+			//die();
 		}
-
 	}
 
-	function record_referrer($user_id, $url = false) {
+	function record_referrer($affiliate_user_id, $url = false) {
 
-		if( !empty($user_id) && is_numeric($user_id) && $url ) {
+		if( !empty($affiliate_user_id) && is_numeric($affiliate_user_id) && $url ) {
 
 			$period = date('Ym');
 
 			// Need to get the amount paid and calculate the commision
 			//$amount = number_format($amount, 2, '.', '');
 
-			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatereferrers} (user_id, period, url, referred) VALUES (%d, %s, %s, %d) ON DUPLICATE KEY UPDATE referred = referred + %d ", $user_id, $period, $url, 1, 1 );
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatereferrers} (user_id, period, url, referred) VALUES (%d, %s, %s, %d) ON DUPLICATE KEY UPDATE referred = referred + %d ", $affiliate_user_id, $period, $url, 1, 1 );
 
 			$queryresult = $this->db->query($sql);
 
@@ -318,7 +461,6 @@ class affiliate {
 	}
 
 	function handle_affiliate_link() {
-
 		if(isset($_COOKIE['noaffiliate_' . COOKIEHASH])) {
 			if(isset($_GET['ref'])) {
 				// redirect to the none affiliate url anyway, just to be tidy
@@ -330,24 +472,34 @@ class affiliate {
 
 		if(isset($_GET['ref'])) {
 			// There is an affiliate type query item, check it for validity and then redirect
-
+			
 			if(!isset( $_COOKIE['affiliate_' . COOKIEHASH])) {
 				// We haven't already been referred here by someone else - note only the first referrer
 				// within a time period gets the cookie.
 
 				// Check if the user is a valid referrer
 				$affiliate = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_reference' AND meta_value='%s'", $_GET['ref']) );
+				
 				if($affiliate) {
-					// Update a quick count for this month
-					do_action( 'affiliate_click', $affiliate);
-
 					// Grab the referrer
 					if(isset($_SERVER['HTTP_REFERER'])) {
-						$referrer = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+						$referrer = parse_url(esc_attr($_SERVER['HTTP_REFERER']), PHP_URL_HOST);
 					} else {
 						$referrer = '';
 					}
+					
+					$meta = array(
+						'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
+						'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+						'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+						//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+					);
 
+					// Update a quick count for this month
+					$note = __('Referal', 'affiliate') .' '. esc_attr($_SERVER['HTTP_REFERER']);
+					do_action( 'affiliate_click', $affiliate, false, 'unique:click', false, $note, $meta);
+					//die();
+					
 					do_action( 'affiliate_referrer', $affiliate, $referrer );
 
 					// Write the affiliate hash out - valid for 30 days.
@@ -367,6 +519,13 @@ class affiliate {
 				// within a time period gets the cookie.
 				$referrer = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
 
+				$meta = array(
+					'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
+					'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+					'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+					//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+				);
+
 				// Check if the user is a valid referrer
 				$affiliate = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value='%s'", $referrer) );
 				if(!empty($affiliate)) {
@@ -376,7 +535,9 @@ class affiliate {
 						$validated = get_user_meta($affiliate, 'affiliate_referrer_validated', true);
 						if(!empty($validated) && $validated == 'yes') {
 							// Update a quick count for this month
-							do_action( 'affiliate_click', $affiliate);
+							//do_action( 'affiliate_click', $affiliate);
+							do_action( 'affiliate_click', $affiliate, false, 'unique', false, false, $meta);
+							
 							// Store the referrer
 							do_action( 'affiliate_referrer', $affiliate, $referrer );
 
@@ -385,7 +546,9 @@ class affiliate {
 						}
 					} else {
 						// Update a quick count for this month
-						do_action( 'affiliate_click', $affiliate);
+						//do_action( 'affiliate_click', $affiliate);
+						do_action( 'affiliate_click', $affiliate, false, 'unique', false, false, $meta);
+												
 						// Store the referrer
 						do_action( 'affiliate_referrer', $affiliate, $referrer );
 
@@ -433,8 +596,4 @@ class affiliate {
 		// Ensure we have an exit
 		exit;
 	}
-
-
 }
-
-?>

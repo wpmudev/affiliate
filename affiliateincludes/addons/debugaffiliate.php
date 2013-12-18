@@ -66,23 +66,22 @@ class affiliate_debugger {
 
 
 		if( isset( $_COOKIE['affiliate_' . COOKIEHASH] ) ) {
-			$msg = __('I have recorded a cookie from <strong>','affiliate');
 
 			$hash = addslashes($_COOKIE['affiliate_' . COOKIEHASH]);
 			$user_id = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_hash' AND meta_value = %s", $hash) );
-
+			
+			$aff_user_login = "UNKNOWN";
 			if(!empty($user_id)) {
 				$user = new WP_User( $user_id );
-				$msg .= $user->user_login;
-			}
-
-			$msg .= __('</strong>. Any purchases will be assigned to that account for <strong>','affiliate') . AFFILIATE_COOKIE_DAYS . __('</strong> days after the click.' , 'affiliate');
-
-			return $msg;
+				if (($user) && (!empty($user->user_login))) {
+					$aff_user_login = $user->user_login;
+				}
+			} 
+			return sprintf(__('I have recorded a cookie for affiliate: <strong>%s</strong>. Any <strong>paid</strong> purchases/signup will be assigned the affiliate for <strong>%d</strong> days after the click.', 'affiliate'), $aff_user_login, AFFILIATE_COOKIE_DAYS);
 		}
 
 		if( isset( $_COOKIE['noaffiliate_' . COOKIEHASH] ) ) {
-			return __('The <strong>Not via an Affiliate</strong> cookie has been set. I am ignoring any future affiliate clicks for this browser session.','affiliate');
+			return __('The <strong>Not via an Affiliate</strong> cookie has been set. This means you are accessing the site via a valid WordPress logged in user. I am ignoring any future affiliate clicks for this browser session.','affiliate');
 		}
 
 		return __('No cookies are currently set - I am looking for cookies at : ','affiliate') . COOKIE_DOMAIN . COOKIEPATH;

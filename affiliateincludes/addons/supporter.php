@@ -1,17 +1,16 @@
 <?php
 /*
-Plugin Name: Pro-sites basic add-on
-Description: Affiliate system plugin for the WordPress Pro-Sites plugin
-Author: Barry (Incsub)
+Plugin Name: Pro-sites
+Description: Affiliate system plugin for the WordPress Pro-Sites plugin. Captures Affiliate transaction for Pro-Site paid upgrades.
 Author URI: http://premium.wpmudev.org
+Network: true
+Depends: pro-sites/pro-sites.php
 */
 
-add_action( 'wpmu_new_blog', 'affiliate_new_blog', 10, 2 );
-add_action( 'supporter_payment_processed', 'affiliate_supporter_paid', 10, 4 );
-add_filter( 'blog_template_exclude_settings', 'affiliate_supporter_new_blog_template_exclude' );
-
-add_action( 'psts_settings_page', 'affiliate_prosites_settings' );
-add_action( 'psts_settings_process', 'affiliate_prosites_settings_update' );
+add_action( 'supporter_payment_processed', 			'affiliate_supporter_paid', 10, 4 );
+add_filter( 'blog_template_exclude_settings', 		'affiliate_supporter_new_blog_template_exclude' );
+add_action( 'psts_settings_page', 					'affiliate_supporter_settings' );
+add_action( 'psts_settings_process', 				'affiliate_supporter_settings_update' );
 
 /*
  * Exclude option from New Blog Template plugin copy
@@ -21,29 +20,13 @@ function affiliate_supporter_new_blog_template_exclude( $and ) {
 	return $and;
 }
 
-
-function affiliate_new_blog( $blog_id, $user_id ) {
-
-	// Call the affiliate action
-	do_action( 'affiliate_signup' );
-
-	if(defined( 'AFFILIATEID' )) {
-		// We found an affiliate that referred this blog creator
-		if(function_exists('update_blog_option')) {
-			update_blog_option( $blog_id, 'affiliate_referred_by', AFFILIATEID );
-		}
-
-		if(function_exists('update_user_meta')) {
-			update_user_meta($user_id, 'affiliate_referred_by', AFFILIATEID);
-		} else {
-			update_usermeta($user_id, 'affiliate_referred_by', AFFILIATEID);
-		}
-
-	}
-
-}
-
 function affiliate_supporter_paid($bid, $periodamount, $period, $level) {
+	global $blog_id, $site_id;
+	
+	//echo "bid[". $bid ."]<br />";
+	//echo "amount[". $amount ."]<br />";
+	//echo "supporterperiod<pre>"; print_r($supporterperiod); echo "</pre>";
+	//die();
 
 	if(function_exists('get_site_option')) {
 		$getoption = 'get_site_option';
@@ -127,8 +110,20 @@ function affiliate_supporter_paid($bid, $periodamount, $period, $level) {
 						$amount = 0;
 						break;
 		}
-
-		do_action('affiliate_purchase', $aff, $amount);
+		$meta = array(
+			'bid'				=>	$bid, 
+			'periodamount'		=>	$periodamount, 
+			'period'			=>	$period, 
+			'level'				=>	$level,
+			'blog_id'			=>	$blog_id,
+			'site_id'			=>	$site_id,
+			'current_user_id'	=>	get_current_user_id(),
+			'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
+			'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+			'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+			//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+		);
+		do_action('affiliate_purchase', $aff, $amount, 'paid:prosites', $bid, false, $meta);
 
 		if(defined('AFFILIATE_PAYONCE') && AFFILIATE_PAYONCE == 'yes') {
 
@@ -141,7 +136,7 @@ function affiliate_supporter_paid($bid, $periodamount, $period, $level) {
 	}
 }
 
-function affiliate_prosites_settings_update() {
+function affiliate_supporter_settings_update() {
 
 	if(function_exists('get_site_option')) {
 		$updateoption = 'update_site_option';
@@ -162,7 +157,7 @@ function affiliate_prosites_settings_update() {
 
 }
 
-function affiliate_prosites_settings() {
+function affiliate_supporter_settings() {
 
 	global $psts;
 
@@ -303,5 +298,3 @@ function affiliate_prosites_settings() {
 	<?php
 
 }
-
-?>

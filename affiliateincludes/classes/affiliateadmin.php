@@ -3,7 +3,7 @@
 // Administration side of the affiliate system
 class affiliateadmin {
 
-	var $build = 7;
+	var $build = 8;
 
 	var $db;
 
@@ -22,13 +22,34 @@ class affiliateadmin {
 
 	function __construct() {
 
+
+		// Add support for new WPMUDEV Dashboard Notices
+		global $wpmudev_notices;
+		$wpmudev_notices[] = array( 'id'=> 106,'name'=> 'Affiliate', 'screens' => array( 
+			'toplevel_page_affiliatesadmin',
+			'affiliates_page_affiliatesadminmanage',
+			'affiliates_page_affiliatesadminsettings',
+			'affiliates_page_affiliatesadminaddons',
+			'users_page_affiliateearnings',
+			'users_page_affiliatebanners',		
+			'toplevel_page_affiliatesadmin-network', 
+			'affiliates_page_affiliatesadminmanage-network',
+			'affiliates_page_affiliatesadminsettings-network',
+			'affiliates_page_affiliatesadminaddons-network',
+			'users_page_affiliateearnings-network',
+			'users_page_affiliatebanners-network'
+			) 
+		);
+		include_once( dirname(__FILE__) . '../../external/wpmudev-dash-notification.php' );	
+
 		global $wpdb;
 
 		// Grab our own local reference to the database class
 		$this->db =& $wpdb;
 
 		foreach ($this->tables as $table) {
-			if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
+			if ((affiliate_is_plugin_active_for_network()) 
+			 && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
 				// we're activated site wide
 				$this->$table = $this->db->base_prefix . $table;
 			} else {
@@ -45,7 +66,6 @@ class affiliateadmin {
 
 		if($installed === false || $installed != $this->build) {
 			$this->install();
-
 			aff_update_option('Aff_Installed', $this->build);
 		}
 
@@ -78,6 +98,9 @@ class affiliateadmin {
 		add_filter( 'user_row_actions', array(&$this, 'add_referrer_search_link'), 10, 2 );
 		add_filter( 'ms_user_row_actions', array(&$this, 'add_referrer_search_link'), 10, 2 );
 
+		//add_action( 'show_user_profile', array(&$this, 'edit_user_profile') );
+		//add_action( 'edit_user_profile', array(&$this, 'edit_user_profile') );
+
 		// Include affiliate plugins
 		load_affiliate_addons();
 
@@ -93,61 +116,76 @@ class affiliateadmin {
 
 	function create_affiliate_tables() {
 
+		if (!function_exists('dbDelta'))
+			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-		if($this->db->get_var( "SHOW TABLES LIKE '" . $this->affiliatedata . "' ") != $this->affiliatedata) {
-
-			$charset_collate = '';
-
-			if ( ! empty($this->db->charset) ) {
-				$charset_collate = "DEFAULT CHARACTER SET " . $this->db->charset;
-			}
-
-			if ( ! empty($this->db->collate) ) {
-				$charset_collate .= " COLLATE " . $this->db->collate;
-			}
-
-			 $sql = "CREATE TABLE `" . $this->affiliatedata . "` (
-			  	`user_id` bigint(20) default NULL,
-			  	`period` varchar(6) default NULL,
-			  	`uniques` bigint(20) default '0',
-			  	`signups` bigint(20) default '0',
-			  	`completes` bigint(20) default '0',
-			  	`debits` decimal(10,2) default '0.00',
-			  	`credits` decimal(10,2) default '0.00',
-			  	`payments` decimal(10,2) default '0.00',
-			  	`lastupdated` datetime default '0000-00-00 00:00:00',
-			  	UNIQUE KEY `user_period` (`user_id`,`period`)
-				) $charset_collate;";
-
-			$this->db->query($sql);
-
-			$sql = "CREATE TABLE `" . $this->affiliatereferrers . "` (
-			  	`user_id` bigint(20) default NULL,
-			  	`period` varchar(6) default NULL,
-			  	`url` varchar(250) default NULL,
-			  	`referred` bigint(20) default '0',
-			  	UNIQUE KEY `user_id` (`user_id`,`period`,`url`)
-				) $charset_collate;";
-
-			$this->db->query($sql);
+		// Get the correct character collate
+		if ( ! empty($this->db->charset) ) {
+			$charset_collate = "DEFAULT CHARACTER SET " . $this->db->charset;
 		}
 
-		if($this->db->get_var( "SHOW TABLES LIKE '" . $this->affiliaterecords . "' ") != $this->affiliaterecords) {
-			 $sql = "CREATE TABLE `" . $this->affiliaterecords . "` (
-			  	`user_id` bigint(20) unsigned NOT NULL,
-				  `period` varchar(6) DEFAULT NULL,
-				  `affiliatearea` varchar(50) DEFAULT NULL,
-				  `area_id` bigint(20) DEFAULT NULL,
-				  `affiliatenote` text,
-				  `amount` decimal(10,2) DEFAULT NULL,
-				  KEY `user_id` (`user_id`),
-				  KEY `period` (`period`)
-				) $charset_collate;";
-
-			$this->db->query($sql);
+		if ( ! empty($this->db->collate) ) {
+			$charset_collate .= " COLLATE " . $this->db->collate;
 		}
 
-		if( (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
+		$sql_affiliatedata_current = "CREATE TABLE `" . $this->affiliatedata . "` (
+				`user_id` bigint(20) default NULL,
+				`period` varchar(6) default NULL,
+				`uniques` bigint(20) default '0',
+				`signups` bigint(20) default '0',
+				`completes` bigint(20) default '0',
+				`debits` decimal(10,4) default '0.0000',
+				`credits` decimal(10,4) default '0.0000',
+				`payments` decimal(10,4) default '0.0000',
+				`lastupdated` datetime default '0000-00-00 00:00:00',
+				UNIQUE KEY user_period (user_id,period),
+				KEY user_id (user_id), 
+				KEY period (period) 
+			) ". $charset_collate .";";
+
+
+		$sql_affiliatereferrers_current = "CREATE TABLE `" . $this->affiliatereferrers . "` (
+				`user_id` bigint(20) default NULL,
+				`period` varchar(6) default NULL,
+				`url` varchar(255) default NULL,
+				`referred` bigint(20) default '0',
+				UNIQUE KEY user_period_url (user_id,period`,`url),
+				KEY user_id (user_id), 
+				KEY period (period), 
+			) ". $charset_collate .";";
+
+		$sql_affiliaterecords_current = "CREATE TABLE `" . $this->affiliaterecords . "` (
+		  		`id` BIGINT NOT NULL AUTO_INCREMENT,
+				`user_id` bigint(20) unsigned NOT NULL,
+				`period` varchar(6) DEFAULT NULL,
+				`affiliatearea` varchar(255) DEFAULT NULL,
+				`area_id` bigint(20) DEFAULT NULL,
+				`affiliatenote` text,
+				`amount` decimal(10,4) DEFAULT '0.0000',
+				`meta` varchar(1000) DEFAULT NULL
+				timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				PRIMARY KEY  (id),
+				KEY `user_id` (`user_id`),
+				KEY `period` (period)
+			) ". $charset_collate .";";
+
+		dbDelta($sql_affiliatedata_current);
+		dbDelta($sql_affiliatereferrers_current);
+		
+		if ($wpdb->get_var("SHOW TABLES LIKE '". $this->affiliaterecords ."'") != $this->affiliaterecords) {
+			//echo "sql_affiliaterecords_current[". $sql_affiliaterecords_current ."]<br />";
+			dbDelta($sql_affiliaterecords_current);
+		} else {
+			//echo "sql_affiliaterecords_current[". $sql_affiliaterecords_current ."]<br />";
+			dbDelta($sql_affiliaterecords_current);
+			
+			$sql_str = "ALTER TABLE `".$this->affiliaterecords."` ADD `id` BIGINT NOT NULL AUTO_INCREMENT FIRST ,ADD PRIMARY KEY (  `id` ) ;";
+			//echo "sql_str[". $sql_str ."<br />";
+			$this->db->query($sql_str);
+		}
+
+		if ((affiliate_is_plugin_active_for_network()) 
+		 && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
 
 			// We need to check for a transfer across from old options to new ones
 			$option = aff_get_option('affiliateheadings', false );
@@ -191,11 +229,7 @@ class affiliateadmin {
 				$option = get_blog_option(1, 'affiliate_activated_addons');
 				aff_update_option('affiliate_activated_addons', $option);
 			}
-
-
 		}
-
-
 	}
 
 	function load_textdomain() {
@@ -385,7 +419,6 @@ class affiliateadmin {
 		if(isset($_GET['callback'])) {
 			echo ")";
 		}
-
 	}
 
 
@@ -404,7 +437,7 @@ class affiliateadmin {
 
 		// Add administration menu
 		if(is_multisite()) {
-			if(function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
+			if (affiliate_is_plugin_active_for_network()) {
 				// we're activated site wide so put the admin menu in the network area
 				if(function_exists('is_network_admin')) {
 					if(is_network_admin()) {
@@ -465,7 +498,8 @@ class affiliateadmin {
 		}
 
 		// Admin user report page
-		if( (isset($_GET['page']) && addslashes($_GET['page']) == 'affiliatesadminmanage') && ( isset($_GET['subpage']) && addslashes($_GET['subpage']) == 'users') && isset($_GET['id'])) {
+		if( ((isset($_GET['page'])) && ($_GET['page'] == 'affiliatesadminmanage')) 
+		 && isset($_GET['id'])) {
 			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
 
 			wp_enqueue_script('aff_js', affiliate_url('affiliateincludes/js/affiliateadminuserreport.js'), array('jquery'));
@@ -539,6 +573,8 @@ class affiliateadmin {
 
 		if(isset($_POST['action']) && addslashes($_POST['action']) == 'update') {
 
+			//echo "_POST<pre>"; print_r($_POST); echo "</pre>";
+			
 			check_admin_referer('affiliatesettings');
 
 			update_user_meta($user_ID, 'enable_affiliate', $_POST['enable_affiliate']);
@@ -562,7 +598,7 @@ class affiliateadmin {
 					if(defined('AFFILIATE_VALIDATE_REFERRER_URLS') && AFFILIATE_VALIDATE_REFERRER_URLS == 'yes' ) {
 						$referrer = $_POST['affiliate_referrer'];
 						$filename = md5('affiliatefilename-' . $user_ID . '-' . $user->user_login . "-" . $referrer) . '.html';
-
+						//echo "filename=[". $filename ."]<br />";
 						if($this->validate_url_for_file( trailingslashit($url), $filename)) {
 							update_user_meta($user_ID, 'affiliate_referrer_validated', 'yes');
 							$chkmsg = __('Validated', 'affiliate');
@@ -642,33 +678,59 @@ class affiliateadmin {
 				if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
 
 					$reference = get_user_meta($user_ID, 'affiliate_reference', true);
+					//echo "reference[". $reference ."]<br />";
+					
 					$referrer = get_user_meta($user_ID, 'affiliate_referrer', true);
+					//echo "referrer[". $referrer ."]<br />";
+					
 					$refurl = "profile.php?page=affiliateearnings";
 
 					$validreferrer = get_user_meta($user_ID, 'affiliate_referrer_validated', true);
+					//echo "validreferrer[". $validreferrer ."]<br />";
+					
+					?>
+					<p><?php _e('<h3>Affiliate Details</h3>', 'affiliate') ?></p>
+					<p><?php _e('In order for us to track your referrals, you should use the following URL to link to our site:', 'affiliate'); ?></p>
+					<p><?php echo sprintf(__('<strong>%s?ref=%s</strong>', 'affiliate'), $affiliatelinkurl, $reference ); ?></p>
+					<?php
+						/*
+						if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes' && !empty($referrer)) {
+							// We are always going to check for a referer site
+							?>
+							<p><?php _e('Alternatively you can use the just link directly to the URL below from the site you entered in the advanced settings above:', 'affiliate'); ?></p>
+							<p><?php echo sprintf(__('<strong>%s</strong>', 'affiliate'), $siteurl ); ?></p>
+							<?php
+
+						}
+						*/
+
+					if(aff_get_option('affiliateenablebanners', 'no') == 'yes') {
+					?>
+					<p><?php echo sprintf(__('If you would rather use a banner or button then we have a wide selection of sizes <a href="%s">here</a>.', 'affiliate'), "profile.php?page=affiliatebanners" ); ?></p>
+					<?php } ?>
+					<?php /* ?><p><?php _e('<strong>You can check on your referral totals by viewing the details on this page</strong>', 'affiliate'); ?></p><?php */ ?>
+					<?php
 
 					if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes') { ?>
 
 						<h3><?php _e('Affiliate Advanced Settings', 'affiliate') ?></h3>
 
 						<?php
-						$advsettingstextdefault = __("<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>
-					<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>", 'affiliate');
+						$advsettingstextdefault = __("<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p><p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>", 'affiliate');
 
 						echo stripslashes( aff_get_option('affiliateadvancedsettingstext', $advsettingstextdefault) );
 
 
-								if(!empty($chkmsg)) {
-									if(empty($error)) {
-										// valid
-										$msg = "<span style='color: green;'>" . $chkmsg . "</span>";
-									} else {
-										// not valid
-										$msg = "<span style='color: red;'>" . $chkmsg . "</span>";
-									}
-								}
-
-							?>
+						if(!empty($chkmsg)) {
+							if(empty($error)) {
+								// valid
+								$msg = "<span style='color: green;'>" . $chkmsg . "</span>";
+							} else {
+								// not valid
+								$msg = "<span style='color: red;'>" . $chkmsg . "</span>";
+							}
+						}
+						?>
 
 						<table class="form-table">
 							<tr style='background: transparent;'>
@@ -703,31 +765,8 @@ class affiliateadmin {
 
 
 						</table>
-
-					<?php
+						<?php
 					}
-					?>
-					<p><?php _e('<h3>Affiliate Details</h3>', 'affiliate') ?></p>
-					<p><?php _e('In order for us to track your referrals, you should use the following URL to link to our site:', 'affiliate'); ?></p>
-					<p><?php echo sprintf(__('<strong>%s?ref=%s</strong>', 'affiliate'), $affiliatelinkurl, $reference ); ?></p>
-
-					<?php
-						if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes' && !empty($referrer)) {
-							// We are always going to check for a referer site
-							?>
-							<p><?php _e('Alternatively you can just link directly to the URL below from the site you entered in the advanced settings above:', 'affiliate'); ?></p>
-							<p><?php echo sprintf(__('<strong>%s</strong>', 'affiliate'), $siteurl ); ?></p>
-							<?php
-
-						}
-
-
-					if(aff_get_option('affiliateenablebanners', 'no') == 'yes') {
-					?>
-					<p><?php echo sprintf(__('If you would rather use a banner or button then we have a wide selection of sizes <a href="%s">here</a>.', 'affiliate'), "profile.php?page=affiliatebanners" ); ?></p>
-					<?php } ?>
-					<p><?php _e('<strong>You can check on your referral totals by viewing the details on this page</strong>', 'affiliate'); ?></p>
-				<?php
 				}
 
 				echo '<p class="submit">';
@@ -790,7 +829,12 @@ class affiliateadmin {
 			echo "</div>";
 
 
-			$results = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatedata} WHERE user_id = %d ORDER BY period DESC", $user_ID ) );
+			
+			//$results = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatedata} WHERE user_id = %d ORDER BY period DESC", $user_ID ) );
+
+			if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
+				echo '<br /><a href="' . add_query_arg('subpage', 'summary') .'">'. __('&larr; Return to Affiliate Period Summary', 'affiliate') .'</a>';
+			}
 
 
 			echo "<div id='affdashgraph' style='width: 100%; margin-top: 20px; min-height: 350px; background-color: #fff; margin-bottom: 20px;'>";
@@ -798,143 +842,14 @@ class affiliateadmin {
 
 			echo "<div id='clickscolumn' style='width: 48%; margin-right: 2%; margin-top: 20px; min-height: 400px; float: left;'>";
 
-			// The table
-			echo '<table width="100%" cellpadding="3" cellspacing="3" class="widefat" style="width: 100%;">';
-			echo '<thead>';
-			echo '<tr>';
-				echo '<th scope="col">';
-				echo __('Date','affiliate');
-				echo '</th>';
-				foreach($columns as $column) {
-					echo '<th scope="col" class="num">';
-					echo stripslashes($column);
-					echo '</th>';
-				}
-			echo '</tr>';
-			echo '</thead>';
-
-			echo '<tbody id="the-list">';
-
-			$totalclicks = 0;
-			$totalsignups = 0;
-			$totalcompletes = 0;
-			$totaldebits = 0;
-			$totalcredits = 0;
-			$totalpayments = 0;
-
-			if(!empty($results)) {
-				$recent = array_shift($results);
+			if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
+				$period = '';
+				if (isset($_GET['period'])) $period = esc_attr($_GET['period']);
+				if (!empty($period)) $period = date('Ym');
+				$this->show_users_period_details_table($user_ID, $period);
 			} else {
-				$recent = array();
+				$this->show_users_period_summary_table($user_ID);
 			}
-
-			$startat = strtotime(date("Y-m-15"));
-
-			for($n = 0; $n < 18; $n++) {
-				$rdate = strtotime("-$n month", $startat);
-				$period = date('Ym', $rdate);
-				$place = 18 - $n;
-
-				echo "<tr class='periods' id='period-$place'>";
-				echo '<td valign="top">';
-				echo date("M", $rdate) . '<br/>' . date("Y", $rdate);
-				echo '</td>';
-
-				if(!empty($recent) && $recent->period == $period) {
-					// We are on the current period
-					echo '<td valign="top" class="num">';
-					echo $recent->uniques;
-					$totalclicks += $recent->uniques;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo $recent->signups;
-					$totalsignups += $recent->signups;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo $recent->completes;
-					$totalcompletes += $recent->completes;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo number_format($recent->debits, 2);
-					$totaldebits += (float) $recent->debits;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo number_format($recent->credits, 2);
-					$totalcredits += (float) $recent->credits;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo number_format($recent->payments, 2);
-					$totalpayments += (float) $recent->payments;
-					echo '</td>';
-
-					if(!empty($results)) {
-						$recent = array_shift($results);
-					} else {
-						$recent = array();
-					}
-
-				} else {
-					// A zero blank row
-					echo '<td valign="top" class="num">';
-					echo 0;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo 0;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo 0;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo "0.00";
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo number_format(0, 2);
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo number_format(0, 2);
-					echo '</td>';
-				}
-				echo '</tr>';
-			}
-
-			echo '</tbody>';
-
-			echo '<tfoot>';
-			echo '<tr>';
-				echo '<th scope="col">';
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo $totalclicks;
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo $totalsignups;
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo $totalcompletes;
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo number_format($totaldebits, 2);
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo number_format($totalcredits, 2);
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo number_format($totalpayments, 2);
-				echo '</th>';
-			echo '</tr>';
-			echo '</tfoot>';
-
-			echo '</table>';
 
 			echo "</div>";
 
@@ -1153,6 +1068,8 @@ class affiliateadmin {
 
 		if($page == 'affiliatesadmin' && isset($_GET['action'])) {
 
+			//echo "_GET<pre>"; print_r($_GET); echo "</pre>";
+			//echo "_POST<pre>"; print_r($_POST); echo "</pre>";
 			switch(addslashes($_GET['action'])) {
 
 				case 'allaffiliates':	// Bulk operations
@@ -1182,9 +1099,11 @@ class affiliateadmin {
 														$notes = __("Affiliate payment for ", "affiliate") . $name;
 
 														$paypal = get_user_meta($affdetails[0], 'affiliate_paypal', true);
-														$amounts = $this->db->get_row( "SELECT debits, credits FROM " . $this->affiliatedata . " WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
+														$amounts = $this->db->get_row( "SELECT debits, credits, payments FROM " . $this->affiliatedata . " WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
+														//echo "amounts<pre>"; print_r($amounts); echo "</pre>";
+														
 
-														$amount = $amounts->credits - $amounts->debits;
+														$amount = ($amounts->credits - $amounts->debits) - $amounts->payments;
 
 														if($amount > 0 && !empty($paypal)) {
 															$line = sprintf("%s\t%01.2f\t%s\t%s\t%s\n", $paypal, $amount, $currency, $id, $notes);
@@ -1240,186 +1159,21 @@ class affiliateadmin {
 			echo '<div id="message" class="updated fade"><p>' . __('Affiliate settings saved.','affiliate') . '</p></div>';
 		}
 
-		$page = (isset($_GET['page'])) ? addslashes($_GET['page']) : '';
-		$subpage = (isset($_GET['subpage'])) ? addslashes($_GET['subpage']) : '';
+		$page = (isset($_GET['page'])) ? esc_attr($_GET['page']) : '';
+		$subpage = (isset($_GET['subpage'])) ? esc_attr($_GET['subpage']) : '';
 
 		echo '<div  id="poststuff" class=class="metabox-holder m-settings">';
 
 		echo '<form method="post" action="?page=' . $page . '&amp;subpage=' . $subpage . '&amp;action=updateaffiliateoptions">';
 		wp_nonce_field( "affiliateoptions" );
 
-		echo '<div class="postbox">';
-		echo '<h3 class="hndle" style="cursor:auto;"><span>' . __('Affiliate Link URL', 'affiliate') . '</span></h3>';
 
-		echo '<div class="inside">';
-
-		if(function_exists('is_multisite') && is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network('affiliate/affiliate.php')) {
-			// switch to use new option
-			$siteurl = get_blog_option(1,'home');
-			$affiliatelinkurl = aff_get_option( 'affiliatelinkurl', $siteurl );
-		} else {
-			// switch to use new option
-			$siteurl = aff_get_option('home');
-			$affiliatelinkurl = aff_get_option( 'affiliatelinkurl', $siteurl );
-		}
-
-		echo '<table class="form-table">';
-		echo '<tr>';
-		echo '<th valign="top" scope="row">' . __('Link URL','affiliate') . '</th>';
-		echo '<td valign="top">';
-		echo '<input name="affiliatelinkurl" type="text" id="affiliatelinkurl" style="width: 50%" value="' . htmlentities(stripslashes($affiliatelinkurl),ENT_QUOTES, 'UTF-8') . '" />';
-		echo '</td>';
-		echo '</tr>';
-
-		echo '</table>';
-
-		echo '</div>';
-		echo '</div>';
-
-
-		echo '<div class="postbox">';
-		echo '<h3 class="hndle" style="cursor:auto;"><span>' . __('Column Settings', 'affiliate') . '</span></h3>';
-
-		echo '<div class="inside">';
-
-		$headings = aff_get_option( 'affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')) );
-
-		echo '<table class="form-table">';
-		echo '<tr>';
-		echo '<th valign="top" scope="row">' . __('Unique Clicks','affiliate') . '</th>';
-		echo '<td valign="top">';
-		echo '<input name="uniqueclicks" type="text" id="uniqueclicks" style="width: 50%" value="' . htmlentities(stripslashes($headings[0]),ENT_QUOTES, 'UTF-8') . '" />';
-		echo '</td>';
-		echo '</tr>';
-
-		echo '<tr>';
-		echo '<th valign="top" scope="row">' . __('Sign ups','affiliate') . '</th>';
-		echo '<td valign="top">';
-		echo '<input name="signups" type="text" id="signups" style="width: 50%" value="' . htmlentities(stripslashes($headings[1]),ENT_QUOTES, 'UTF-8') . '" />';
-		echo '</td>';
-		echo '</tr>';
-
-		echo '<tr>';
-		echo '<th valign="top" scope="row">' . __('Paid members','affiliate') . '</th>';
-		echo '<td valign="top">';
-		echo '<input name="paidmembers" type="text" id="paidmembers" style="width: 50%" value="' . htmlentities(stripslashes($headings[2]),ENT_QUOTES, 'UTF-8') . '" />';
-		echo '</td>';
-		echo '</tr>';
-
-		echo '</table>';
-
-		echo '</div>';
-		echo '</div>';
-
-		echo '<div class="postbox">';
-		echo '<h3 class="hndle" style="cursor:auto;"><span>' . __('Profile page text', 'affiliate') . '</span></h3>';
-
-		echo '<div class="inside">';
-
-		$settingstextdefault = __("<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
-<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
-<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>", 'affiliate');
-
-		echo '<table class="form-table">';
-		echo '<tr valign="top">';
-		echo '<th scope="row">' . __('Affiliate settings profile text', 'affiliate') . '</th>';
-		echo '<td>';
-		$args = array("textarea_name" => "affiliatesettingstext");
-		wp_editor( stripslashes( aff_get_option('affiliatesettingstext', $settingstextdefault) ), "affiliatesettingstext", $args );
-		echo '</td>';
-		echo '</tr>';
-
-		$advsettingstextdefault = __("<p>There are times when you would rather hide your affiliate link, or simply not have to bother remembering the affiliate reference to put on the end of our URL.</p>
-<p>If this is the case, then you can enter the main URL of the site you will be sending requests from below, and we will sort out the tricky bits for you.</p>", 'affiliate');
-
-		echo '<table class="form-table">';
-		echo '<tr valign="top">';
-		echo '<th scope="row">' . __('Affiliate advanced settings profile text', 'affiliate') . '</th>';
-		echo '<td>';
-		$args = array("textarea_name" => "affiliateadvancedsettingstext");
-		wp_editor( stripslashes( aff_get_option('affiliateadvancedsettingstext', $advsettingstextdefault) ), "affiliateadvancedsettingstext", $args );
-		echo '</td>';
-		echo '</tr>';
-
-		echo '</table>';
-
-		echo '</div>';
-		echo '</div>';
-
-		echo '<div class="postbox">';
-		echo '<h3 class="hndle" style="cursor:auto;"><span>' . __('Banner Settings', 'affiliate') . '</span></h3>';
-
-		echo '<div class="inside">';
-
-		echo '<table class="form-table">';
-		echo '<tr>';
-		echo '<th valign="top" scope="row">' . __('Enable Banners','affiliate') . '</th>';
-		echo '<td valign="top">';
-
-		echo "<select name='affiliateenablebanners'>";
-		echo "<option value='yes'";
-		if(aff_get_option('affiliateenablebanners', 'no') == 'yes') echo "selected = 'selected'";
-		echo '>' . __('Yes please', 'affiliate') . "</option>";
-
-		echo "<option value='no'";
-		if(aff_get_option('affiliateenablebanners', 'no') == 'no') echo "selected = 'selected'";
-		echo '>' . __('No thanks', 'affiliate') . "</option>";
-
-		echo "</select>";
-
-		echo '</td>';
-		echo '</tr>';
-
-		$banners = aff_get_option('affiliatebannerlinks');
-		if(is_array($banners)) {
-			$banners = implode("\n", $banners);
-		}
-
-		echo '<tr valign="top">';
-		echo '<th scope="row">' . __('Banner Image URLs (one per line)', 'affiliate') . '</th>';
-		echo '<td>';
-		echo '<textarea name="affiliatebannerlinks" id="affiliatebannerlinks" cols="60" rows="10">' . stripslashes( $banners ) . '</textarea>';
-		echo '</td>';
-		echo '</tr>';
-
-		echo '</table>';
-
-		echo '</div>';
-		echo '</div>';
-
-		echo '<div class="postbox">';
-		echo '<h3 class="hndle" style="cursor:auto;"><span>' . __('Approval Settings', 'affiliate') . '</span></h3>';
-
-		echo '<div class="inside">';
-
-			echo '<p class="description">';
-			_e('If you want to delay payouts to affiliates until they have been manually approved then set this option below. ','affiliate');
-			_e('Affiliates will still be able to generate leads, whilst they are waiting to be approved.','affiliate');
-			echo '</p>';
-
-			echo '<table class="form-table">';
-			echo '<tr>';
-			echo '<th valign="top" scope="row">' . __('Pay only approved affiliates','affiliate') . '</th>';
-			echo '<td valign="top">';
-
-			echo "<select name='affiliateenableapproval'>";
-			echo "<option value='yes'";
-			if(aff_get_option('affiliateenableapproval', 'no') == 'yes') echo "selected = 'selected'";
-			echo '>' . __('Yes please', 'affiliate') . "</option>";
-
-			echo "<option value='no'";
-			if(aff_get_option('affiliateenableapproval', 'no') == 'no') echo "selected = 'selected'";
-			echo '>' . __('No thanks', 'affiliate') . "</option>";
-
-			echo "</select>";
-
-			echo '</td>';
-			echo '</tr>';
-			echo '</table>';
-
-		echo '</div>';
-		echo '</div>';
-
+		show_affiliate_admin_metabox_reports_affiliate_link();
+		//show_affiliate_admin_metabox_reports_monetary_precision();
+		show_affiliate_admin_metabox_reports_column_settings();
+		show_affiliate_admin_metabox_profile_text();
+		show_affiliate_admin_metabox_settings_banner();
+		show_affiliate_admin_metabox_settings_approval();
 
 		do_action('affililate_settings_form');
 
@@ -1447,31 +1201,84 @@ class affiliateadmin {
 
 					case 'userdebit':
 						check_admin_referer('debit-user-' . $user_id);
-						$period = addslashes($_POST['debitperiod']);
-						$debit = addslashes($_POST['debitvalue']);
+						$period 	= addslashes($_POST['debitperiod']);
+						$debit 		= abs(floatval($_POST['debitvalue']));
+						$note 		= esc_attr($_POST['debitnote']);
 						$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, debits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE debits = debits + %f", $user_id, $period, $debit, $debit );
 						$queryresult = $this->db->query($sql);
 						if($queryresult) {
+							$user = wp_get_current_user();
+							$meta = array(
+								'current_user_id'	=>	$user->ID,
+								'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+								'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+								//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+							);
+							
+							//$note .= ' '. __('by', 'affiliate') .': ';
+							//if ( !empty( $user->display_name ) )
+							//	$note .= $user->display_name .' ('. $user->user_login.')';
+							//else
+							//	$note .= $user->user_login;
+							
+							$this->db->insert( $this->affiliaterecords, array( 'user_id' => $user_id, 'period' => $period, 'affiliatearea' => 'debit', 'area_id' => false, 'affiliatenote' => $note, 'amount' => $debit, 'meta' => maybe_serialize($meta) ) );
+														
 							echo '<div id="message" class="updated fade"><p>' . __('Debit has been assigned correctly.', 'affiliate') . '</p></div>';
 						}
 						break;
 					case 'usercredit':
 						check_admin_referer('credit-user-' . $user_id);
-						$period = addslashes($_POST['creditperiod']);
-						$credit = addslashes($_POST['creditvalue']);
+						$period 	= addslashes($_POST['creditperiod']);
+						$credit 	= abs(floatval($_POST['creditvalue']));
+						$note 		= esc_attr($_POST['creditnote']);
+						//echo "note[". $note ."]<br />";
+						//die();
+						
 						$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, credits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE credits = credits + %f", $user_id, $period, $credit, $credit );
 						$queryresult = $this->db->query($sql);
 						if($queryresult) {
+							$user = wp_get_current_user();
+							$meta = array(
+								'current_user_id'	=>	$user->ID,
+								'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+								'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+								//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+							);
+							//$note .= ' '. __('by', 'affiliate') .': ';
+							//if ( !empty( $user->display_name ) )
+							//	$note .= $user->display_name .' ('. $user->user_login.')';
+							//else
+							//	$note .= $user->user_login;
+							
+							$this->db->insert( $this->affiliaterecords, array( 'user_id' => $user_id, 'period' => $period, 'affiliatearea' => 'credit', 'area_id' => false, 'affiliatenote' => $note, 'amount' => $credit, 'meta' => maybe_serialize($meta) ) );
+
 							echo '<div id="message" class="updated fade"><p>' . __('Credit has been assigned correctly.', 'affiliate') . '</p></div>';
 						}
 						break;
 					case 'userpayment':
 						check_admin_referer('pay-user-' . $user_id);
-						$period = addslashes($_POST['payperiod']);
-						$payment = addslashes($_POST['payvalue']);
+						$period 	= addslashes($_POST['payperiod']);
+						$payment 	= abs(floatval($_POST['payvalue']));
+						$note 		= esc_attr($_POST['paynote']);
+						
 						$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, payments, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE payments = payments + %f", $user_id, $period, $payment, $payment );
 						$queryresult = $this->db->query($sql);
 						if($queryresult) {
+							$user = wp_get_current_user();
+							$meta = array(
+								'current_user_id'	=>	$user->ID,
+								'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+								'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+								//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+							);
+							//$note .= ' '. __('by', 'affiliate') .': ';
+							//if ( !empty( $user->display_name ) )
+							//	$note .= $user->display_name .' ('. $user->user_login.')';
+							//else
+							//	$note .= $user->user_login;
+							
+							$this->db->insert( $this->affiliaterecords, array( 'user_id' => $user_id, 'period' => $period, 'affiliatearea' => 'payment', 'area_id' => false, 'affiliatenote' => $note, 'amount' => $payment, 'meta' => maybe_serialize($meta) ) );
+
 							echo '<div id="message" class="updated fade"><p>' . __('Payment has been assigned correctly.', 'affiliate') . '</p></div>';
 						}
 						break;
@@ -1492,18 +1299,6 @@ class affiliateadmin {
 
 			}
 
-			$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
-
-			$headings = array_merge($headings, array( __('Debits','affiliate'), __('Credits','affiliate'), __('Payments','affiliate') ));
-
-			$newcolumns = apply_filters('affiliate_column_names', $headings);
-			if(count($newcolumns) == 6) {
-				// We must have 6 columns
-				$columns = $newcolumns;
-			}
-
-			$results = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatedata} WHERE user_id = %d ORDER BY period DESC", $user_id ) );
-
 			$user = get_userdata($user_id);
 
 			echo "<strong>" . __('Details for user : ','affiliate') . $user->user_login . " ( " . get_user_meta($user_id, 'affiliate_paypal', true) . " )" . "</strong>";
@@ -1512,151 +1307,28 @@ class affiliateadmin {
 			if(!empty($referrer)) {
 				echo " " . __('linked to ', 'affiliate') . "<a href='http://{$referrer}'>" . $referrer . "</a>";
 			}
+
+			
+			if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
+				echo '<br /><a href="' . add_query_arg('subpage', 'summary') .'">'. __('&larr; Return to Affiliate Period Summary', 'affiliate') .'</a>';
+			}
+			
 			echo "<br/>";
-			echo "<div id='clickscolumn' style='width: 48%; margin-right: 2%; margin-top: 20px; min-height: 400px; float: left;'>";
+			echo "<div id='clickscolumn' style='width: 48%; margin-right: 10px; margin-top: 20px; min-height: 400px; float: left;'>";
 
-			// The table
-			echo '<table width="100%" cellpadding="3" cellspacing="3" class="widefat" style="width: 100%;">';
-			echo '<thead>';
-			echo '<tr>';
-				echo '<th scope="col">';
-				echo __('Date','affiliate');
-				echo '</th>';
-				foreach($columns as $column) {
-					echo '<th scope="col" class="num">';
-					echo stripslashes($column);
-					echo '</th>';
-				}
-			echo '</tr>';
-			echo '</thead>';
-
-			echo '<tbody id="the-list">';
-
-			$totalclicks = 0;
-			$totalsignups = 0;
-			$totalcompletes = 0;
-			$totaldebits = 0;
-			$totalcredits = 0;
-			$totalpayments = 0;
-
-			if(!empty($results)) {
-				$recent = array_shift($results);
-			} else {
-				$recent = array();
+			//echo "_GET<pre>"; print_r($_GET); echo "</pre>";
+			if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "summary")) {
+				$this->show_users_period_summary_table($user_id);
+			} else if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
+				$period = '';
+				if (isset($_GET['period'])) $period = esc_attr($_GET['period']);
+				if (!empty($period)) $period = date('Ym');
+				$this->show_users_period_details_table($user_id, $period);
 			}
-
-			$startat = strtotime(date("Y-m-15"));
-
-			for($n = 0; $n < 18; $n++) {
-				$rdate = strtotime("-$n month", $startat);
-				$period = date('Ym', $rdate);
-				$place = 10 - $n;
-
-				echo "<tr class='periods' id='period-$place'>";
-				echo '<td valign="top">';
-				echo date("M", $rdate) . '<br/>' . date("Y", $rdate);
-				echo '</td>';
-
-				if(!empty($recent) && $recent->period == $period) {
-					// We are on the current period
-					echo '<td valign="top" class="num">';
-					echo $recent->uniques;
-					$totalclicks += $recent->uniques;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo $recent->signups;
-					$totalsignups += $recent->signups;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo $recent->completes;
-					$totalcompletes += $recent->completes;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo number_format($recent->debits, 2);
-					$totaldebits += (float) $recent->debits;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo number_format($recent->credits, 2);
-					$totalcredits += (float) $recent->credits;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo number_format($recent->payments, 2);
-					$totalpayments += (float) $recent->payments;
-					echo '</td>';
-
-					if(!empty($results)) {
-						$recent = array_shift($results);
-					} else {
-						$recent = array();
-					}
-
-				} else {
-					// A zero blank row
-					echo '<td valign="top" class="num">';
-					echo 0;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo 0;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo 0;
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo "0.00";
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo number_format(0, 2);
-					echo '</td>';
-
-					echo '<td valign="top" class="num">';
-					echo number_format(0, 2);
-					echo '</td>';
-				}
-				echo '</tr>';
-			}
-
-			echo '</tbody>';
-
-			echo '<tfoot>';
-			echo '<tr>';
-				echo '<th scope="col">';
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo $totalclicks;
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo $totalsignups;
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo $totalcompletes;
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo number_format($totaldebits, 2);
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo number_format($totalcredits, 2);
-				echo '</th>';
-				echo '<th scope="col" class="num">';
-				echo number_format($totalpayments, 2);
-				echo '</th>';
-			echo '</tr>';
-			echo '</tfoot>';
-
-			echo '</table>';
-
 			echo "</div>";
 
 
-			echo "<div id='referrerscolumn' style='width: 48%; margin-left: 2%; min-height: 400px; margin-top: 20px; background: #fff; float: left;'>";
+			echo "<div id='referrerscolumn' style='width: 48%; min-height: 400px; margin-top: 20px; padding: 10px; background: #fff; float: left;'>";
 
 			echo "<div id='affdashgraph' style='height: 300px; width: 100%; background-color: #fff; margin-left: 0px; margin-right: 10px; margin-bottom: 20px;'>" . "</div>";
 
@@ -1706,50 +1378,13 @@ class affiliateadmin {
 
 			// Add credit and debits table and form
 
-			echo "<form action='' method='post'>";
-			wp_nonce_field( 'debit-user-' . $user_id );
-			echo '<input type="hidden" name="action" value="userdebit" />';
-			echo '<input type="hidden" name="userid" id="debituserid" value="' . $user_id . '" />';
-			echo "<table class='widefat'>";
-
-			echo "<thead>";
-				echo "<tr>";
-				echo "<th scope='col'>";
-				echo  __('Debit user account','affiliate');
-				echo "</th>";
-				echo "<th scope='col' style='width: 3em;'>";
-				echo '&nbsp;';
-				echo "</th>";
-				echo "</tr>";
-			echo "</thead>";
-
-			echo "<tbody>";
-
-					echo "<tr class='' style=''>";
-					echo "<td style='padding: 5px;'>";
-					echo __('Period : ','affiliate');
-					echo '<select name="debitperiod" id="debitperiod">';
-					$startat = strtotime(date("Y-m-15"));
-					for($n=0; $n <=24; $n++) {
-						$rdate = strtotime("-$n month", $startat);
-						$period = date('Ym', $rdate);
-						echo '<option value="' . $period . '"';
-						echo '>' . date('M Y', $rdate) . '</option>';
-					}
-					echo '</select>&nbsp;';
-					echo __('Value : ','affiliate');
-					echo '<input type="text" name="debitvalue" value="" style="width: 6em;"/>';
-					echo "</td>";
-					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
-					echo "<input type='submit' name='debitaccount' value='" . __('Add Debit','affiliate') . "' class='button-primary' />";
-					echo "</td>";
-					echo "</tr>";
-
-			echo "</tbody>";
-			echo "</table>";
-			echo "</form>";
-
-			echo "<br/>";
+			$period_options = '';
+			$startat = strtotime(date("Y-m-15"));
+			for($n=0; $n <=24; $n++) {
+				$rdate = strtotime("-$n month", $startat);
+				$period = date('Ym', $rdate);
+				$period_options .= '<option value="' . $period . '">' . date('M Y', $rdate) . '</option>';
+			}
 
 			echo "<form action='' method='post'>";
 			wp_nonce_field( 'credit-user-' . $user_id );
@@ -1772,18 +1407,17 @@ class affiliateadmin {
 
 					echo "<tr class='' style=''>";
 					echo "<td style='padding: 5px;'>";
-					echo __('Period : ','affiliate');
+					echo '<label for="creditperiod">'. __('Period : ','affiliate') .'</label>';
 					echo '<select name="creditperiod" id="creditperiod">';
-					$startat = strtotime(date("Y-m-15"));
-					for($n=0; $n <=24; $n++) {
-						$rdate = strtotime("-$n month", $startat);
-						$period = date('Ym', $rdate);
-						echo '<option value="' . $period . '"';
-						echo '>' . date('M Y', $rdate) . '</option>';
-					}
+					echo $period_options;
 					echo '</select>&nbsp;';
-					echo __('Value : ','affiliate');
-					echo '<input type="text" name="creditvalue" value="" style="width: 6em;"/>';
+					
+					echo '<label for="creditvalue">'. __('Value : ','affiliate') .'</label>';
+					echo '<input type="text" id="creditvalue" name="creditvalue" value="" style="width: 10%;"/>&nbsp;';
+					
+					echo '<label for="creditnote">'. __('Note : ','affiliate') .'</label>';
+					echo '<input type="text" id="creditnote" name="creditnote" value="" style="width: 45%;" placeholder="'. __('Credit for...', 'affiliate') .'"/>';
+					
 					echo "</td>";
 					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
 					echo "<input type='submit' name='creditaccount' value='" . __('Add Credit','affiliate') . "' class='button-primary' />";
@@ -1796,6 +1430,48 @@ class affiliateadmin {
 			echo "</form>";
 
 			echo "<br/>";
+
+			echo "<form action='' method='post'>";
+			wp_nonce_field( 'debit-user-' . $user_id );
+			echo '<input type="hidden" name="action" value="userdebit" />';
+			echo '<input type="hidden" name="userid" id="debituserid" value="' . $user_id . '" />';
+			echo "<table class='widefat'>";
+
+			echo "<thead>";
+				echo "<tr>";
+				echo "<th scope='col'>";
+				echo  __('Debit user account','affiliate');
+				echo "</th>";
+				echo "<th scope='col' style='width: 3em;'>";
+				echo '&nbsp;';
+				echo "</th>";
+				echo "</tr>";
+			echo "</thead>";
+
+			echo "<tbody>";
+
+					echo "<tr class='' style=''>";
+					echo "<td style='padding: 5px;'>";
+					echo '<label for="debitperiod">'. __('Period : ','affiliate') .'</label>';
+					echo '<select name="debitperiod" id="debitperiod">';
+					echo $period_options;
+					echo '</select>&nbsp;';
+					echo '<label for="debitvalue">'. __('Value : ','affiliate') .'</label>';
+					echo '<input type="text" id="debitvalue" name="debitvalue" value="" style="width: 10%;"/>';
+					echo '  <label for="debitnote">'. __('Note : ','affiliate') .'</label>';
+					echo '<input type="text" id="debitnote" name="debitnote" value="" style="width: 45%;" placeholder="'. __('Debit for...', 'affiliate') .'"/>';
+					echo "</td>";
+					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
+					echo "<input type='submit' name='debitaccount' value='" . __('Add Debit','affiliate') . "' class='button-primary' />";
+					echo "</td>";
+					echo "</tr>";
+
+			echo "</tbody>";
+			echo "</table>";
+			echo "</form>";
+
+			echo "<br/>";
+
 
 			echo "<form action='' method='post'>";
 			wp_nonce_field( 'pay-user-' . $user_id );
@@ -1818,18 +1494,17 @@ class affiliateadmin {
 
 					echo "<tr class='' style=''>";
 					echo "<td style='padding: 5px;'>";
-					echo __('Period : ','affiliate');
+					echo '<label for="payperiod">' .__('Period : ','affiliate') .'</label>';
 					echo '<select name="payperiod" id="payperiod">';
-					$startat = strtotime(date("Y-m-15"));
-					for($n=0; $n <=24; $n++) {
-						$rdate = strtotime("-$n month", $startat);
-						$period = date('Ym', $rdate);
-						echo '<option value="' . $period . '"';
-						echo '>' . date('M Y', $rdate) . '</option>';
-					}
+					echo $period_options;
 					echo '</select>&nbsp;';
-					echo __('Value : ','affiliate');
-					echo '<input type="text" name="payvalue" value="" style="width: 6em;" />';
+					
+					echo '<label for="payvalue">' .__('Value : ','affiliate') .'</label>';
+					echo '<input type="text" id="payvalue" name="payvalue" value="" style="width: 10%;" />&nbsp;';
+
+					echo '<label for="paynote">'. __('Note : ','affiliate') .'</label>';
+					echo '<input type="text" id="paynote" name="paynote" value="" style="width: 45%;" placeholder="'. __('Payment for...', 'affiliate') .'"/>';
+
 					echo "</td>";
 					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
 					echo "<input type='submit' name='payaccount' value='" . __('Add Payment','affiliate') . "' class='button-primary' />";
@@ -1878,7 +1553,8 @@ class affiliateadmin {
 	}
 
 	function show_affiliates_panel_menu() {
-
+		return;
+		
 		global $page, $subpage;
 
 		$tab = $page;
@@ -1912,7 +1588,7 @@ class affiliateadmin {
 
 	function handle_affiliates_panel() {
 
-		global $page;
+		global $page, $wpdb;
 
 		wp_reset_vars( array('page') );
 
@@ -1944,59 +1620,107 @@ class affiliateadmin {
 				switch(addslashes($_GET['action'])) {
 
 					case 'allaffiliates':	// Bulk operations
-											if(isset($_POST['allaction_markaspaid'])) {
-												check_admin_referer('allaffiliateactions');
+						if(isset($_POST['allaction_markaspaid'])) {
+							check_admin_referer('allaffiliateactions');
 
-												if(!empty($_POST['allpayments'])) {
-													foreach($_POST['allpayments'] as $affiliate) {
-														$affdetails = explode('-', $affiliate);
-														if(count($affdetails) == 2) {
-															if(defined('AFFILIATE_ORIGINAL_PAYMENT_CALCULATION') && AFFILIATE_ORIGINAL_PAYMENT_CALCULATION == true) {
-																$affected = $this->db->query( "UPDATE " . $this->affiliatedata . " SET payments = payments + (credits - debits), lastupdated = '" . current_time('mysql', true) . "' WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
-															} else {
-																$affected = $this->db->query( "UPDATE " . $this->affiliatedata . " SET payments = (credits - debits), lastupdated = '" . current_time('mysql', true) . "' WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
-															}
-
-														}
-													}
-													echo '<div id="message" class="updated fade"><p>' . __('Payments has been assigned correctly.', 'affiliate') . '</p></div>';
-												}
-
-												// Mark as paid
+							if(!empty($_POST['allpayments'])) {
+								foreach($_POST['allpayments'] as $affiliate) {
+									$affdetails = explode('-', $affiliate);
+									if(count($affdetails) == 2) {
+										$sql_str = $wpdb->prepare("SELECT * FROM ". $this->affiliatedata ." WHERE user_id = %d AND period = %s", $affdetails[0], $affdetails[1]);
+										//echo "sql_str[". $sql_str ."]<br />";
+										$record = $wpdb->get_row($sql_str);
+										if ($record) {
+											echo "record<pre>"; print_r($record);
+											//die();
+								
+											//if(defined('AFFILIATE_ORIGINAL_PAYMENT_CALCULATION') && AFFILIATE_ORIGINAL_PAYMENT_CALCULATION == true) {
+												$sql_str = $wpdb->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->payments + ($record->credits - $record->debits), current_time('mysql', true), $affdetails[0], $affdetails[1]); 
+												
+												
+												$user = wp_get_current_user();
+												$meta = array(
+													'current_user_id'	=>	$user->ID,
+													'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+													'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+													//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+												);
+							
+												$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affdetails[0], 'period' => $affdetails[1], 'affiliatearea' => 'payment', 'area_id' => false, 'affiliatenote' => $note, 'amount' => $record->credits - $record->debits, 'meta' => maybe_serialize($meta) ) );
+												
+												
+												//echo "#1 sql_str[". $sql_str ."]<br />";
+												//die();
+												$affected = $this->db->query( $sql_str );
+											//} else {
+											//	$sql_str = $wpdb->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->credits - $record->debits, current_time('mysql', true), $affdetails[0], $affdetails[1]);
+											//	echo "#2 sql_str[". $sql_str ."]<br />";
+											//	die();
+										
+											//	$affected = $this->db->query( $sql_str );
+											//}
+											if($affected) {
+												echo '<div id="message" class="updated fade"><p>' . __('Payment has been assigned correctly.', 'affiliate') . '</p></div>';
 											}
-											break;
+										}
+									}
+								}
+								echo '<div id="message" class="updated fade"><p>' . __('Payments has been assigned correctly.', 'affiliate') . '</p></div>';
+							}
+
+							// Mark as paid
+						}
+						break;
 
 					case 'makepayment':		// Mark a payment
-											$affiliate = addslashes($_GET['id']);
-											if(isset($affiliate)) {
-												$affdetails = explode('-', $affiliate);
+						$affiliate = addslashes($_GET['id']);
+						if(isset($affiliate)) {
+							$affdetails = explode('-', $affiliate);
 
-												if(count($affdetails) == 2) {
-													if(defined('AFFILIATE_ORIGINAL_PAYMENT_CALCULATION') && AFFILIATE_ORIGINAL_PAYMENT_CALCULATION == true) {
-														$affected = $this->db->query( "UPDATE " . $this->affiliatedata . " SET payments = payments + (credits - debits), lastupdated = '" . current_time('mysql', true) . "' WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
-													} else {
-														$affected = $this->db->query( "UPDATE " . $this->affiliatedata . " SET payments = (credits - debits), lastupdated = '" . current_time('mysql', true) . "' WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
-													}
-													if($affected) {
-														echo '<div id="message" class="updated fade"><p>' . __('Payment has been assigned correctly.', 'affiliate') . '</p></div>';
-													}
-												}
+							if(count($affdetails) == 2) {
+								$sql_str = $wpdb->prepare("SELECT * FROM ". $this->affiliatedata ." WHERE user_id = %d AND period = %s", $affdetails[0], $affdetails[1]);
+								//echo "sql_str[". $sql_str ."]<br />";
+								$record = $wpdb->get_row($sql_str);
+								if ($record) {
+									//echo "record<pre>"; print_r($record);
 
-											}
-
-											break;
+									$balance = ($record->credits - $record->debits) - $record->payments;
+									//echo "balance[". $balance ."]<br />";
+									
+									if ($balance > 0) {
+								
+										$sql_str = $wpdb->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $balance+$record->payments, current_time('mysql', true), $affdetails[0], $affdetails[1]); 
+										//echo "#1 sql_str[". $sql_str ."]<br />";
+										$affected = $this->db->query( $sql_str );
+										if($affected) {
+											echo '<div id="message" class="updated fade"><p>' . __('Payment has been assigned correctly.', 'affiliate') . '</p></div>';
+										
+											$user = wp_get_current_user();
+											$meta = array(
+												'current_user_id'	=>	$user->ID,
+												'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+												'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+											);
+					
+											$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affdetails[0], 'period' => $affdetails[1], 'affiliatearea' => 'payment', 'area_id' => false, 'affiliatenote' => $note, 'amount' => $balance, 'meta' => maybe_serialize($meta) ) );
+										}
+									}
+								}
+							}
+						}
+						break;
 
 				}
 
-				}
+			}
 
 
 			$headings = aff_get_option('affiliateheadings', array( __('Unique Clicks','affiliate'), __('Sign ups','affiliate'), __('Paid members','affiliate')));
 
-			$headings = array_merge($headings, array( __('Debits','affiliate'), __('Credits','affiliate'), __('Payments','affiliate') ));
+			$headings = array_merge($headings, array( __('Credits','affiliate'), __('Debits','affiliate'), __('Payments','affiliate'), __('Balance','affiliate') ));
 
 			$newcolumns = apply_filters('affiliate_column_names', $headings);
-			if(count($newcolumns) == 6) {
+			if(count($newcolumns) == 7) {
 				// We must have 6 columns
 				$columns = $newcolumns;
 			}
@@ -2036,7 +1760,7 @@ class affiliateadmin {
 				echo '<div class="alignright">';
 
 				echo '<input type="submit" value="' . __('Export Payments', 'affiliate') . '" name="allaction_exportpayments" class="button-secondary delete" />&nbsp;&nbsp;';
-				echo '<input type="submit" value="' . __('Mark as Paid', 'affiliate') . '" name="allaction_markaspaid" class="button-secondary" />';
+				echo '<input type="submit" value="' . __('Pay Balances', 'affiliate') . '" name="allaction_markaspaid" class="button-secondary" />';
 				wp_nonce_field( 'allaffiliateactions' );
 				echo '<br class="clear" />';
 				echo '</div>';
@@ -2053,6 +1777,12 @@ class affiliateadmin {
 					echo '<th scope="col">';
 					echo __('Username','affiliate');
 					echo '</th>';
+
+					if (aff_get_option('affiliateenableapproval', 'no') == 'yes') {
+						echo '<th scope="col">';
+						echo __('Approved','affiliate');
+						echo '</th>';
+					}
 
 					foreach($columns as $column) {
 						echo '<th scope="col" class="num">';
@@ -2097,40 +1827,66 @@ class affiliateadmin {
 						// Quick links
 					$actions = array();
 					if( $this->approved_affiliate( $result->user_id ) ) {
-						$actions[] = "<a href='?page=$page&amp;action=makepayment&amp;id=". $result->user_id . "-" . $result->period ."&amp;reportperiod=" . $reportperiod . "' class='edit'>" . __('Mark as Paid','affiliate') . "</a>";
+						$actions[] = "<a href='?page=$page&amp;action=makepayment&amp;id=". $result->user_id . "-" . $result->period ."&amp;reportperiod=" . $reportperiod . "' class='edit'>" . __('Pay Balance','affiliate') . "</a>";
 					}
-					$actions[] = "<a href='?page=affiliatesadminmanage&amp;subpage=users&amp;id=". $result->user_id . "' class='edit'>" . __('Manage Affiliate','affiliate') . "</a>";
-
-
+					$actions[] = "<a href='?page=affiliatesadminmanage&amp;subpage=summary&amp;id=". $result->user_id . "' class='edit'>" . __('Manage Affiliate','affiliate') . "</a>";
+					
+/*
+					if ((intval($result->uniques)) || (intval($result->signups)) || intval($result->completes)) {
+						if(is_network_admin()) {
+							$actions[] = '<a href="' . network_admin_url('user-edit.php?user_id='. $result->user_id .'&period='. $reportperiod .'#affiliate-details') .'">'. __('details', 'affiliate') .'</a>';
+						} else {
+							$actions[] = '<a href="'. admin_url('user-edit.php?user_id='. $result->user_id .'&period='.$reportperiod .'#affiliate-details') .'">'. __('details', 'affiliate') .'</a>';
+						}
+					}
+*/
 					echo '<div class="row-actions">';
 					echo implode(' | ', $actions);
 					echo '</div>';
 
 					echo '</td>';
 
+
+					if (aff_get_option('affiliateenableapproval', 'no') == 'yes') {
+						echo '<td valign="top" class="">';
+						if ($this->approved_affiliate( $result->user_id )) {
+							echo __('Yes', 'affiliate');
+						} else {
+							echo __('No', 'affiliate');
+						}
+						echo '</td>';
+					}
+
 					echo '<td valign="top" class="num">';
-					echo $result->uniques;
+					echo intval($result->uniques);
 					echo '</td>';
 
 					echo '<td valign="top" class="num">';
-					echo $result->signups;
+					echo intval($result->signups);
 					echo '</td>';
 
 					echo '<td valign="top" class="num">';
-					echo $result->completes;
+					echo intval($result->completes);
+					echo '</div>';
+					
 					echo '</td>';
 
 					echo '<td valign="top" class="num">';
-					echo number_format($result->debits,2);
+					echo number_format($result->credits, 2);
 					echo '</td>';
 
 					echo '<td valign="top" class="num">';
-					echo number_format($result->credits,2);
+					echo number_format($result->debits * -1, 2);
 					echo '</td>';
 
 					echo '<td valign="top" class="num">';
-					echo number_format($result->payments,2);
+					echo number_format($result->payments * -1, 2);
 					echo '</td>';
+
+					echo '<td valign="top" class="num">';
+					echo number_format(($result->credits - $result->debits) - $result->payments, 2);
+					echo '</td>';
+
 					echo '</tr>';
 				}
 			} else {
@@ -2150,6 +1906,13 @@ class affiliateadmin {
 				echo '<th scope="col">';
 				echo __('Username','affiliate');
 				echo '</th>';
+				
+				if (aff_get_option('affiliateenableapproval', 'no') == 'yes') {
+					echo '<th scope="col">';
+					echo __('Approved','affiliate');
+					echo '</th>';
+				}
+				
 				reset($columns);
 				foreach($columns as $column) {
 					echo '<th scope="col" class="num">';
@@ -2348,7 +2111,7 @@ class affiliateadmin {
 				wp_original_referer_field(true, 'previous'); wp_nonce_field('bulk-addon');
 
 				$columns = array(	"name"		=>	__('Addon Name', 'affiliate'),
-									"active"	=>	__('Active','affiliate')
+									"active"	=>	__('Addon Status','affiliate')
 								);
 
 				$columns = apply_filters('affiliate_plugincolumns', $columns);
@@ -2390,47 +2153,107 @@ class affiliateadmin {
 				<tbody>
 					<?php
 					if(!empty($plugins)) {
+						
+						$AFFILIATE_IS_NETWORK_ACTIVE = affiliate_is_plugin_active_for_network();
+						
 						foreach($plugins as $key => $plugin) {
 							$default_headers = array(
-								                'Name' => 'Plugin Name',
-												'Author' => 'Author',
-												'Description'	=>	'Description',
-												'AuthorURI' => 'Author URI'
-								        );
+								'Name' 				=> 	'Plugin Name',
+								//'Author' 			=> 	'Author',
+								'Description'		=>	'Description',
+								'AuthorURI' 		=> 	'Author URI',
+								'Network'			=>	'Network',
+								'Depends'			=>	'Depends',
+							);
 
 							$plugin_data = get_file_data( affiliate_dir('affiliateincludes/addons/' . $plugin), $default_headers, 'plugin' );
-
+							//echo "plugin_data<pre>"; print_r($plugin_data); echo "</pre>";
+							
 							if(empty($plugin_data['Name'])) {
 								continue;
 							}
 
+							if ((!isset($plugin_data['Network'])) || (empty($plugin_data['Network'])) || ($plugin_data['Network'] != 'true')) {
+								$plugin_data['Network'] = false;
+							} else if ($plugin_data['Network'] == 'true') {
+								$plugin_data['Network'] = true;
+							} 
+							if ( ($plugin_data['Network'] == true) && (!is_multisite()) && (is_network_admin()) ) {
+								continue;
+							}
+								
+							//echo "plugin_data<pre>"; print_r($plugin_data); echo "</pre>";
+							
+							$PLUGINS_CAN_BE_ACTIVE = true;
+							if ( ($plugin_data['Network'] == true) && (!$AFFILIATE_IS_NETWORK_ACTIVE) ) { 
+								$PLUGINS_CAN_BE_ACTIVE = false;
+							} 
+							//echo "[". $plugin_data['Name'] ."] PLUGINS_CAN_BE_ACTIVE[". $PLUGINS_CAN_BE_ACTIVE ."]<br />";
+							
+							// Set the initial active
+							$PLUGIN_INSTALLED = true;
+							if ((!isset($plugin_data['Depends'])) || (empty($plugin_data['Depends']))) { 
+								$plugin_data['Network'] = array();
+							} else {
+								$depends = explode(',', $plugin_data['Depends']);
+								if (($depends) && (is_array($depends)) && (count($depends))) {
+									foreach($depends as $depend) {
+										//echo "depend[". $depend ."]<br />";
+										if ((!affiliate_is_plugin_active($depend)) && (!affiliate_is_plugin_active_for_network($depend))) {
+											$PLUGIN_INSTALLED = false;
+										}
+									}
+								}
+							}
+							//echo "[". $plugin_data['Name'] ."] PLUGIN_INSTALLED[". $PLUGIN_INSTALLED ."]<br />";
+							
 							?>
 							<tr valign="middle" class="alternate" id="plugin-<?php echo $plugin; ?>">
-								<th class="check-column" scope="row"><input type="checkbox" value="<?php echo esc_attr($plugin); ?>" name="plugincheck[]"></th>
+								<th class="check-column" scope="row">
+									<?php
+									if (($PLUGINS_CAN_BE_ACTIVE) && ($PLUGIN_INSTALLED)) {
+										?><input type="checkbox" value="<?php echo esc_attr($plugin); ?>" name="plugincheck[]"><?php
+									}
+									?>
+								</th>
 								<td class="column-name">
-									<strong><?php echo esc_html($plugin_data['Name']) . "</strong>"; ?>
-									<?php if(!empty($plugin_data['Description'])) {
+									<strong><?php echo esc_html($plugin_data['Name']) ?></strong>
+									<?php
+									if (!$PLUGIN_INSTALLED) {
+										//echo ' <span>'. __('Base plugin not activate/installed', 'affiliate') .'</span>';
+										echo ' -- <strong>' .__('plugin not installed', 'affiliate') .'</strong>';
+									}
+
+									if(!empty($plugin_data['Description'])) {
 										?><br/><?php echo esc_html($plugin_data['Description']);
-										}
+									}
 
+									//if ($plugin_data['Network'] == true)  { 
+									//	echo '<br /><strong>' .__('Network only - Requires Affiliate plugin is Network Activated', 'affiliate') .'</strong>';
+									//} 
+										
+									if (($PLUGINS_CAN_BE_ACTIVE) && ($PLUGIN_INSTALLED)) {
 										$actions = array();
-
 										if(in_array($plugin, $active)) {
 											$actions['toggle'] = "<span class='edit activate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=deactivate&amp;addon=" . $plugin . "", 'toggle-addon-' . $plugin) . "'>" . __('Deactivate', 'affiliate') . "</a></span>";
 										} else {
 											$actions['toggle'] = "<span class='edit deactivate'><a href='" . wp_nonce_url("?page=" . $page. "&amp;subpage=" . $subpage . "&amp;action=activate&amp;addon=" . $plugin . "", 'toggle-addon-' . $plugin) . "'>" . ((function_exists('is_network_admin') && is_network_admin()) ? __('Network Activate', 'affiliate') : __('Activate', 'affiliate')) . "</a></span>";
 										}
+										if (count($actions)) {
+											?><br /><div class="row-actions"><?php echo implode(" | ", $actions); ?></div><?php
+										}
+									} 
 									?>
-									<br><div class="row-actions"><?php echo implode(" | ", $actions); ?></div>
-									</td>
-
+								</td>
 								<td class="column-active">
 									<?php
-										if(in_array($plugin, $active)) {
-											echo "<strong>" . __('Active', 'affiliate') . "</strong>";
-										} else {
-											echo __('Inactive', 'affiliate');
-										}
+										if (($PLUGINS_CAN_BE_ACTIVE) && ($PLUGIN_INSTALLED)) {
+											if(in_array($plugin, $active)) {
+												echo "<strong>" . __('Active', 'affiliate') . "</strong>";
+											} else {
+												echo __('Inactive', 'affiliate');
+											}
+										} 
 									?>
 								</td>
 						    </tr>
@@ -2529,7 +2352,520 @@ class affiliateadmin {
 			return true;
 		}
 	}
+	function edit_user_profile( $user = '') {
 
+		if (!$user) {
+			global $current_user;
+			$user = $current_user;
+		}
+
+		if (isset($_GET['period'])) {
+			$period = esc_attr($_GET['period']);
+		} else {
+			$period = $period = date('Ym');
+		}
+
+		$area = array();
+		if (isset($_GET['type'])) {
+			$type = esc_attr($_GET['type']);
+			if ($type == 'paid')
+				$area[] = 'marketpress';
+			else if ($type == 'uniques')
+				$area[] = 'click';
+			else if ($type == 'signups')
+				$area[] = 'signups';
+		} 
+
+		?><h3><?php _e('Affiliate Transactions', 'affiliate'); ?></h3><?php
+		$this->show_complete_records_table($user->ID, $period, $area);
+	}
+
+	function get_complete_records($user_id, $period = false, $area = array(), $area_id = false) {
+		$sql_str = "SELECT * FROM ". $this->affiliaterecords ." WHERE `user_id`=". $user_id;
+		if (!empty($period))
+			$sql_str .= " AND `period`='". $period ."' ";
+
+		if (!empty($area)) {
+			$area_str = '';
+			foreach($area as $area_item) {
+				if (!empty($area_str)) $area_str .= ',';
+				$area_str .= "'". $area_item ."'";
+			}
+			if (!empty($area_str)) {
+				$sql_str .= " AND `affiliatearea` IN (". $area_str .") ";
+			}
+		}
+		if (!empty($area_id))
+			$sql_str .= " AND `area_id`='". $area_id ."' ";
+
+		$sql_str .= ' LIMIT 50';
+
+		//echo "sql_str[". $sql_str ."]<br />";
+		return $this->db->get_results($sql_str);
+	}
+
+	function show_complete_records_table($user_id, $period = false, $area = false, $area_id = false) {
+		?>
+		<table id="affiliate-details" class="affiliate-details">
+		<tr>
+			<th class="affiliate-period"><?php _e('Period', 'affiliate'); ?></th>
+			<th class="affiliate-type"><?php _e('Type', 'affiliate'); ?></th>
+			<th class="affiliate-period"><?php _e('Note', 'affiliate'); ?></th>
+			<th class="affiliate-period"><?php _e('Amount', 'affiliate'); ?></th>
+		</tr>
+		<?php
+
+		$compete_records = $this->get_complete_records($user_id, $period, $area, $area_id);
+		if (($compete_records) && (!empty($compete_records))) {
+			//echo "compete_records<pre>"; print_r($compete_records); echo "</pre>";
+			$amount_total = 0.00;
+			foreach($compete_records as $compete_record) {
+				$amount_total += $compete_record->amount;
+				$style = ( ' class="alternate"' == $style ) ? '' : ' class="alternate"';
+				?>
+				<tr <?php echo $style; ?>>
+					<td class="affiliate-period"><?php echo $compete_record->period; ?></td>
+					<td class="affiliate-type"><?php 
+						$order_label =  __('Order#', 'affiliate'). ' '. $compete_record->area_id;
+						if (($compete_record->affiliatearea == 'paid:marketpress') && (!empty($compete_record->area_id))) {
+							if ((!isset($_GET['page'])) || ($_GET['page'] != 'marketpress-orders')) {
+								global $mp;
+								if (isset($mp)) {
+									echo '<a title="'. __('view order details', 'affiliate') .'" href="'.
+										admin_url('edit.php?post_type=product&page=marketpress-orders&order_id='. $compete_record->area_id) .'">'. $order_label .' '. $compete_record->area_id .'</a>';
+								} else {
+									echo $order_label;
+								}
+							} else {
+								echo $order_label;
+							}
+						} else if ($compete_record->affiliatearea == 'unique') {
+							echo __('Referral Link', 'affiliate');
+						} else {
+							
+						}
+						
+						?></td>
+					<td class="affiliate-note"><?php 
+						if ($compete_record->affiliatearea == 'unique') {
+							if (!empty($compete_record->meta)) {
+								$meta = maybe_unserialize($compete_record->meta);
+								//echo "meta<pre>"; print_r($meta); echo "</pre>";
+								if (isset($meta['REMOTE_URL'])) {
+									echo $meta['REMOTE_URL'];
+
+									if (isset($meta['IP'])) {
+										echo ' ('. $meta['IP'] .')';
+									}
+								}
+								if (isset($meta['LOCAL_URL'])) 
+									echo ' -> '. $meta['LOCAL_URL'];
+							}
+						} else {
+							echo $compete_record->affiliatenote; 
+						}
+					?></td>
+					<td class="affiliate-amount"><?php 
+						if ($compete_record->affiliatearea == 'paid:marketpress') {
+							echo $compete_record->amount; 
+						} else {
+							echo '&nbsp;';
+						}?></td>
+				</tr>
+				<?php
+			}
+			if (count($compete_records) > 1) {
+				?>
+				<tr>
+					<td class="affiliate-period">&nbsp;</td>
+					<td class="affiliate-type">&nbsp;</td>
+					<td class="affiliate-note"><?php _e('Total', 'affiliate'); ?></td>
+					<td class="affiliate-amount"><?php echo $amount_total; ?></td>
+				</tr>
+				<?php
+			}
+		} else {
+			?><tr><td colspan="4"><?php _e('No affiliate transactions found for this user.', 'affiliate'); ?></td></tr><?php
+		}
+		?>
+		</table>
+		<style type="text/css" id="affiliate-mp-order-details-css">
+			table.affiliate-details { width: 100%; }
+			table.affiliate-details th { font-weight: bold; }
+			table.affiliate-details td { font-weight: normal; }
+			table.affiliate-details td { text-align: center;}
+		</style>
+		<?php
+	}
+
+
+	function show_users_period_summary_table($user_id){
+		$headings = aff_get_option('affiliateheadings', 
+			array( 
+				__('Unique Clicks','affiliate'), 
+				__('Sign ups','affiliate'), 
+				__('Paid members','affiliate')
+			)
+		);
+
+		$headings = array_merge($headings, 
+			array( 
+				__('Credits','affiliate'), 
+				__('Debits','affiliate'), 
+				__('Payments','affiliate'), 
+				__('Balanace', 'affiliate')
+			)
+		);
+
+		$newcolumns = apply_filters('affiliate_summary_columns', $headings);
+		if(count($newcolumns) == 7) {
+			// We must have 6 columns
+			$columns = $newcolumns;
+		}
+
+		$results = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatedata} WHERE user_id = %d ORDER BY period DESC", $user_id ) );
+
+		// The table
+		echo '<table width="100%" cellpadding="3" cellspacing="3" class="widefat" style="width: 100%;">';
+		echo '<thead>';
+		echo '<tr>';
+			echo '<th scope="col">';
+			echo __('Period','affiliate');
+			echo '</th>';
+			foreach($columns as $column) {
+				echo '<th scope="col" class="num">';
+				echo stripslashes($column);
+				echo '</th>';
+			}
+		echo '</tr>';
+		echo '</thead>';
+
+		echo '<tbody id="the-list">';
+
+		$totalclicks 		= 0.00;
+		$totalsignups 		= 0.00;
+		$totalcompletes 	= 0.00;
+		$totaldebits 		= 0.00;
+		$totalcredits 		= 0.00;
+		$totalpayments 		= 0.00;
+		$totalbalances 		= 0.00;
+
+		if(!empty($results)) {
+			$recent = array_shift($results);
+		} else {
+			$recent = array();
+		}
+
+		$startat = strtotime(date("Y-m-15"));
+
+		for($n = 0; $n < 18; $n++) {
+			$rdate = strtotime("-$n month", $startat);
+			$period = date('Ym', $rdate);
+			$place = 10 - $n;
+
+			echo "<tr class='periods' id='period-$place'>";
+			echo '<td valign="top">';
+			//echo "recent<pre>"; print_r($recent); echo "</pre>";
+			if ((intval($recent->uniques)) || (intval($recent->signups)) || (intval($recent->completes)) 
+			 || (floatval($recent->debits)) || (floatval($recent->credits)) || (floatval($recent->payments))) {
+				/*
+				if(is_network_admin()) {
+					echo '<a href="' . network_admin_url('user-edit.php?user_id='. $user_id .'&period='. $period .'#affiliate-details') .'">'. date("M", $rdate) . '<br/>' . date("Y", $rdate) .'</a>';
+				} else {
+					echo '<a href="'. admin_url('user-edit.php?user_id='. $user_id .'&period='. $period .'#affiliate-details') .'">'. date("M", $rdate) . '<br/>' . date("Y", $rdate) .'</a>';
+				}
+				*/
+				
+				echo '<a title="'. __('View Affiliate detail transactions for this perios', 'affiliate') .'" href="'. add_query_arg('subpage', 'details') .'">'. date("M", $rdate) . '<br/>' . date("Y", $rdate) .'</a>';
+				
+			} else {
+				echo date("M", $rdate) . '<br/>' . date("Y", $rdate);
+			}
+			echo '</td>';
+
+			if(!empty($recent) && $recent->period == $period) {
+				// We are on the current period
+				echo '<td valign="top" class="num">';
+				echo $recent->uniques;
+				$totalclicks += $recent->uniques;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo $recent->signups;
+				$totalsignups += $recent->signups;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo $recent->completes;
+				$totalcompletes += $recent->completes;
+
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format($recent->credits, 2);
+				$totalcredits += (float) $recent->credits;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format($recent->debits * -1, 2);
+				$totaldebits += (float) $recent->debits;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format($recent->payments * -1, 2);
+				$totalpayments += (float) $recent->payments;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				$balanace = ($recent->credits - $recent->debits) - $recent->payments;
+				$totalbalances += $balanace;
+				echo number_format($balanace, 2);
+				echo '</td>';
+
+				if(!empty($results)) {
+					$recent = array_shift($results);
+				} else {
+					$recent = array();
+				}
+
+			} else {
+				// A zero blank row
+				echo '<td valign="top" class="num">';
+				echo 0;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo 0;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo 0;
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo "0.00";
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format(0, 2);
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format(0, 2);
+				echo '</td>';
+
+				echo '<td valign="top" class="num">';
+				echo number_format(0, 2);
+				echo '</td>';
+			}
+			echo '</tr>';
+		}
+
+		echo '</tbody>';
+
+		echo '<tfoot>';
+		echo '<tr>';
+			echo '<th scope="col">';
+			echo '</th>';
+			echo '<th scope="col" class="num">';
+			echo $totalclicks;
+			echo '</th>';
+			echo '<th scope="col" class="num">';
+			echo $totalsignups;
+			echo '</th>';
+			echo '<th scope="col" class="num">';
+			echo $totalcompletes;
+			echo '</th>';
+			echo '<th scope="col" class="num">';
+			echo number_format($totalcredits, 2);
+			echo '</th>';
+
+			echo '<th scope="col" class="num">';
+			echo number_format($totaldebits * -1, 2);
+			echo '</th>';
+
+			echo '<th scope="col" class="num">';
+			echo number_format($totalpayments * -1, 2);
+			echo '</th>';
+
+			echo '<th scope="col" class="num">';
+			echo number_format($totalbalances, 2);
+			echo '</th>';
+		echo '</tr>';
+		echo '</tfoot>';
+
+		echo '</table>';		
+	}
+	
+	function show_users_period_details_table($user_id, $period) {
+		$columns = array( 
+				'date'		=>	__('Date','affiliate'),
+				'type'		=>	__('Type','affiliate'), 
+				'note'		=>	__('Note','affiliate'), 
+				'amount'	=>	__('Amount','affiliate')
+		);
+
+		$columns = apply_filters('affiliate_details_columns', $columns);
+
+		// The table
+		echo '<table width="100%" cellpadding="3" cellspacing="3" class="widefat" style="width: 100%;">';
+		echo '<thead>';
+		echo '<tr>';
+		foreach($columns as $key => $column) {
+			echo '<th scope="col" class="column-'. $key .'">';
+			echo stripslashes($column);
+			echo '</th>';
+		}
+		echo '</tr>';
+		echo '</thead>';
+		
+		$amountTotal = 0.00;
+		
+		echo '<tbody id="the-list">';
+		$records = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliaterecords} WHERE user_id = %d ORDER BY timestamp DESC", $user_id ) );
+		//echo "records<pre>"; print_r($records); echo "</pre>";
+		if (($records) && (count($records))) {
+			foreach($records as $record) {
+				//echo "record<pre>"; print_r($record); echo "</pre>";
+
+				if (!empty($record->meta)) {
+					$record->meta = maybe_unserialize($record->meta);
+				}
+				
+				echo '<tr>';
+				foreach($columns as $key => $column) {
+					switch($key) {
+						case 'date':
+							echo '<td>'. date_i18n(get_option('date_format') .' '.get_option('time_format'), strtotime($record->timestamp) + get_option('gmt_offset') * 3600, false) .'</td>';
+							break;
+							
+						case 'type':
+							echo '<td>';
+
+							if (($record->affiliatearea == 'paid:marketpress') && (!empty($record->area_id))) {
+								_e('Paid', 'affiliate');
+							} else if (substr($record->affiliatearea, 0, strlen('paid:')) == 'paid:') {	
+								_e('Paid', 'affiliate');
+							} else if (substr($record->affiliatearea, 0, strlen('unique:')) == 'unique:') {	
+								_e('Unique', 'affiliate');
+							} else if (substr($record->affiliatearea, 0, strlen('signup:')) == 'signup:') {
+								//if ($record->affiliatearea == "signup:user")
+								//	_e('Signup User', 'affiliate');
+								//else if ($record->affiliatearea == "signup:blog")
+								//	_e('Signup Blog', 'affiliate');
+								//else
+									_e('Signup', 'affiliate');
+							} else {
+								echo ucwords($record->affiliatearea);
+							}
+								
+							echo '</td>';
+							break;
+
+						case 'note':
+							echo '<td>'; 
+							
+							if (!empty($record->affiliatenote)) {
+								if ((($record->affiliatearea == 'paid:marketpress') || ($record->affiliatearea == 'marketpress')) && (!empty($record->area_id))) {
+									_e('MarketPress', 'affiliate');
+									//echo "meta<pre>"; print_r(unserialize($record->meta)); echo "</pre>";
+									global $mp;
+									if ((isset($mp)) && (current_user_can('edit_others_posts'))) {
+										if (isset($record->meta['blog_id'])) {
+											$order_href = get_admin_url($record->meta['blog_id'], 'edit.php?post_type=product&page=marketpress-orders&order_id='. $record->area_id);
+										} else {
+											$order_href = admin_url('edit.php?post_type=product&page=marketpress-orders&order_id='. $record->area_id);
+										}
+										echo ' <a title="'. __('view order details', 'affiliate') .'" href="'. $order_href .'">'. __('Order#', 'affiliate'). ' '. $record->area_id .'</a>';
+									} else {
+										echo ' '. __('Order#:', 'affiliate'). ' '. $record->area_id;
+									}
+								} else if (($record->affiliatearea == 'signup:user') && (!empty($record->area_id))) {
+									_e('User:', 'affiliate');
+									$user = new WP_User( $record->area_id );
+									if (($user) && (intval($user->ID) === intval($record->area_id))) {
+										//echo ' '.$record->area_id;	
+										$display_name = $user->display_name;
+										if (current_user_can('edit_users')) {
+											if(is_network_admin()) {
+												echo ' <a href="' . network_admin_url('user-edit.php?user_id='. $user->ID)  .'">'.  $display_name .'</a>';
+											} else {
+												echo  ' <a title="'. __('View User', 'affiliate').'" href="'. admin_url('user-edit.php?user_id='. $user_ID)  .'">'. $display_name .'</a>';
+											}
+										} else {
+											echo ' '. $display_name;
+										}
+									} else {
+										echo ' '. __('user id', 'affiliate') .' '. $record->area_id;
+									}
+								} else if (($record->affiliatearea == 'signup:blog') && (!empty($record->area_id))) {
+									_e('Blog:', 'affiliate');
+									$blog_details = get_blog_details($record->area_id);
+									if ($blog_details) {
+										//echo "blog_details<pre>"; print_r($blog_details); echo "</pre>";
+										//$display_name = $user->display_name;
+										echo ' <a href="' . $blog_details->siteurl  .'">'.  $blog_details->blogname .'</a>';
+									}
+								} else {
+									echo $record->affiliatenote;
+									
+									if (($record->affiliatearea == "debit") || ($record->affiliatearea == "credit") || ($record->affiliatearea == "payment")) {
+										if ((isset($record->meta['current_user_id'])) && (!empty($record->meta['current_user_id']))) {
+											$user = new WP_User( intval($record->meta['current_user_id']) );
+											if (($user) && ($user->ID > 0)) {
+												$note = ' '. __('by', 'affiliate') .': ';
+												if ( !empty( $user->display_name ) ) {
+													$note .= $user->display_name;
+													if ($user->display_name !== $user->user_login)
+														$note .= ' ('. $user->user_login.')';
+												} else {
+													$note .= $user->user_login;
+												}
+												echo $note;
+												
+											}
+										}
+									}
+								}
+							} 
+							//echo "meta<pre>"; print_r(unserialize($record->meta)); echo "</pre>";
+							echo '</td>';
+							break;
+
+						case 'amount':
+							if (($record->affiliatearea == 'payment') || ($record->affiliatearea == 'debit')) {
+								if ($record->amount == 0) {
+									echo '<td class="afiliate-credit">'. number_format(0, 2) .'</td>';
+								} else {
+									echo '<td class="afiliate-credit">-'. number_format($record->amount, 2) .'</td>';
+									$amountTotal -= $record->amount;
+								}
+							} else {
+								echo '<td>'. number_format($record->amount, 2) .'</td>';
+								$amountTotal += $record->amount;
+							}
+							break;
+							
+						default:
+							do_action('affiliate_details_column_'. $key, $record);
+							break;							
+					}
+				}
+				echo '</tr>';
+				
+				
+			}
+		} 
+		echo '</tbody>';
+
+		echo '<tfoot>';
+		echo '<tr>';
+			$col_count = count($columns) - 1;
+			echo '<td colspan="'. $col_count .'">'. __('Period Balance', 'affiliate') .'</td>';
+			echo '<td>'. number_format($amountTotal, 2) .'</td>';
+		echo '</tr>';
+		echo '</tfoot>';
+
+		echo '</table>';		
+	}
 }
-
-?>

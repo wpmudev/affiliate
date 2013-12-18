@@ -1,42 +1,28 @@
 <?php
 /*
-Plugin Name: Directory add-on
+Plugin Name: Directory
 Description: Affiliate system plugin for the WordPress Directory plugin
-Author: Andrey Shipilov (Incsub)
-Author URI: http://premium.wpmudev.org
+Author URI: http://premium.wpmudev.org/project/wordpress-directory
+Depends: directory/loader.php
 */
 
 define( 'AFF_DIRECTORY_ADDON', 1 );
 
-add_action( 'user_register', 'dr_affiliate_new_user' );
-
 add_action( 'directory_set_paid_member', 'dr_affiliate_new_paid', 10, 3 );
-
 add_action( 'directory_affiliate_settings', 'dr_affiliate_settings' );
 
-function dr_affiliate_new_user( $user_id ) {
-
-    $user_role = get_user_meta( $user_id, 'wp_capabilities', true );
-
-    //not paid directory user
-    if ( isset( $user_role['directory_member_not_paid'] ) || isset( $user_role['directory_member_paid'] ) ) {
-
-	    // Call the affiliate action
-	    do_action( 'affiliate_signup' );
-
-	    if ( defined( 'AFFILIATEID' ) ) {
-		    // We found an affiliate that referred this blog creator
-		    if ( function_exists( 'update_user_meta' ) ) {
-			    update_user_meta( $user_id, 'affiliate_referred_by', AFFILIATEID );
-		    } else {
-			    update_usermeta( $user_id, 'affiliate_referred_by', AFFILIATEID );
-		    }
-	    }
-    }
-}
-
-
 function dr_affiliate_new_paid( $affiliate_settings, $user_id, $billing_type ) {
+	global $blog_id, $site_id;
+	
+	if (empty($user_id)) {
+		$user_id = get_current_user_id();
+	}
+
+	//echo 'in '. __FILE__ .': '. __FUNCTION__ .': '. __LINE__ .'<br />';
+	//echo "affiliate_settings<pre>"; print_r($affiliate_settings); echo "</pre>";
+	//echo "user_id[". $user_id ."]<br />";
+	//echo "billing_type[". $billing_type ."<br />";
+	//die();
 
 	if ( function_exists( 'get_user_meta' ) ) {
 		$aff    = get_user_meta( $user_id, 'affiliate_referred_by', true );
@@ -46,6 +32,9 @@ function dr_affiliate_new_paid( $affiliate_settings, $user_id, $billing_type ) {
 		$paid   = get_usermeta( $user_id, 'affiliate_paid' );
 	}
 
+	//echo "aff[". $aff ."]<br />";
+	//echo "paid[". $paid ."]<br />";
+	
 	if ( empty( $aff ) ) $aff = false;
 
 	if ( $aff && $paid != 'yes' ) {
@@ -53,40 +42,58 @@ function dr_affiliate_new_paid( $affiliate_settings, $user_id, $billing_type ) {
         if ( 'recurring' == $billing_type ) {
             $whole      = ( isset( $affiliate_settings['dr_recurring_whole_payment'] ) ) ? $affiliate_settings['dr_recurring_whole_payment'] : '0';
             $partial    = ( isset( $affiliate_settings['dr_recurring_partial_payment'] ) ) ? $affiliate_settings['dr_recurring_partial_payment'] : '0';
+			$note		= __('Directory recurring', 'affiliate');
         } elseif ( 'one_time' == $billing_type ) {
             $whole      = ( isset( $affiliate_settings['dr_one_time_whole_payment'] ) ) ? $affiliate_settings['dr_one_time_whole_payment'] : '0';
             $partial    = ( isset( $affiliate_settings['dr_one_time_partial_payment'] ) ) ? $affiliate_settings['dr_one_time_partial_payment'] : '0';
+			$note		= __('Directory one time', 'affiliate');
         } else {
             $whole      = '0';
             $partial    = '0';
+			$note		= __('Directory', 'affiliate') .' '. $billing_type;
         }
 
-
+		//echo "whole[". $whole ."]<br />";
+		//echo "partial[". $partial ."]<br />";
+		
 		if( !empty( $whole ) || !empty( $partial ) ) {
 			$amount = $whole . '.' . $partial;
 		} else {
 			$amount = 0;
 		}
+		if ($amount > 0) {
+			//echo "amount[". $amount ."]<br />";
+		
+			$meta = array(
+				'affiliate_settings'	=>	affiliate_settings,
+				'user_id'				=> 	$user_id,
+				'billing_type'			=>	$billing_type,
+				'blog_id'				=>	$blog_id,
+				'site_id'				=>	$site_id,
+				'current_user_id'		=>	get_current_user_id(),
+				//'REMOTE_URL'			=>	esc_attr($_SERVER['HTTP_REFERER']),
+				'LOCAL_URL'				=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+				'IP'					=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+				//'HTTP_USER_AGENT'		=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+			);
+			do_action( 'affiliate_purchase', $aff, $amount, 'paid:directory', $user_id, $note, $meta );
 
-		do_action( 'affiliate_purchase', $aff, $amount, 'directory', $user_id, 'Directory referral for user.' );
+			if ( defined( 'AFFILIATE_PAYONCE' ) && AFFILIATE_PAYONCE == 'yes' ) {
 
-		if ( defined( 'AFFILIATE_PAYONCE' ) && AFFILIATE_PAYONCE == 'yes' ) {
-
-			if ( function_exists( 'update_user_meta' ) ) {
-				update_user_meta( $user_id, 'affiliate_paid', 'yes' );
-			} else {
-				update_usermeta( $user_id, 'affiliate_paid', 'yes' );
+				if ( function_exists( 'update_user_meta' ) ) {
+					update_user_meta( $user_id, 'affiliate_paid', 'yes' );
+				} else {
+					update_usermeta( $user_id, 'affiliate_paid', 'yes' );
+				}
 			}
-
 		}
-
 	}
-
 }
 
 
 function dr_affiliate_settings( $affiliate_settings ) {
-
+	//echo "affiliate_settings<pre>"; print_r($affiliate_settings); echo "</pre>";
+	
     $dr_recurring_whole_payment     = ( isset( $affiliate_settings['cost']['dr_recurring_whole_payment'] ) ) ? $affiliate_settings['cost']['dr_recurring_whole_payment'] : '0';
     $dr_recurring_partial_payment   = ( isset( $affiliate_settings['cost']['dr_recurring_partial_payment'] ) ) ? $affiliate_settings['cost']['dr_recurring_partial_payment'] : '00';		    	     						
     $dr_one_time_whole_payment      = ( isset( $affiliate_settings['cost']['dr_one_time_whole_payment'] ) ) ? $affiliate_settings['cost']['dr_one_time_whole_payment'] : '0';

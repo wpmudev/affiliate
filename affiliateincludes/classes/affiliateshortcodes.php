@@ -771,7 +771,7 @@ class affiliateshortcodes {
 		echo '<thead>';
 		echo '<tr>';
 			echo '<th scope="col">';
-			echo __('Date','affiliate');
+			echo __('Period','affiliate');
 			echo '</th>';
 			foreach($columns as $column) {
 				echo '<th scope="col" class="num">';
@@ -1570,5 +1570,3 @@ class affiliateshortcodes {
 
 
 }
-
-?>
