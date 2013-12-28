@@ -3,6 +3,11 @@ Author: Incsub
 
 Change Log:
 ----------------------------------------------------------------------
+3.1.5.1 - 2013-12-18 - Paul Menard (Incsub)
+----------------------------------------------------------------------
+- Corrected reported issue with plugin not properly supporting secure URLs under https://
+
+----------------------------------------------------------------------
 3.1.5 - 2013-12-18 - Paul Menard (Incsub)
 ----------------------------------------------------------------------
 - Added new Affiliate details screen showing the transaction details for unique clicks, signups and paid members. For example on MarketPress paid orders will show link to order details screen for review.

@@ -36,7 +36,10 @@ function set_affiliate_url($base) {
 	} else {
 		$M_affiliate_url = trailingslashit(WP_PLUGIN_URL . '/affiliate');
 	}
-
+	
+	if (is_ssl()) {
+		$M_affiliate_url = str_replace('http://', 'https://', $M_affiliate_url);
+	}
 }
 
 function set_affiliate_dir($base) {
@@ -50,13 +53,15 @@ function set_affiliate_dir($base) {
 	} else {
 		$M_affiliate_dir = trailingslashit(WP_PLUGIN_DIR . '/affiliate');
 	}
-
-
 }
 
 function affiliate_url($extended) {
 
 	global $M_affiliate_url;
+
+	if (is_ssl()) {
+		$M_affiliate_url = str_replace('http://', 'https://', $M_affiliate_url);
+	}
 
 	return $M_affiliate_url . $extended;
 
