@@ -3,7 +3,8 @@
 // Administration side of the affiliate system
 class affiliateadmin {
 
-	var $build = 8;
+	var $build_version = 9;
+	var $installed_version = 0;
 
 	var $db;
 
@@ -21,7 +22,6 @@ class affiliateadmin {
 	var $affiliaterecords;
 
 	function __construct() {
-
 
 		// Add support for new WPMUDEV Dashboard Notices
 		global $wpmudev_notices;
@@ -62,11 +62,11 @@ class affiliateadmin {
 			}
 		}
 
-		$installed = aff_get_option('Aff_Installed', false);
+		$this->installed_version = aff_get_option('Aff_Installed', false);
 
-		if($installed === false || $installed != $this->build) {
+		if($this->installed_version === false || $this->installed_version != $this->build_version) {
 			$this->install();
-			aff_update_option('Aff_Installed', $this->build);
+			aff_update_option('Aff_Installed', $this->build_version);
 		}
 
 		register_activation_hook(__FILE__, array(&$this, 'install'));
@@ -149,9 +149,9 @@ class affiliateadmin {
 				`period` varchar(6) default NULL,
 				`url` varchar(255) default NULL,
 				`referred` bigint(20) default '0',
-				UNIQUE KEY user_period_url (user_id,period`,`url),
+				UNIQUE KEY user_period_url (user_id,period,url),
 				KEY user_id (user_id), 
-				KEY period (period), 
+				KEY period (period) 
 			) ". $charset_collate .";";
 
 		$sql_affiliaterecords_current = "CREATE TABLE `" . $this->affiliaterecords . "` (
@@ -162,28 +162,34 @@ class affiliateadmin {
 				`area_id` bigint(20) DEFAULT NULL,
 				`affiliatenote` text,
 				`amount` decimal(10,4) DEFAULT '0.0000',
-				`meta` varchar(1000) DEFAULT NULL
-				timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				`meta` varchar(1000) DEFAULT NULL,
+				`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PRIMARY KEY  (id),
 				KEY `user_id` (`user_id`),
 				KEY `period` (period)
 			) ". $charset_collate .";";
 
+		//echo "sql_affiliatedata_current[". $sql_affiliatedata_current ."]<br />";
 		dbDelta($sql_affiliatedata_current);
+
+		//echo "sql_affiliatedata_current[". $sql_affiliatereferrers_current ."]<br />";
 		dbDelta($sql_affiliatereferrers_current);
 		
-		if ($wpdb->get_var("SHOW TABLES LIKE '". $this->affiliaterecords ."'") != $this->affiliaterecords) {
-			//echo "sql_affiliaterecords_current[". $sql_affiliaterecords_current ."]<br />";
+		if ($this->db->get_var("SHOW TABLES LIKE '". $this->affiliaterecords ."'") != $this->affiliaterecords) {
+			//echo "IF sql_affiliaterecords_current[". $sql_affiliaterecords_current ."]<br />";
 			dbDelta($sql_affiliaterecords_current);
 		} else {
-			//echo "sql_affiliaterecords_current[". $sql_affiliaterecords_current ."]<br />";
+			//echo "ELSE sql_affiliaterecords_current[". $sql_affiliaterecords_current ."]<br />";
 			dbDelta($sql_affiliaterecords_current);
 			
-			$sql_str = "ALTER TABLE `".$this->affiliaterecords."` ADD `id` BIGINT NOT NULL AUTO_INCREMENT FIRST ,ADD PRIMARY KEY (  `id` ) ;";
-			//echo "sql_str[". $sql_str ."<br />";
-			$this->db->query($sql_str);
+			if ($this->installed_version < 8) {
+				$sql_str = "ALTER TABLE `".$this->affiliaterecords."` ADD `id` BIGINT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (  `id` ) ;";
+				//echo "sql_str[". $sql_str ."<br />";
+				$this->db->query($sql_str);
+			}
 		}
-
+		//die();
+		
 		if ((affiliate_is_plugin_active_for_network()) 
 		 && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
 
@@ -1588,7 +1594,7 @@ class affiliateadmin {
 
 	function handle_affiliates_panel() {
 
-		global $page, $wpdb;
+		global $page;
 
 		wp_reset_vars( array('page') );
 
@@ -1627,15 +1633,15 @@ class affiliateadmin {
 								foreach($_POST['allpayments'] as $affiliate) {
 									$affdetails = explode('-', $affiliate);
 									if(count($affdetails) == 2) {
-										$sql_str = $wpdb->prepare("SELECT * FROM ". $this->affiliatedata ." WHERE user_id = %d AND period = %s", $affdetails[0], $affdetails[1]);
+										$sql_str = $this->db->prepare("SELECT * FROM ". $this->affiliatedata ." WHERE user_id = %d AND period = %s", $affdetails[0], $affdetails[1]);
 										//echo "sql_str[". $sql_str ."]<br />";
-										$record = $wpdb->get_row($sql_str);
+										$record = $this->db->get_row($sql_str);
 										if ($record) {
 											echo "record<pre>"; print_r($record);
 											//die();
 								
 											//if(defined('AFFILIATE_ORIGINAL_PAYMENT_CALCULATION') && AFFILIATE_ORIGINAL_PAYMENT_CALCULATION == true) {
-												$sql_str = $wpdb->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->payments + ($record->credits - $record->debits), current_time('mysql', true), $affdetails[0], $affdetails[1]); 
+												$sql_str = $this->db->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->payments + ($record->credits - $record->debits), current_time('mysql', true), $affdetails[0], $affdetails[1]); 
 												
 												
 												$user = wp_get_current_user();
@@ -1653,7 +1659,7 @@ class affiliateadmin {
 												//die();
 												$affected = $this->db->query( $sql_str );
 											//} else {
-											//	$sql_str = $wpdb->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->credits - $record->debits, current_time('mysql', true), $affdetails[0], $affdetails[1]);
+											//	$sql_str = $this->db->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->credits - $record->debits, current_time('mysql', true), $affdetails[0], $affdetails[1]);
 											//	echo "#2 sql_str[". $sql_str ."]<br />";
 											//	die();
 										
@@ -1678,9 +1684,9 @@ class affiliateadmin {
 							$affdetails = explode('-', $affiliate);
 
 							if(count($affdetails) == 2) {
-								$sql_str = $wpdb->prepare("SELECT * FROM ". $this->affiliatedata ." WHERE user_id = %d AND period = %s", $affdetails[0], $affdetails[1]);
+								$sql_str = $this->db->prepare("SELECT * FROM ". $this->affiliatedata ." WHERE user_id = %d AND period = %s", $affdetails[0], $affdetails[1]);
 								//echo "sql_str[". $sql_str ."]<br />";
-								$record = $wpdb->get_row($sql_str);
+								$record = $this->db->get_row($sql_str);
 								if ($record) {
 									//echo "record<pre>"; print_r($record);
 
@@ -1689,7 +1695,7 @@ class affiliateadmin {
 									
 									if ($balance > 0) {
 								
-										$sql_str = $wpdb->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $balance+$record->payments, current_time('mysql', true), $affdetails[0], $affdetails[1]); 
+										$sql_str = $this->db->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $balance+$record->payments, current_time('mysql', true), $affdetails[0], $affdetails[1]); 
 										//echo "#1 sql_str[". $sql_str ."]<br />";
 										$affected = $this->db->query( $sql_str );
 										if($affected) {
