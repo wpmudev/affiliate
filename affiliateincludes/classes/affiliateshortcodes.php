@@ -797,13 +797,17 @@ class affiliateshortcodes {
 		}
 
 		$startat = strtotime(date("Y-m-15"));
-
+		$alt_class = '';
+		
 		for($n = 0; $n < 18; $n++) {
 			$rdate = strtotime("-$n month", $startat);
 			$period = date('Ym', $rdate);
 			$place = 18 - $n;
 
-			echo "<tr $bgcolour class='$class periods' id='period-$place'>";
+			$alt_class = ( ' alternate' == $alt_class ) ? '' : ' alternate';
+			//$bg_color = ( '#FFFFFF' == $bg_color ) ? '#FF0000' : '#FFFFFF';
+
+			echo "<tr class='$alt_class periods' id='period-$place'>";
 			echo '<td valign="top">';
 			echo date("M", $rdate) . '<br/>' . date("Y", $rdate);
 			echo '</td>';

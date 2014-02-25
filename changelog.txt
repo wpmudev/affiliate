@@ -4,6 +4,14 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
+3.1.5.3 - 2014-02-25 - Paul Menard (Incsub)
+----------------------------------------------------------------------
+- Corrected issue with Membership Add-on to correctly track user signups.
+- Corrected issue with MarketPress Add-on to allow for checking is MarketPress is in mu-plugins directory.
+- Corrected issue with MarketPress order tracking where affiliate commission was based on total purchase amount. Now excluding shipping and tax. 
+- Corrected but in shortcode outout shwowing PHP warning because var not defined.
+
+----------------------------------------------------------------------
 3.1.5.2 - 2014-01-09 - Paul Menard (Incsub)
 ----------------------------------------------------------------------
 - Corrected reported issue related to database setup/creation during activation. 

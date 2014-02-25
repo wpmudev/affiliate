@@ -220,39 +220,77 @@ class affiliate {
 	}
 
 	function user_register( $new_user_id ) {
+//		echo 'in '. __FILE__ .': '. __FUNCTION__ .': '. __LINE__ .'<br />';
+//		echo "new_user_id[". $new_user_id ."]<br />";
+		
+//		echo "_GET<pre>"; print_r($_GET); echo "</pre>";
+//		echo "_POST<pre>"; print_r($_POST); echo "</pre>";
+//		echo "_REQUEST<pre>"; print_r($_REQUEST); echo "</pre>";
+//		echo "trace<pre>"; debug_print_backtrace(); echo "</pre>";
+		
+//		die();
 		// The user_register hook is only for regular (non-Multisite) systems. Fro Multisite see wpmu_activate_user
-		if (is_multisite()) return;
-		
-		
-		$affiliate_user_id = $this->get_affiliate_user_id_from_hash();
-		if (!empty($affiliate_user_id)) {
-			
-			//echo "trace<pre>"; print_r(debug_print_backtrace()); echo "</pre>";
-			$affiliate_referred_by = get_user_meta($new_user_id, 'affiliate_referred_by', true);
-			if (!$affiliate_referred_by) {
-			
-				// Call the affiliate action
-				$meta = array(
-					'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
-					'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
-					'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
-					//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
-				);
-			
-				//echo "blog_details<pre>"; print_r($blog_details); echo "</pre>";
-				$note = __('User', 'affiliate');
-				do_action( 'affiliate_signup', $affiliate_user_id, false, 'signup:user', $new_user_id, $note, $meta); 
+//		if (is_multisite()) return;
 
-				update_user_meta($new_user_id, 'affiliate_referred_by', $affiliate_user_id);
+		// Since this action does not support the meta information like the wpmu_activate_user() function we need to 
+		// query the signups to see if we have the information. 	
+		//$affiliate_referred_by = get_user_meta($new_user_id, 'affiliate_referred_by', true);
+
+		$affiliate_referred_id = get_user_meta($new_user_id, 'affiliate_referred_by', true);
+		if (!empty($affiliate_referred_id)) {
+			// This user is already associated with an affiliate. So nothing left to do. 
+		}
+
+		$affiliate_referred_id = $this->get_affiliate_user_id_from_hash();
+		//echo "affiliate_referred_id[". $affiliate_referred_id .']<br />';
+		if (empty($affiliate_referred_id)) {
+			// If we don't have the affiliate reference then double check the signup meta info. 
+			
+			global $wpdb;
+			$sql_str = $wpdb->prepare("SELECT meta FROM $wpdb->signups WHERE user_email = %s LIMIT 1", get_the_author_meta('user_email', $new_user_id));
+			//echo "sql_str[". $sql_str ."]<br />";	
+			$signup_meta = $wpdb->get_var( $sql_str );		
+			//echo "signup_meta<pre>"; print_r($signup_meta); echo "</pre>";
+			if ($signup_meta) {
+				$signup_meta = maybe_unserialize($signup_meta);
+				//echo "signup_meta<pre>"; print_r($signup_meta); echo "</pre>";
+				if ((isset($signup_meta['affiliate_referred_by'])) && (!empty($signup_meta['affiliate_referred_by']))) {
+					$affiliate_referred_id = $signup_meta['affiliate_referred_by'];
+				} 
 			}
+		}
+
+		if (!empty($affiliate_referred_id)) {
+			//echo "affiliate_referred_id[". $affiliate_referred_id .']<br />';
+
+			// Call the affiliate action
+			$meta = array(
+				'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
+				'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+				'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+				//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+			);
+		
+			$note = __('User', 'affiliate');
+			do_action( 'affiliate_signup', $affiliate_referred_id, false, 'signup:user', $new_user_id, $note, $meta); 
+			update_user_meta($new_user_id, 'affiliate_referred_by', $affiliate_referred_id);
 		}		
 	}
 	
 	function wpmu_activate_user($new_user_id, $new_user_password, $new_blog_meta) {
+//		echo 'in '. __FILE__ .': '. __FUNCTION__ .': '. __LINE__ .'<br />';
+//		echo "new_user_id[". $new_user_id ."]<br />";
+//		echo "new_blog_meta[". $new_blog_meta ."]<br />";
+//		
+//		echo "_GET<pre>"; print_r($_GET); echo "</pre>";
+//		echo "_POST<pre>"; print_r($_POST); echo "</pre>";
+//		echo "_REQUEST<pre>"; print_r($_REQUEST); echo "</pre>";
+//		echo "trace<pre>"; debug_print_backtrace(); echo "</pre>";
+		
 		// Check if this signup was from an affiliate referal. 
-		if (isset($new_blog_meta['affiliate_referred_by'])) {
-			$affiliate_referred_by = get_user_meta($new_user_id, 'affiliate_referred_by', true);
-			if (!$affiliate_referred_by) {
+		$affiliate_referred_by = get_user_meta($new_user_id, 'affiliate_referred_by', true);
+		if (!$affiliate_referred_by) {
+			if (isset($new_blog_meta['affiliate_referred_by'])) {
 			
 				$affiliate_user_id = intval($new_blog_meta['affiliate_referred_by']);
 			
@@ -265,6 +303,8 @@ class affiliate {
 				);
 			
 				//echo "blog_details<pre>"; print_r($blog_details); echo "</pre>";
+				//echo "adding affiliate_signup<br />";
+				
 				$note = __('User', 'affiliate');
 				do_action( 'affiliate_signup', $affiliate_user_id, false, 'signup:user', $new_user_id, $note, $meta); 
 
@@ -274,6 +314,8 @@ class affiliate {
 	}
 	
 	function wpmu_activate_blog($new_blog_id, $new_user_id, $new_user_password, $new_blog_title, $new_blog_meta) {
+		//echo 'in '. __FILE__ .': '. __FUNCTION__ .': '. __LINE__ .'<br />';
+		
 		// Check if this signup was from an affiliate referal. 
 		if (isset($new_blog_meta['affiliate_referred_by'])) {
 			$affiliate_user_id = intval($new_blog_meta['affiliate_referred_by']);
@@ -291,7 +333,7 @@ class affiliate {
 
 			update_blog_option( $new_blog_id, 'affiliate_referred_by', $affiliate_user_id );
 
-			$this->wpmu_activate_user($new_user_id, '', $new_blog_meta);
+//			$this->wpmu_activate_user($new_user_id, '', $new_blog_meta);
 		}
 	}
 	
@@ -340,14 +382,18 @@ class affiliate {
 			$queryresult = $this->db->query($sql);
 
 			if( $area !== false ) {
-				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affiliate_user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount, 'meta' => maybe_serialize($meta) ) );
+				$args = array( 'user_id' => $affiliate_user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount, 'meta' => maybe_serialize($meta), 'timestamp' => current_time('mysql', true));
+				//echo "args<pre>"; print_r($args); echo "</pre>";
+				
+				$this->db->insert( $this->affiliaterecords, $args );
+				//echo "db<pre>"; print_r($this->db); echo "</pre>";
 			}
 		}
 	}
 
 	function record_signup( $affiliate_user_id = false, $amount = false, $area = false, $area_id = false, $note = false, $meta = false ) {
 
-		if (!affiliate_user_id) {
+		if (!$affiliate_user_id) {
 			if(defined( 'AFFILIATEID' )) {
 				$affiliate_user_id = AFFILIATEID;
 			} else {
@@ -366,7 +412,7 @@ class affiliate {
 				define( 'AFFILIATEID', $affiliate_user_id );
 			}
 			if( !empty($area) && $area !== false ) {
-				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affiliate_user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount, 'meta' => maybe_serialize($meta) ) );
+				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affiliate_user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount, 'meta' => maybe_serialize($meta), 'timestamp' => current_time('mysql', true) ) );
 			}			
 		}
 	}
@@ -389,7 +435,7 @@ class affiliate {
 			$queryresult = $this->db->query($sql);
 
 			if( !empty($area) && $area !== false ) {
-				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affiliate_user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount, 'meta' => maybe_serialize($meta) ) );
+				$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affiliate_user_id, 'period' => $period, 'affiliatearea' => $area, 'area_id' => $area_id, 'affiliatenote' => $note, 'amount' => $amount, 'meta' => maybe_serialize($meta), 'timestamp' => current_time('mysql', true) ) );
 			}
 			//die();
 		}
@@ -415,7 +461,7 @@ class affiliate {
 				//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
 			);
 			
-			$this->db->insert( $this->affiliaterecords, array( $affiliate_user_id, $period, 'credit', false, false, 'amount' => $amount, 'meta' => maybe_serialize($meta) ) );
+			$this->db->insert( $this->affiliaterecords, array( $affiliate_user_id, $period, 'credit', false, false, 'amount' => $amount, 'meta' => maybe_serialize($meta), 'timestamp' => current_time('mysql', true) ) );
 		}
 	}
 
@@ -437,7 +483,7 @@ class affiliate {
 				'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
 				//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
 			);
-			$this->db->insert( $this->affiliaterecords, array( $affiliate_user_id, $period, 'debit', false, false, 'amount' => $amount, 'meta' => maybe_serialize($meta) ) );
+			$this->db->insert( $this->affiliaterecords, array( $affiliate_user_id, $period, 'debit', false, false, 'amount' => $amount, 'meta' => maybe_serialize($meta), 'timestamp' => current_time('mysql', true) ) );
 			//echo "db<pre>"; print_r($this->db); echo "</pre>";
 			//die();
 		}

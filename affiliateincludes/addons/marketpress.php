@@ -5,13 +5,32 @@ Description: Affiliate system plugin for the WordPress MarketPress plugin. Used 
 Author URI: http://premium.wpmudev.org/project/e-commerce/
 Network: false
 Depends: marketpress/marketpress.php
+Class: MarketPress
 */
 
 add_action( 'mp_shipping_process', 'affiliate_marketpress_record_order' );
 add_action( 'mp_order_paid', 'affiliate_marketpress_paid_order' );
 add_action( 'mp_single_order_display_box', 'affiliate_marketpress_display_metabox' );
-add_action('mp_gateway_settings', 'affiliate_marketpress_settings');
+add_action( 'mp_gateway_settings', 'affiliate_marketpress_settings' );
 
+// Catch order status changes in MP
+//add_action('order_received_to_trash', 'affiliate_marketpress_order_to_trash');
+
+/*
+function affiliate_marketpress_order_to_trash($order) {
+	if (($order) && (isset($order->post_type)) && ($order->post_type == 'mp_order')) {
+		//$order->post_content = maybe_unserialize($order->post_content);
+		//echo "order<pre>"; print_r($order); echo "</pre>";
+		
+		if ((isset($order->mp_shipping_info['affiliate_referrer'])) && (!empty($order->mp_shipping_info['affiliate_referrer']))) {
+			global $affadmin;
+			$compete_records = $affadmin->get_complete_records($order->mp_shipping_info['affiliate_referrer'], false, 'paid:marketpress', $order->ID);
+			echo "compete_records<pre>"; print_r($compete_records); echo "</pre>";
+		}
+		die();
+	}
+}
+*/
 function affiliate_marketpress_record_order() {
 
 	if(!empty($_SESSION['mp_shipping_info'])) {
@@ -30,11 +49,14 @@ function affiliate_marketpress_paid_order( $order ) {
 	global $blog_id, $site_id;
 	
 	//echo "order<pre>"; print_r($order); echo "</pre>";
-	
+
+	//if (isset($order->post_content)) {
+	//	echo "post_content<pre>"; print_r(unserialize($order_post_content)); echo "</pre>";
+	//}
 	// Check for the affiliate referrer if there is one
 	$shipping_info = get_post_meta( $order->ID, 'mp_shipping_info', true);
-//	echo "shipping_info<pre>"; print_r($shipping_info); echo "</pre>";
-//	die();
+	//echo "shipping_info<pre>"; print_r($shipping_info); echo "</pre>";
+	//die();
 	
 	if(!isset($shipping_info['affiliate_referrer']))
 		 return;
@@ -42,21 +64,45 @@ function affiliate_marketpress_paid_order( $order ) {
 	$affiliate_user_id = $shipping_info['affiliate_referrer'];
 
 	if(!empty($affiliate_user_id)) {
+		
+		// We have a referrer - get the total
+		//$total_amount = get_post_meta($order->ID, 'mp_order_total', true);
+		//echo "total_amount[". $total_amount ."]<br />";
+		
+		// From above we have the order total. It is passed to use in the $order data structure. 
+		if (isset($order->mp_order_total))
+			$total_amount = $order->mp_order_total;
+		else
+			$total_amount = get_post_meta($order->ID, 'mp_order_total', true);
+		
+		$total_amount = floatval($total_amount);
+		//echo "total_amount before[". $total_amount ."]<br />";
+		
+		if ((isset($order->mp_shipping_total)) && (!empty($order->mp_shipping_total))) {
+			$total_amount -= floatval($order->mp_shipping_total);
+		}
+		if ((isset($order->mp_tax_total)) && (!empty($order->mp_tax_total))) {
+			$total_amount -= floatval($order->mp_tax_total);
+		}
+		
+		//echo "total_amount after[". $total_amount ."]<br />";
+		//die();
+
+
 		$percentage = aff_get_option('affiliate_mp_percentage', 0);
 		//echo "percentage[". $percentage ."]<br />";
 		
-		// We have a referrer - get the total
-		$total_amount = get_post_meta($order->ID, 'mp_order_total', true);
-		//echo "total_amount[". $total_amount ."]<br />";
-		
 		// calculate the amount to give the referrer - hardcoded for testing to 30%
-		$amount = ($total_amount / 100) * $percentage;
+		$amount = number_format(($total_amount / 100) * $percentage, 2);
 		//echo "amount[". $amount ."]<br />";
 		
 		//die();
 		
 		$meta = array(
 			'order_id'			=>	$order->ID,
+			'order_amount'		=>	$total_amount,
+			'commision_type'	=>	'percentage',
+			'commision_rate'	=>	$percentage,
 			'blog_id'			=>	$blog_id,
 			'site_id'			=>	$site_id,
 			'current_user_id'	=>	get_current_user_id(),

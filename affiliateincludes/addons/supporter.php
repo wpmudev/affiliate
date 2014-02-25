@@ -5,6 +5,7 @@ Description: Affiliate system plugin for the WordPress Pro-Sites plugin. Capture
 Author URI: http://premium.wpmudev.org
 Network: true
 Depends: pro-sites/pro-sites.php
+Class: ProSites
 */
 
 add_action( 'supporter_payment_processed', 			'affiliate_supporter_paid', 10, 4 );

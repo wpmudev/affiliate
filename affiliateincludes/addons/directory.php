@@ -4,6 +4,7 @@ Plugin Name: Directory
 Description: Affiliate system plugin for the WordPress Directory plugin
 Author URI: http://premium.wpmudev.org/project/wordpress-directory
 Depends: directory/loader.php
+Class: Directory_Core
 */
 
 define( 'AFF_DIRECTORY_ADDON', 1 );

@@ -97,7 +97,6 @@ function get_affiliate_addons() {
 function load_affiliate_addons() {
 
 	$plugins = aff_get_option('affiliate_activated_addons', array());
-	
 	if ( is_dir( affiliate_dir('affiliateincludes/addons') ) ) {
 		if ( $dh = opendir( affiliate_dir('affiliateincludes/addons') ) ) {
 			$aff_plugins = array ();
@@ -114,7 +113,6 @@ function load_affiliate_addons() {
 					include_once( affiliate_dir('affiliateincludes/addons/' . $aff_plugin) );
 				}
 			}
-
 		}
 	}
 }
