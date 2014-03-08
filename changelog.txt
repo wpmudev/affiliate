@@ -4,6 +4,13 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
+3.1.5.4 - 2014-03-08 - Paul Menard (Incsub)
+----------------------------------------------------------------------
+- Added setting to define currency used for PayPal masspay file export. 
+- Added logic to Membership add-on to use Affiliate currency instead of value from Membership plugin.
+- Added logic to Pro Sites add-on to use Affiliate currency instead of value from Pro Sites plugin.
+ 
+----------------------------------------------------------------------
 3.1.5.3 - 2014-02-25 - Paul Menard (Incsub)
 ----------------------------------------------------------------------
 - Corrected issue with Membership Add-on to correctly track user signups.

@@ -1,0 +1,1113 @@
+# Translation of the WordPress plugin Affiliate 3.1.5.4 by WPMU DEV.
+# Copyright (C) 2014 WPMU DEV
+# This file is distributed under the same license as the Affiliate package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Affiliate 3.1.5.4\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/affiliate\n"
+"POT-Creation-Date: 2014-03-08 10:28-0600\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: affiliateincludes/addons/debugaffiliate.php:56
+msgid "Affiliate Debug : "
+msgstr ""
+
+#: affiliateincludes/addons/debugaffiliate.php:80
+#, php-format
+msgid ""
+"I have recorded a cookie for affiliate: <strong>%s</strong>. Any "
+"<strong>paid</strong> purchases/signup will be assigned the affiliate for "
+"<strong>%d</strong> days after the click."
+msgstr ""
+
+#: affiliateincludes/addons/debugaffiliate.php:84
+msgid ""
+"The <strong>Not via an Affiliate</strong> cookie has been set. This means "
+"you are accessing the site via a valid WordPress logged in user. I am "
+"ignoring any future affiliate clicks for this browser session."
+msgstr ""
+
+#: affiliateincludes/addons/debugaffiliate.php:87
+msgid "No cookies are currently set - I am looking for cookies at : "
+msgstr ""
+
+#: affiliateincludes/addons/directory.php:46
+msgid "Directory recurring"
+msgstr ""
+
+#: affiliateincludes/addons/directory.php:50
+msgid "Directory one time"
+msgstr ""
+
+#: affiliateincludes/addons/directory.php:54
+msgid "Directory"
+msgstr ""
+
+#: affiliateincludes/addons/marketpress.php:116
+msgid "Affiliate payment for MarketPress order."
+msgstr ""
+
+#. #-#-#-#-#  affiliate.pot (Affiliate 3.1.5.4)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: affiliateincludes/addons/marketpress.php:131
+msgid "Affiliate"
+msgstr ""
+
+#: affiliateincludes/addons/marketpress.php:131
+msgid "This order was received via an Affiliate Referrer link."
+msgstr ""
+
+#: affiliateincludes/addons/marketpress.php:136
+msgid ""
+"Affiliate information will be displayed when the order status is changed to "
+"'paid'"
+msgstr ""
+
+#: affiliateincludes/addons/marketpress.php:145
+#: affiliateincludes/addons/marketpress.php:152
+msgid "Affiliate User"
+msgstr ""
+
+#: affiliateincludes/addons/marketpress.php:184
+#: affiliateincludes/addons/supporter.php:174
+msgid "Affiliate Settings"
+msgstr ""
+
+#: affiliateincludes/addons/marketpress.php:186
+msgid ""
+"You can set the global commision amount paid to affiliates for referred "
+"purchases below. Set it to 0 for no payments."
+msgstr ""
+
+#: affiliateincludes/addons/marketpress.php:189
+msgid "Set percentage to be paid to affiliates"
+msgstr ""
+
+#: affiliateincludes/addons/marketpress.php:192
+#: affiliateincludes/addons/membership.php:321
+#: affiliateincludes/addons/supporter.php:219
+#: affiliateincludes/addons/supporter.php:259
+#: affiliateincludes/addons/supporter.php:299
+msgid "%"
+msgstr ""
+
+#: affiliateincludes/addons/membership.php:131
+#: affiliateincludes/addons/membership.php:243
+msgid "Membership"
+msgstr ""
+
+#: affiliateincludes/addons/membership.php:279
+#: affiliateincludes/classes/affiliateadmin.php:1584
+msgid "Affiliate settings"
+msgstr ""
+
+#: affiliateincludes/addons/membership.php:286
+#, php-format
+msgid ""
+"Currency mismatch. Your Membership currency is set to <strong>%s</strong> "
+"but Affiliate currency is set to <strong>%s</strong>. Please ensure both are "
+"set correctly."
+msgstr ""
+
+#: affiliateincludes/addons/membership.php:289
+msgid "Affiliate payment credited for a signup on this subscription"
+msgstr ""
+
+#: affiliateincludes/addons/prosites.php:91
+msgid "Supporter payments settings"
+msgstr ""
+
+#: affiliateincludes/addons/prosites.php:95
+#: affiliateincludes/addons/supporter.php:186
+msgid "1 Month payment"
+msgstr ""
+
+#: affiliateincludes/addons/prosites.php:122
+#: affiliateincludes/addons/supporter.php:221
+msgid "Affiliate payment for one month."
+msgstr ""
+
+#: affiliateincludes/addons/prosites.php:127
+#: affiliateincludes/addons/supporter.php:226
+msgid "3 Month payment"
+msgstr ""
+
+#: affiliateincludes/addons/prosites.php:154
+#: affiliateincludes/addons/supporter.php:261
+msgid "Affiliate payment for three months."
+msgstr ""
+
+#: affiliateincludes/addons/prosites.php:160
+#: affiliateincludes/addons/supporter.php:266
+msgid "12 Month payment"
+msgstr ""
+
+#: affiliateincludes/addons/prosites.php:187
+#: affiliateincludes/addons/supporter.php:301
+msgid "Affiliate payment for twelve months."
+msgstr ""
+
+#: affiliateincludes/addons/supporter.php:180
+#, php-format
+msgid ""
+"Currency mismatch. Your Pro Sites currency is set to <strong>%s</strong> but "
+"Affiliate currency is set to <strong>%s</strong>. Please ensure both are set "
+"correctly."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:263
+#: affiliateincludes/classes/affiliateadmin.php:556
+#: affiliateincludes/classes/affiliateadmin.php:1734
+#: affiliateincludes/classes/affiliateadmin.php:2560
+#: affiliateincludes/classes/affiliatedashboard.php:61
+#: affiliateincludes/classes/affiliateshortcodes.php:496
+#: affiliateincludes/classes/affiliateshortcodes.php:698
+#: affiliateincludes/classes/affiliateshortcodes.php:744
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:57
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:64
+msgid "Unique Clicks"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:263
+#: affiliateincludes/classes/affiliateadmin.php:556
+#: affiliateincludes/classes/affiliateadmin.php:1734
+#: affiliateincludes/classes/affiliateadmin.php:2561
+#: affiliateincludes/classes/affiliatedashboard.php:61
+#: affiliateincludes/classes/affiliateshortcodes.php:496
+#: affiliateincludes/classes/affiliateshortcodes.php:698
+#: affiliateincludes/classes/affiliateshortcodes.php:744
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:57
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:70
+msgid "Sign ups"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:263
+#: affiliateincludes/classes/affiliateadmin.php:556
+#: affiliateincludes/classes/affiliateadmin.php:1734
+#: affiliateincludes/classes/affiliateadmin.php:2562
+#: affiliateincludes/classes/affiliatedashboard.php:61
+#: affiliateincludes/classes/affiliateshortcodes.php:496
+#: affiliateincludes/classes/affiliateshortcodes.php:698
+#: affiliateincludes/classes/affiliateshortcodes.php:744
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:57
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:76
+msgid "Paid members"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:450
+#: affiliateincludes/classes/affiliateadmin.php:456
+#: affiliateincludes/classes/affiliateadmin.php:458
+#: affiliateincludes/classes/affiliateadmin.php:462
+msgid "Affiliates"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:465
+msgid "Manage Affiliates"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:466
+msgid "Settings"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:467
+msgid "Add-ons"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:470
+msgid "Affiliate Reports"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:473
+msgid "Affiliate Earnings Report"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:473
+msgid "Affiliate Referrals"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:478
+msgid "Affiliate Banners"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:558
+#: affiliateincludes/classes/affiliateadmin.php:1736
+#: affiliateincludes/classes/affiliateadmin.php:2569
+#: affiliateincludes/classes/affiliateshortcodes.php:700
+#: affiliateincludes/classes/affiliateshortcodes.php:746
+msgid "Debits"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:558
+#: affiliateincludes/classes/affiliateadmin.php:1736
+#: affiliateincludes/classes/affiliateadmin.php:2568
+#: affiliateincludes/classes/affiliateshortcodes.php:700
+#: affiliateincludes/classes/affiliateshortcodes.php:746
+msgid "Credits"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:558
+#: affiliateincludes/classes/affiliateadmin.php:1736
+#: affiliateincludes/classes/affiliateadmin.php:2570
+#: affiliateincludes/classes/affiliateshortcodes.php:700
+#: affiliateincludes/classes/affiliateshortcodes.php:746
+msgid "Payments"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:599
+#: affiliateincludes/classes/affiliateshortcodes.php:1177
+msgid "This URL is already in use."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:610
+#: affiliateincludes/classes/affiliateshortcodes.php:1188
+msgid "Validated"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:613
+#: affiliateincludes/classes/affiliateshortcodes.php:1191
+msgid "Not validated"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:637
+msgid "Affiliate Referral Report"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:641
+#: affiliateincludes/classes/affiliateshortcodes.php:1216
+msgid ""
+"Hello, Thank you for supporting us</strong>, to view or change any of your "
+"affiliate settings click on the edit link."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:641
+#: affiliateincludes/classes/affiliateshortcodes.php:1216
+msgid "edit"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:654
+#: affiliateincludes/classes/affiliateadmin.php:794
+msgid ""
+"<p>We love it when people talk about us, and even more so when they "
+"recommend us to their friends.</p><p>As a thank you we would like to offer "
+"something back, which is why we have set up this affiliate program.</p><p>To "
+"get started simply enable the links for your account and enter your PayPal "
+"email address below, for more details on our affiliate program please visit "
+"our main site.</p>"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:662
+#: affiliateincludes/classes/affiliateadmin.php:802
+#: affiliateincludes/classes/affiliateshortcodes.php:1240
+#: affiliateincludes/classes/affiliateshortcodes.php:1377
+msgid "Enable Affiliate links"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:665
+#: affiliateincludes/classes/affiliateadmin.php:805
+#: affiliateincludes/classes/affiliateshortcodes.php:1243
+#: affiliateincludes/classes/affiliateshortcodes.php:1380
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:140
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:172
+msgid "Yes please"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:666
+#: affiliateincludes/classes/affiliateadmin.php:806
+#: affiliateincludes/classes/affiliateshortcodes.php:1244
+#: affiliateincludes/classes/affiliateshortcodes.php:1381
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:142
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:174
+msgid "No thanks"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:672
+#: affiliateincludes/classes/affiliateadmin.php:812
+#: affiliateincludes/classes/affiliateshortcodes.php:1250
+#: affiliateincludes/classes/affiliateshortcodes.php:1387
+msgid "PayPal Email Address"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:696
+#: affiliateincludes/classes/affiliateshortcodes.php:1326
+msgid "<h3>Affiliate Details</h3>"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:697
+#: affiliateincludes/classes/affiliateshortcodes.php:1327
+msgid ""
+"In order for us to track your referrals, you should use the following URL to "
+"link to our site:"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:698
+#: affiliateincludes/classes/affiliateshortcodes.php:1328
+#, php-format
+msgid "<strong>%s?ref=%s</strong>"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:713
+#: affiliateincludes/classes/affiliateshortcodes.php:1343
+#, php-format
+msgid ""
+"If you would rather use a banner or button then we have a wide selection of "
+"sizes <a href=\"%s\">here</a>."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:720
+#: affiliateincludes/classes/affiliateshortcodes.php:1270
+msgid "Affiliate Advanced Settings"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:723
+msgid ""
+"<p>There are times when you would rather hide your affiliate link, or simply "
+"not have to bother remembering the affiliate reference to put on the end of "
+"our URL.</p><p>If this is the case, then you can enter the main URL of the "
+"site you will be sending requests from below, and we will sort out the "
+"tricky bits for you.</p>"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:741
+#: affiliateincludes/classes/affiliateshortcodes.php:1292
+msgid "Your URL"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:758
+#: affiliateincludes/classes/affiliateshortcodes.php:1309
+msgid ""
+"You need to validate this URL by uploading a file to the root of the site "
+"above with the following name : "
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:760
+#: affiliateincludes/classes/affiliateshortcodes.php:1311
+msgid "Filename : "
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:761
+#: affiliateincludes/classes/affiliateshortcodes.php:1312
+msgid "[click here to check if the file exists]"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:762
+#: affiliateincludes/classes/affiliateshortcodes.php:1313
+msgid "Validate"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:777
+#: affiliateincludes/classes/affiliateadmin.php:823
+#: affiliateincludes/classes/affiliateadmin.php:1197
+#: affiliateincludes/classes/affiliateshortcodes.php:1350
+#: affiliateincludes/classes/affiliateshortcodes.php:1398
+msgid "Update Settings"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:784
+#: affiliateincludes/classes/affiliateshortcodes.php:1357
+msgid "Hello, why not consider becoming an affiliate?"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:838
+#: affiliateincludes/classes/affiliateadmin.php:1329
+msgid "&larr; Return to Affiliate Period Summary"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:874
+#: affiliateincludes/classes/affiliateadmin.php:885
+#: affiliateincludes/classes/affiliatedashboard.php:193
+#: affiliateincludes/classes/affiliateshortcodes.php:942
+#: affiliateincludes/classes/affiliateshortcodes.php:953
+msgid "Top referrers for "
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:877
+#: affiliateincludes/classes/affiliateadmin.php:888
+#: affiliateincludes/classes/affiliateadmin.php:948
+#: affiliateincludes/classes/affiliateadmin.php:959
+#: affiliateincludes/classes/affiliatedashboard.php:196
+#: affiliateincludes/classes/affiliateshortcodes.php:945
+#: affiliateincludes/classes/affiliateshortcodes.php:956
+#: affiliateincludes/classes/affiliateshortcodes.php:1033
+#: affiliateincludes/classes/affiliateshortcodes.php:1044
+msgid "Visits"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:918
+#: affiliateincludes/classes/affiliatedashboard.php:226
+#: affiliateincludes/classes/affiliateshortcodes.php:986
+msgid "<tr><td colspan=\"2\">You have no referred visits this month.</td></tr>"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:945
+#: affiliateincludes/classes/affiliateadmin.php:956
+#: affiliateincludes/classes/affiliateshortcodes.php:1030
+#: affiliateincludes/classes/affiliateshortcodes.php:1041
+msgid "Top referrers over past 18 months"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:989
+#: affiliateincludes/classes/affiliateshortcodes.php:1074
+msgid "<tr><td colspan=\"2\">You have no overall referred visits.</td></tr>"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1034
+msgid "So, you want something more exciting than a straight forward text link?"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1035
+msgid ""
+"Not to worry, we've got banners and buttons galore. To use them simply copy "
+"and paste the HTML underneath the graphic that you want to use."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1094
+msgid "Affiliate payment for"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1105
+msgid "Affiliate payment for "
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1174
+msgid "Affiliate settings saved."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1242
+msgid "Debit has been assigned correctly."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1271
+msgid "Credit has been assigned correctly."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1298
+#: affiliateincludes/classes/affiliateadmin.php:1679
+#: affiliateincludes/classes/affiliateadmin.php:1712
+msgid "Payment has been assigned correctly."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1320
+msgid "Details for user : "
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1324
+#: affiliateincludes/classes/affiliateadmin.php:1840
+msgid "linked to "
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1363
+msgid "Approve user account"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1376
+msgid "User is "
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1378
+msgid "not approved"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1379
+msgid "approved"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1381
+msgid " to receive affiliate payments."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1384
+msgid "Update"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1414
+msgid "Credit user account"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1426
+#: affiliateincludes/classes/affiliateadmin.php:1471
+#: affiliateincludes/classes/affiliateadmin.php:1513
+msgid "Period : "
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1431
+#: affiliateincludes/classes/affiliateadmin.php:1475
+#: affiliateincludes/classes/affiliateadmin.php:1518
+msgid "Value : "
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1434
+#: affiliateincludes/classes/affiliateadmin.php:1477
+#: affiliateincludes/classes/affiliateadmin.php:1521
+msgid "Note : "
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1435
+msgid "Credit for..."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1439
+msgid "Add Credit"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1459
+msgid "Debit user account"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1478
+msgid "Debit for..."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1481
+msgid "Add Debit"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1501
+msgid "Set Payment on account"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1522
+msgid "Payment for..."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1526
+msgid "Add Payment"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1560
+msgid "Search Users"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1582
+msgid "Affiliate reports"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1583
+msgid "Manage affiliates"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1585
+msgid "Manage add-ons"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1614
+msgid "Affiliate System Administration"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1684
+msgid "Payments has been assigned correctly."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1736
+msgid "Balance"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1760
+msgid "Show report for"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1771
+msgid "Refresh"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1778
+msgid "Export Payments"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1779
+msgid "Pay Balances"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1794
+#: affiliateincludes/classes/affiliateadmin.php:1923
+#: affiliateincludes/classes/affiliates-list-table.php:256
+msgid "Username"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1799
+#: affiliateincludes/classes/affiliateadmin.php:1928
+#: affiliateincludes/classes/affiliates-list-table.php:265
+msgid "Approved"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1846
+msgid "Pay Balance"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1848
+#: affiliateincludes/classes/affiliates-list-table.php:351
+msgid "Manage Affiliate"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1869
+msgid "Yes"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1871
+msgid "No"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1913
+msgid "There are no results for the selected month."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:1955
+#: affiliateincludes/classes/affiliateadmin.php:1986
+msgid "Referred by"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2081
+msgid "Addon updated."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2082
+msgid "Addon not updated."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2084
+msgid "Addon activated."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2085
+msgid "Addon not activated."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2087
+msgid "Addon deactivated."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2088
+msgid "Addon not deactivated."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2090
+msgid "Addon activation toggled."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2121
+#: affiliateincludes/classes/affiliateadmin.php:2317
+msgid "Bulk Actions"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2122
+#: affiliateincludes/classes/affiliateadmin.php:2318
+msgid "Toggle activation"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2124
+msgid "Apply"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2138
+msgid "Addon Name"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2139
+msgid "Addon Status"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2261
+msgid "plugin not installed"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2275
+msgid "Deactivate"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2277
+msgid "Network Activate"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2277
+msgid "Activate"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2289
+msgid "Active"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2291
+msgid "Inactive"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2303
+msgid "No Addons where found for this install."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2370
+#: affiliateincludes/classes/affiliateadmin.php:2372
+msgid "Referred"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2418
+msgid "Affiliate Transactions"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2450
+#: affiliateincludes/classes/affiliateadmin.php:2588
+#: affiliateincludes/classes/affiliateshortcodes.php:774
+msgid "Period"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2451
+#: affiliateincludes/classes/affiliateadmin.php:2758
+msgid "Type"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2452
+#: affiliateincludes/classes/affiliateadmin.php:2759
+msgid "Note"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2453
+#: affiliateincludes/classes/affiliateadmin.php:2760
+msgid "Amount"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2471
+#: affiliateincludes/classes/affiliateadmin.php:2834
+msgid "Order#"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2476
+#: affiliateincludes/classes/affiliateadmin.php:2834
+msgid "view order details"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2485
+msgid "Referral Link"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2537
+msgid "Total"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2543
+msgid "No affiliate transactions found for this user."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2571
+msgid "Balanace"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2634
+msgid "View Affiliate detail transactions for this period"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2757
+msgid "Date"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2801
+#: affiliateincludes/classes/affiliateadmin.php:2803
+msgid "Paid"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2805
+msgid "Unique"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2812
+msgid "Signup"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2825
+msgid "MarketPress"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2836
+msgid "Order#:"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2839
+msgid "User:"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2848
+msgid "View User"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2854
+msgid "user id"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2857
+#: affiliateincludes/classes/affiliates-list-table.php:243
+msgid "Blog:"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2889
+msgid "by"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateadmin.php:2937
+msgid "Period Balance"
+msgstr ""
+
+#: affiliateincludes/classes/affiliatedashboard.php:170
+msgid "Affiliate Report"
+msgstr ""
+
+#: affiliateincludes/classes/affiliatepublic.php:274
+#: affiliateincludes/classes/affiliatepublic.php:308
+msgid "User"
+msgstr ""
+
+#: affiliateincludes/classes/affiliatepublic.php:331
+#: affiliateincludes/classes/affiliates-list-table.php:261
+msgid "Blog"
+msgstr ""
+
+#: affiliateincludes/classes/affiliatepublic.php:545
+msgid "Referal"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateshortcodes.php:158
+#, php-format
+msgid ""
+"You are not currently logged in. Please %s to see your affiliate information."
+msgstr ""
+
+#: affiliateincludes/classes/affiliateshortcodes.php:158
+msgid "login"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateshortcodes.php:1334
+msgid ""
+"Alternatively you can just link directly to the URL below from the site you "
+"entered in the advanced settings above:"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateshortcodes.php:1335
+#, php-format
+msgid "<strong>%s</strong>"
+msgstr ""
+
+#: affiliateincludes/classes/affiliateshortcodes.php:1345
+msgid ""
+"<strong>You can check on your referral totals by viewing the details on this "
+"page</strong>"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:204
+msgid "No matching users were found."
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:236
+msgid "Blog ID"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:238
+msgid "Sub-Domain"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:240
+msgid "Domain Path"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:242
+msgid " or Mapped Domain"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:258
+msgid "Name"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:268
+msgid "PayPal account"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:269
+msgid "Reference"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:270
+msgid "URL"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:351
+msgid "manage"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:395
+msgid "Filter listing by this Blog"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:395
+msgid "filter"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:396
+#: affiliateincludes/classes/affiliates-list-table.php:397
+msgid "Visit Dashboard"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:396
+msgid "dashboard"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:397
+msgid "affiliate"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:400
+msgid "Visit Site"
+msgstr ""
+
+#: affiliateincludes/classes/affiliates-list-table.php:400
+msgid "visit"
+msgstr ""
+
+#: affiliateincludes/external/wpmudev-dash-notification.php:57
+#, php-format
+msgid ""
+"Easily get updates, support, and one-click WPMU DEV plugin/theme "
+"installations right from in your dashboard - <strong><a href=\"%s\" title="
+"\"Install Now &raquo;\">install the free WPMU DEV Dashboard plugin</a></"
+"strong>. &nbsp;&nbsp;&nbsp;<small><a href=\"http://premium.wpmudev.org/wpmu-"
+"dev/update-notifications-plugin-information/\">(find out more)</a></small>"
+msgstr ""
+
+#: affiliateincludes/external/wpmudev-dash-notification.php:61
+#, php-format
+msgid ""
+"Updates, Support, Premium Plugins, Community - <strong><a href=\"%s\" title="
+"\"Activate Now &raquo;\">activate the WPMU DEV Dashboard plugin now</a></"
+"strong>."
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:15
+msgid "Affiliate Link URL"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:19
+msgid "Link URL"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:35
+msgid "Monetary Precision"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:39
+msgid "Number or decimal places for stored calculations"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:42
+msgid "2 places - 0.00"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:44
+msgid "4 places - 0.0000"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:49
+msgid ""
+"Warning: changing the precision will effect existing data and calculations."
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:60
+msgid "Column Settings"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:89
+msgid ""
+"<p>We love it when people talk about us, and even more so when they "
+"recommend us to their friends.</p>\n"
+"<p>As a thank you we would like to offer something back, which is why we "
+"have set up this affiliate program.</p>\n"
+"<p>To get started simply enable the links for your account and enter your "
+"PayPal email address below, for more details on our affiliate program please "
+"visit our main site.</p>"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:93
+msgid ""
+"<p>There are times when you would rather hide your affiliate link, or simply "
+"not have to bother remembering the affiliate reference to put on the end of "
+"our URL.</p>\n"
+"<p>If this is the case, then you can enter the main URL of the site you will "
+"be sending requests from below, and we will sort out the tricky bits for you."
+"</p>"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:98
+msgid "Profile page text"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:102
+msgid "Affiliate settings profile text"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:112
+msgid "Affiliate advanced settings profile text"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:133
+msgid "Banner Settings"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:137
+msgid "Enable Banners"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:147
+msgid "Banner Image URLs (one per line)"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:162
+msgid "Approval Settings"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:165
+msgid ""
+"If you want to delay payouts to affiliates until they have been manually "
+"approved then set this option below. Affiliates will still be able to "
+"generate leads, whilst they are waiting to be approved."
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:169
+msgid "Pay only approved affiliates"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:194
+msgid "Currency used for PayPal Masspay"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:196
+#, php-format
+msgid "This setting defines the 3-character currency used for the %s."
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:196
+msgid "PayPal masspay file"
+msgstr ""
+
+#: affiliateincludes/includes/affiliate_admin_metaboxes.php:202
+msgid "Currency"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://premium.wpmudev.org/project/wordpress-mu-affiliate"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"This plugin adds a simple affiliate system to your site. Track incoming "
+"clicks from affiliate referer links, Order tracking integration with "
+"MarketPress, Prosites paid signups and Membership paid signups."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "WPMU DEV"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://premium.wpmudev.org"
+msgstr ""

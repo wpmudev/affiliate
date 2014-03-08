@@ -182,3 +182,38 @@ function show_affiliate_admin_metabox_settings_approval() {
 	</div>
 	<?php
 }
+
+
+function show_affiliate_admin_metabox_settings_paypal_masspay_currency() {
+	global $affiliate_currencies, $affiliate_currencies_paypal_masspay;
+
+	sort($affiliate_currencies_paypal_masspay);
+
+	?>
+	<div class="postbox">
+		<h3 class='hndle'><span><?php _e('Currency used for PayPal Masspay', 'affiliate') ?></span></h3>
+		<div class="inside">
+			<span class="description"><?php echo sprintf(__('This setting defines the 3-character currency used for the %s.', 'affiliate'), '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_batch-payment-format-outside" target="_blank">'. __('PayPal masspay file', 'affiliate') .'</a>') ?></span>
+			
+			
+			
+			<table class="form-table">
+			<tr valign="top">
+				<th scope="row"><?php _e('Currency', 'mp') ?></th>
+				<td>
+					<select id="affiliate-currency-paypal-masspay" name="affiliate-currency-paypal-masspay">
+					<?php
+						foreach ($affiliate_currencies_paypal_masspay as $key) {
+							if (isset($affiliate_currencies[$key])) {
+								?><option value="<?php echo $key; ?>"<?php selected(aff_get_option('affiliate-currency-paypal-masspay', 'USD'), $key); ?>><?php echo esc_attr($key) .' - '. esc_attr($affiliate_currencies[$key][0]) ?></option><?php
+							}
+						}
+					?>
+					</select>
+				</td>
+			</tr>
+			</table>
+		</div>
+	</div>
+	<?php
+}

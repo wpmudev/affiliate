@@ -651,9 +651,7 @@ class affiliateadmin {
 
 				echo "<input type='hidden' name='action' value='update' />";
 
-				$settingstextdefault = __("<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
-			<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
-			<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>", 'affiliate');
+				$settingstextdefault = __("<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p><p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p><p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>", 'affiliate');
 
 				echo stripslashes( aff_get_option('affiliatesettingstext', $settingstextdefault) );
 
@@ -793,9 +791,7 @@ class affiliateadmin {
 				echo "<input type='hidden' name='action' value='update' />";
 
 
-				$settingstextdefault = __("<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p>
-			<p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p>
-			<p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>", 'affiliate');
+				$settingstextdefault = __("<p>We love it when people talk about us, and even more so when they recommend us to their friends.</p><p>As a thank you we would like to offer something back, which is why we have set up this affiliate program.</p><p>To get started simply enable the links for your account and enter your PayPal email address below, for more details on our affiliate program please visit our main site.</p>", 'affiliate');
 
 				echo stripslashes( aff_get_option('affiliatesettingstext', $settingstextdefault) );
 
@@ -1070,6 +1066,9 @@ class affiliateadmin {
 
 	function handle_export_link() {
 
+		//echo "_GET<pre>"; print_r($_GET); echo "</pre>";
+		//echo "_POST<pre>"; print_r($_POST); echo "</pre>";
+
 		$page = (isset($_GET['page'])) ? addslashes($_GET['page']) : false;
 
 		if($page == 'affiliatesadmin' && isset($_GET['action'])) {
@@ -1090,11 +1089,12 @@ class affiliateadmin {
 													// Reset variables
 													$paypal = "";
 													$amount = "0.00";
-													$currency = "USD";
+													$currency = aff_get_option('affiliate-currency-paypal-masspay', 'USD');
 													$id = "AFF_PAYMENT";
 													$notes = __("Affiliate payment for", "affiliate");
 
 													$affdetails = explode('-', $affiliate);
+													//echo "affdetails<pre>"; print_r($affdetails); echo "</pre>";
 													if(count($affdetails) == 2) {
 
 														$name = get_option('blogname');
@@ -1108,9 +1108,8 @@ class affiliateadmin {
 														$amounts = $this->db->get_row( "SELECT debits, credits, payments FROM " . $this->affiliatedata . " WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
 														//echo "amounts<pre>"; print_r($amounts); echo "</pre>";
 														
-
 														$amount = ($amounts->credits - $amounts->debits) - $amounts->payments;
-
+														//echo "amount[". $amount ."]<br />";
 														if($amount > 0 && !empty($paypal)) {
 															$line = sprintf("%s\t%01.2f\t%s\t%s\t%s\n", $paypal, $amount, $currency, $id, $notes);
 															echo $line;
@@ -1134,6 +1133,9 @@ class affiliateadmin {
 		if(isset($_GET['action']) && addslashes($_GET['action']) == 'updateaffiliateoptions') {
 			check_admin_referer('affiliateoptions');
 
+			//echo "_POST<pre>"; print_r($_POST); echo "</pre>";
+			//die();
+
 			$headings = array();
 			$headings[] = $_POST['uniqueclicks'];
 			$headings[] = $_POST['signups'];
@@ -1152,6 +1154,13 @@ class affiliateadmin {
 			} else {
 				aff_delete_option('affiliatelinkurl');
 			}
+
+			if ((isset($_POST['affiliate-currency-paypal-masspay'])) && (!empty($_POST['affiliate-currency-paypal-masspay']))) {
+				aff_update_option('affiliate-currency-paypal-masspay', $_POST['affiliate-currency-paypal-masspay']);
+			} else {
+				aff_delete_option('affiliate-currency-paypal-masspay');
+			}
+
 
 			$banners = explode( "\n", stripslashes($_POST['affiliatebannerlinks']));
 
@@ -1176,6 +1185,7 @@ class affiliateadmin {
 
 		show_affiliate_admin_metabox_reports_affiliate_link();
 		//show_affiliate_admin_metabox_reports_monetary_precision();
+		show_affiliate_admin_metabox_settings_paypal_masspay_currency();
 		show_affiliate_admin_metabox_reports_column_settings();
 		show_affiliate_admin_metabox_profile_text();
 		show_affiliate_admin_metabox_settings_banner();

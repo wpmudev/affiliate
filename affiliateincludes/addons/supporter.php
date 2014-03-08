@@ -147,13 +147,14 @@ function affiliate_supporter_settings_update() {
 
 	$updateoption( "supporter_1_whole_payment", $_POST[ 'supporter_1_whole_payment' ] );
 	$updateoption( "supporter_1_partial_payment", $_POST[ 'supporter_1_partial_payment' ] );
+	$updateoption( "supporter_1_payment_type", $_POST[ 'supporter_1_payment_type' ] );
+
 	$updateoption( "supporter_3_whole_payment", $_POST[ 'supporter_3_whole_payment' ] );
 	$updateoption( "supporter_3_partial_payment", $_POST[ 'supporter_3_partial_payment' ] );
+	$updateoption( "supporter_3_payment_type", $_POST[ 'supporter_3_payment_type' ] );
+
 	$updateoption( "supporter_12_whole_payment", $_POST[ 'supporter_12_whole_payment' ] );
 	$updateoption( "supporter_12_partial_payment", $_POST[ 'supporter_12_partial_payment' ] );
-
-	$updateoption( "supporter_1_payment_type", $_POST[ 'supporter_1_payment_type' ] );
-	$updateoption( "supporter_3_payment_type", $_POST[ 'supporter_3_payment_type' ] );
 	$updateoption( "supporter_12_payment_type", $_POST[ 'supporter_12_payment_type' ] );
 
 }
@@ -172,6 +173,14 @@ function affiliate_supporter_settings() {
 	<div class="postbox">
         <h3 class="hndle" style="cursor:auto;"><span><?php _e('Affiliate Settings', 'affiliate') ?></span></h3>
         <div class="inside">
+			<?php
+				$prosites_currency = $psts->get_setting('currency');
+				$affiliate_currency = aff_get_option('affiliate-currency-paypal-masspay', 'USD');
+				if ($membership_currency != $affiliate_currency) {
+					?><p class="error"><?php echo sprintf(__('Currency mismatch. Your Pro Sites currency is set to <strong>%s</strong> but Affiliate currency is set to <strong>%s</strong>. Please ensure both are set correctly.'), $prosites_currency, $affiliate_currency) ?></p><?php
+				}
+			?>
+			
           <table class="form-table">
             <tr valign="top">
             <th scope="row"><?php _e('1 Month payment', 'affiliate'); ?></th>
@@ -206,7 +215,7 @@ function affiliate_supporter_settings() {
 				$supporter_1_payment_type = $getoption( "supporter_1_payment_type", 'actual' );
 				?>
 				<select name="supporter_1_payment_type">
-					<option value='actual' <?php selected( $supporter_1_payment_type, 'actual');  ?>><?php echo esc_html($psts->get_setting('currency')); ?></option>
+					<option value='actual' <?php selected( $supporter_1_payment_type, 'actual');  ?>><?php echo esc_html($affiliate_currency); ?></option>
 					<option value='percentage' <?php selected( $supporter_1_payment_type, 'percentage');  ?>><?php _e('%','membership'); ?></option>
 				</select>
 		        <br /><?php _e('Affiliate payment for one month.'); ?>
@@ -246,7 +255,7 @@ function affiliate_supporter_settings() {
 				$supporter_3_payment_type = $getoption( "supporter_3_payment_type", 'actual' );
 				?>
 				<select name="supporter_3_payment_type">
-					<option value='actual' <?php selected( $supporter_3_payment_type, 'actual');  ?>><?php echo esc_html($psts->get_setting('currency')); ?></option>
+					<option value='actual' <?php selected( $supporter_3_payment_type, 'actual');  ?>><?php echo esc_html($affiliate_currency); ?></option>
 					<option value='percentage' <?php selected( $supporter_3_payment_type, 'percentage');  ?>><?php _e('%','membership'); ?></option>
 				</select>
 		        <br /><?php _e('Affiliate payment for three months.'); ?>
@@ -286,7 +295,7 @@ function affiliate_supporter_settings() {
 				$supporter_12_payment_type = $getoption( "supporter_12_payment_type", 'actual' );
 				?>
 				<select name="supporter_12_payment_type">
-					<option value='actual' <?php selected( $supporter_12_payment_type, 'actual');  ?>><?php echo esc_html($psts->get_setting('currency')); ?></option>
+					<option value='actual' <?php selected( $supporter_12_payment_type, 'actual');  ?>><?php echo esc_html($affiliate_currency); ?></option>
 					<option value='percentage' <?php selected( $supporter_12_payment_type, 'percentage');  ?>><?php _e('%','membership'); ?></option>
 				</select>
 		        <br /><?php _e('Affiliate payment for twelve months.'); ?>

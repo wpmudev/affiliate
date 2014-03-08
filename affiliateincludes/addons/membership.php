@@ -278,6 +278,14 @@ function affiliate_membership_subscription_settings( $sub_id ) {
 	?>
 	<h3><?php _e('Affiliate settings','affiliate'); ?></h3>
 	<div class='sub-details'>
+
+	<?php
+		$membership_currency = $M_options['paymentcurrency'];
+		$affiliate_currency = aff_get_option('affiliate-currency-paypal-masspay', 'USD');
+		if ($membership_currency != $affiliate_currency) {
+			?><p class="error"><?php echo sprintf(__('Currency mismatch. Your Membership currency is set to <strong>%s</strong> but Affiliate currency is set to <strong>%s</strong>. Please ensure both are set correctly.'), $membership_currency, $affiliate_currency) ?></p><?php
+		}
+	?>
 	<label for='aff_pay'><?php _e('Affiliate payment credited for a signup on this subscription','management'); ?></label>
 	<select name="membership_whole_payment">
 	<?php
@@ -309,7 +317,7 @@ function affiliate_membership_subscription_settings( $sub_id ) {
 	$membership_payment_type = get_option( "membership_payment_type_" . $sub_id, 'actual' );
 	?>
 	<select name="membership_payment_type">
-		<option value='actual' <?php selected( $membership_payment_type, 'actual');  ?>><?php echo esc_html($M_options['paymentcurrency']); ?></option>
+		<option value='actual' <?php selected( $membership_payment_type, 'actual');  ?>><?php echo esc_html($affiliate_currency); ?></option>
 		<option value='percentage' <?php selected( $membership_payment_type, 'percentage');  ?>><?php _e('%','membership'); ?></option>
 	</select>
 	</div>
