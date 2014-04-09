@@ -89,6 +89,7 @@ class affiliateadmin {
 		// Affiliate blog and user reporting
 		add_filter( 'wpmu_blogs_columns', array(&$this, 'add_affiliate_column' ) );
 		add_action( 'manage_blogs_custom_column', array(&$this, 'show_affiliate_column' ), 10, 2 );
+		add_action( 'manage_sites_custom_column', array(&$this, 'show_affiliate_column' ), 10, 2 );
 
 		add_filter( 'manage_users_columns', array(&$this, 'add_user_affiliate_column') );
 		add_filter( 'wpmu_users_columns', array(&$this, 'add_user_affiliate_column') );
@@ -1993,21 +1994,21 @@ class affiliateadmin {
 
 		if($column_name == 'referred') {
 			$affid = get_blog_option( $blog_id, 'affiliate_referrer', false );
-
+			if (empty($affid)) {
+				$affid = get_blog_option( $blog_id, 'affiliate_referred_by', false );
+			}
 			if(!empty($affid)) {
 				// was referred so get the referrers details
-				$referrer = new WP_User( $affid );
-
-				if(is_network_admin()) {
-					$content .= "<a href='" . network_admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
-				} else {
-					$content .= "<a href='" . admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+				$referrer = get_user_by('id', $affid );
+				if (!empty($referrer)) {
+					if(is_network_admin()) {
+						echo "<a href='" . network_admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+					} else {
+						echo "<a href='" . admin_url('users.php?s=') . $referrer->user_login . "'>" . $referrer->user_login . "</a>";
+					}
 				}
-
 			}
-
 		}
-
 	}
 
 	// Plugins interface
@@ -2339,8 +2340,6 @@ class affiliateadmin {
 
 	function override_referrer_search( $search ) {
 
-		//echo "search<pre>"; print_r($search); echo "</pre>";
-		
 		$s = (!empty($_REQUEST['s'])) ? $_REQUEST['s'] : '';
 
 		if(substr($s, 0, 9) == 'referrer:') {
@@ -2351,17 +2350,16 @@ class affiliateadmin {
 				$user = get_user_by( 'login',$searchstring[1] );
 				if($user) {
 					$referred = $this->get_referred_by( $user->ID );
-
-					$search->query_where = "WHERE 1=1 AND ( ID IN (0," . implode(',', $referred) . ") )";
+					if (!empty($referred)) {
+						$search->query_where = "WHERE 1=1 AND ( ID IN (0," . implode(',', $referred) . ") )";
+					}
 
 					if(!empty($search->query_vars['blog_id']) && is_multisite()) {
 						$search->query_where .= " AND (wp_usermeta.meta_key = '" . $this->db->get_blog_prefix( $search->query_vars['blog_id'] ) . "capabilities' )";
 					}
-
 				}
 			}
 		}
-
 	}
 
 	function add_referrer_search_link( $actions, $user_object ) {

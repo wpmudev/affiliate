@@ -4,6 +4,12 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
+3.1.5.5 - 2014-04-09 - Paul Menard (Incsub)
+----------------------------------------------------------------------
+- Corrected reported SQL error when viewing Users listing and selecting user referrers. 
+- Corrected issue where affiliate referred by column on Multisite Sites listing was not showing reference. 
+
+----------------------------------------------------------------------
 3.1.5.4 - 2014-03-08 - Paul Menard (Incsub)
 ----------------------------------------------------------------------
 - Added setting to define currency used for PayPal masspay file export. 
