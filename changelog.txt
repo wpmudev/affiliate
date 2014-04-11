@@ -4,6 +4,10 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
+3.1.5.6 - 2014-04-11 - Paul Menard (Incsub)
+----------------------------------------------------------------------
+- Corrected reported issue with AFFILIATE_CHECKALL defin when set to 'no' did not prevent Affiliate Advanced Settings from showing on Affiliate profile
+
 3.1.5.5 - 2014-04-09 - Paul Menard (Incsub)
 ----------------------------------------------------------------------
 - Corrected reported SQL error when viewing Users listing and selecting user referrers. 

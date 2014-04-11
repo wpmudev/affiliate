@@ -1265,7 +1265,7 @@ class affiliateshortcodes {
 
 				$validreferrer = get_user_meta($user_ID, 'affiliate_referrer_validated', true);
 
-				if(defined('AFFILIATE_CHECKALL')) { ?>
+				if((defined('AFFILIATE_CHECKALL')) && (AFFILIATE_CHECKALL == 'yes')) { ?>
 
 					<h3><?php _e('Affiliate Advanced Settings', 'affiliate') ?></h3>
 
