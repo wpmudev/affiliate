@@ -4,6 +4,11 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
+3.1.5.7 - 2014-05-06 - Paul Menard (Incsub)
+----------------------------------------------------------------------
+- Added filter 'affiliate_click_amount_filter' to be called when affiliate unique click processing starts. The filter allows the site admin to set an amount to be used for the referral click transaction. Default is zero.
+
+----------------------------------------------------------------------
 3.1.5.6 - 2014-04-11 - Paul Menard (Incsub)
 ----------------------------------------------------------------------
 - Corrected reported issue with AFFILIATE_CHECKALL defin when set to 'no' did not prevent Affiliate Advanced Settings from showing on Affiliate profile

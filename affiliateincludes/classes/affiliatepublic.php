@@ -378,7 +378,9 @@ class affiliate {
 			// Record the click in the affiliate table - v0.2+
 			$period = date('Ym');
 
-			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, uniques, lastupdated) VALUES (%d, %s, %d, now()) ON DUPLICATE KEY UPDATE uniques = uniques + %d", $affiliate_user_id, $period, 1, 1 );
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, uniques, credits, lastupdated) VALUES (%d, %s, %d, %01.2f, now()) ON DUPLICATE KEY UPDATE uniques = uniques + %d, credits = credits + %01.2f", $affiliate_user_id, $period, 1, $amount, 1, $amount );
+			//error_log(__FUNCTION__ .": sql[". $sql ."]");
+			
 			$queryresult = $this->db->query($sql);
 
 			if( $area !== false ) {
@@ -405,7 +407,7 @@ class affiliate {
 
 			$period = date('Ym');
 
-			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, signups, lastupdated) VALUES (%d, %s, %d, now()) ON DUPLICATE KEY UPDATE signups = signups + %d", $affiliate_user_id, $period, 1, 1 );
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, signups, credits, lastupdated) VALUES (%d, %s, %d, %01.2f, now()) ON DUPLICATE KEY UPDATE signups = signups + %d, credits = credits + %01.2f", $affiliate_user_id, $period, 1, $amount, 1, $amount );
 			$queryresult = $this->db->query($sql);
 			
 			if(!defined( 'AFFILIATEID' )) {
@@ -503,8 +505,8 @@ class affiliate {
 			$queryresult = $this->db->query($sql);
 
 		}
-
 	}
+
 
 	function handle_affiliate_link() {
 		if(isset($_COOKIE['noaffiliate_' . COOKIEHASH])) {
@@ -543,9 +545,11 @@ class affiliate {
 
 					// Update a quick count for this month
 					$note = __('Referal', 'affiliate') .' '. esc_attr($_SERVER['HTTP_REFERER']);
-					do_action( 'affiliate_click', $affiliate, false, 'unique:click', false, $note, $meta);
-					//die();
-					
+					$amount = apply_filters('affiliate_click_amount_filter', '0.00', $affiliate );
+					$amount = number_format($amount, 2);
+					//error_log(__FUNCTION__ .": amount[". $amount ."]");
+					do_action( 'affiliate_click', $affiliate, $amount, 'unique:click', false, $note, $meta);
+
 					do_action( 'affiliate_referrer', $affiliate, $referrer );
 
 					// Write the affiliate hash out - valid for 30 days.
