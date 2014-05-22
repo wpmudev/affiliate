@@ -4,6 +4,17 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
+3.1.5.8 - 2014-05-22 - Paul Menard (Incsub)
+----------------------------------------------------------------------
+- Added logic to prevent affiliate shortcodes from displaying if user is not an affiliate. Thanks @Hector
+- Added logic to prevent affiliate admin profile from displaying if user is not an affiliate.
+- Added logic to Affilite-Membership add-on to prevent Membership payment complete transactions from processing multiple times. 
+- Added new define 'AFFILIATE_REPLACE_COOKIE' which can be used to replace an existing cookie if the user happens to follow a different affiliate URL. Default is not to replace. 
+- Correct reported issue on Affiliate-ProSites addon where currency for Affiliate was displaying mis-match warning even when they matched. 
+- Corrected typo on the 'Balanace' column for the Affiliate user reports summary. Thanks again @Hector
+
+
+----------------------------------------------------------------------
 3.1.5.7 - 2014-05-06 - Paul Menard (Incsub)
 ----------------------------------------------------------------------
 - Added filter 'affiliate_click_amount_filter' to be called when affiliate unique click processing starts. The filter allows the site admin to set an amount to be used for the referral click transaction. Default is zero.

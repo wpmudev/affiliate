@@ -17,7 +17,7 @@ add_action( 'membership_subscription_add', 						'affiliate_membership_subscript
 
 
 function affiliate_membership_payment_processed( $m_user_id, $m_sub_id, $m_amount, $m_currency, $m_txn_id ) {
-	global $blog_id, $site_id;
+	global $blog_id, $site_id, $affiliate;
 	
 	$default_headers = array(
 		'Name' 				=> 	'Plugin Name',
@@ -40,50 +40,113 @@ function affiliate_membership_payment_processed( $m_user_id, $m_sub_id, $m_amoun
 		} 
 	}
 	
-	//$a_debug = true;
+	if ((defined('AFFILIATE_MEMBERSHIP_ADDON_DEBUG')) && (AFFILIATE_MEMBERSHIP_ADDON_DEBUG == 'yes')) {
+		$a_debug = true;
+		$a_debug_path = trailingslashit($_SERVER['DOCUMENT_ROOT']);
 
-	//if ($a_debug) {
-	//	$fp = fopen($_SERVER['DOCUMENT_ROOT']. '/_affiliate_data_'. $m_user_id .'.txt', 'a');
-	//	fwrite($fp, "m_user_id[". $m_user_id ."]\r\n");
-	//	fwrite($fp, "m_sub_id[". $m_sub_id ."]\r\n");
-	//	fwrite($fp, "m_amount[". $m_amount ."]\r\n");
-	//	fwrite($fp, "m_currency[". $m_currency ."]\r\n");
-	//	fwrite($fp, "m_txn_id[". $m_txn_id ."]\r\n");
-	//	fwrite($fp, "_POST<pre>". print_r($_POST, true). "</pre>");
-	//}
+		if ((defined('AFFILIATE_MEMBERSHIP_ADDON_DEBUG_PATH')) && (AFFILIATE_MEMBERSHIP_ADDON_DEBUG_PATH != '')) {
+			if ((file_exists(AFFILIATE_MEMBERSHIP_ADDON_DEBUG_PATH)) && (is_writable(AFFILIATE_MEMBERSHIP_ADDON_DEBUG_PATH))) {
+				$a_debug_path = trailingslashit(AFFILIATE_MEMBERSHIP_ADDON_DEBUG_PATH);
+			}
+		} 
+	} else {
+		$a_debug = false;
+	}
+
+	if ($a_debug) {
+		$fp = fopen( $a_debug_path . '_affiliate_data_'. $m_user_id .'.txt', 'a');
+		fwrite($fp, "--------------------- ". __FUNCTION__ ." --------------------------\r\n");
+		fwrite($fp, "m_user_id[". $m_user_id ."]\r\n");
+		fwrite($fp, "m_sub_id[". $m_sub_id ."]\r\n");
+		fwrite($fp, "m_amount[". $m_amount ."]\r\n");
+		fwrite($fp, "m_currency[". $m_currency ."]\r\n");
+		fwrite($fp, "m_txn_id[". $m_txn_id ."]\r\n");
+		fwrite($fp, "_POST<pre>". print_r($_POST, true). "</pre>\r\n");
+		
+		//ob_start();
+		//echo "trace<pre>"; debug_print_backtrace(); echo "</pre>";
+		//$trace = ob_get_contents();
+		//ob_end_clean();
+		//fwrite($fp, "_TRACE<pre>". $trace . "\r\n");
+	}
 	
 	// If we don't have an affiliate referred by then not an affiliate commission
 	$affiliate_referred_by = get_user_meta($m_user_id, 'affiliate_referred_by', true);
-	//if ($a_debug) { fwrite($fp, "affiliate_referred_by[". $affiliate_referred_by ."]\r\n"); }
+	//$affiliate_referred_by = '1';
+	if ($a_debug) { fwrite($fp, "affiliate_referred_by[". $affiliate_referred_by ."]\r\n"); }
 	if (empty($affiliate_referred_by)) {
-		//if ($a_debug) { 
-		//	fwrite($fp, "affiliate_referred_by is EMPTY\r\n"); 
-		//	fclose($fp);
-		//}
+		if ($a_debug) { 
+			fwrite($fp, "affiliate_referred_by is EMPTY\r\n"); 
+			fclose($fp);
+		}
 		return;
+	} else {
+		if ($a_debug) { 
+			fwrite($fp, "affiliate_referred_by: [". $affiliate_referred_by ."]\r\n"); 
+		}
 	}
 	
 	// IF we have Affiliate set to PAYPONCE and the affiliate has been paid. Then nothing to give here.
 	$affiliate_paid = get_user_meta($m_user_id, 'affiliate_paid', true);
-	//if ($a_debug) { fwrite($fp, "affiliate_paid[". $affiliate_paid ."]\r\n"); }
+	if ($a_debug) { fwrite($fp, "affiliate_paid[". $affiliate_paid ."]\r\n"); }
 	if ((defined('AFFILIATE_PAYONCE')) && (AFFILIATE_PAYONCE == 'yes') && ($affiliate_paid == 'yes')) {
-		//if ($a_debug) { 
-		//	fwrite($fp, "affiliate already PAYONCE\r\n");
-		//	fclose($fp);
-		//}
+		if ($a_debug) { 
+			fwrite($fp, "affiliate already PAYONCE\r\n");
+			fclose($fp);
+		}
 		return;
+	} else {
+		if ($a_debug) { 
+			fwrite($fp, "affiliate NOT PAYONCE\r\n");
+		}
+	}
+
+
+	$complete_records = $affiliate->get_complete_records($affiliate_referred_by, date('Ym'), array('paid:membership'), $m_user_id);	
+	
+	if (!empty($complete_records)) {
+
+		foreach($complete_records as $complete_record) {
+			$complete_record->meta = maybe_unserialize($complete_record->meta);
+
+			if ($a_debug) { 
+				fwrite($fp, "m_user_id[". $m_user_id ."] meta[tosub_id][". $complete_record->meta['tosub_id'] ."]\r\n");
+				fwrite($fp, "m_sub_id[". $m_sub_id ."] meta[tolevel_id][". $complete_record->meta['tolevel_id'] ."]\r\n");
+				fwrite($fp, "m_amount[". $m_amount ."] meta[amount][". $complete_record->meta['amount'] ."]\r\n");
+				fwrite($fp, "m_currency[". $m_currency ."] meta[currency][". $complete_record->meta['currency'] ."]\r\n");
+				fwrite($fp, "m_txn_id[". $m_txn_id ."] meta[trans_id][". $complete_record->meta['trans_id'] ."]\r\n");
+			}
+
+			if (( $complete_record->meta['tosub_id'] == $m_user_id ) 
+			 && ( $complete_record->meta['tolevel_id'] == $m_sub_id )	
+			 && ( $complete_record->meta['amount'] == $m_amount )	
+			 && ( $complete_record->meta['currency'] == $m_currency )	
+			 && ( $complete_record->meta['trans_id'] == $m_txn_id ))	{
+
+				if ($a_debug) { 
+					fwrite($fp, "affiliate duplicate transactions: <pre>". print_r($complete_record, true) ."</pre> aborting\r\n");
+					fclose($fp);
+				}
+				return;
+			}
+		}
+
+	} else {
+		if ($a_debug) { 
+			fwrite($fp, "affiliate previous transactions NOT found.\r\n");
+		}
 	}
 	
 	$whole = get_option( "membership_whole_payment_" . $m_sub_id, 0);
-	//if ($a_debug) { fwrite($fp, "whole[". $whole ."]\r\n"); } 
+	if ($a_debug) { fwrite($fp, "whole[". $whole ."]\r\n"); } 
 	//echo "whole[". $whole ."]<br />";
 		
 	$partial = get_option( "membership_partial_payment_" . $m_sub_id, 0);
-	//if ($a_debug) { fwrite($fp, "partial[". $partial ."]\r\n"); } 
+	if ($a_debug) { fwrite($fp, "partial[". $partial ."]\r\n"); } 
 	//echo "partial[". $partial ."]<br />";
 		
 	$type = get_option( "membership_payment_type_" . $m_sub_id, 'actual' );
-	//if ($a_debug) { fwrite($fp, "type[". $type ."]\r\n"); } 
+	if ($a_debug) { fwrite($fp, "type[". $type ."]\r\n"); } 
 	//echo "type[". $type ."]<br />";
 		
 	switch( $type ) {
@@ -108,15 +171,16 @@ function affiliate_membership_payment_processed( $m_user_id, $m_sub_id, $m_amoun
 			}
 			break;
 	}
-	//if ($a_debug) {
-	//	fwrite($fp, "amount[". $amount ."]\r\n");
-	//}
-	//echo "amount[". $amount ."]<br />";
+	if ($a_debug) {
+		fwrite($fp, "amount[". $amount ."]\r\n");
+	}
 		
 	$meta = array(
 		'tosub_id'			=>	$m_user_id, 
 		'tolevel_id'		=>	$m_sub_id, 
 		'amount'			=>	$m_amount,
+		'currency'			=>	$m_currency, 
+		'trans_id'			=>	$m_txn_id,
 		'blog_id'			=>	$blog_id,
 		'site_id'			=>	$site_id,
 		'current_user_id'	=>	get_current_user_id(),
@@ -132,9 +196,9 @@ function affiliate_membership_payment_processed( $m_user_id, $m_sub_id, $m_amoun
 	if(defined('AFFILIATE_PAYONCE') && AFFILIATE_PAYONCE == 'yes') {
 		update_user_meta($user_id, 'affiliate_paid', 'yes');
 	}
-	//if ($a_debug) {
-	//	fclose($fp);
-	//}
+	if ($a_debug) {
+		fclose($fp);
+	}
 }
 
 

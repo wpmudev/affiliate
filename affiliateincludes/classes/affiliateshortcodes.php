@@ -251,10 +251,22 @@ class affiliateshortcodes {
 							"postfix"				=>	'',
 							"prefix"				=>	'',
 							"wrapwith"				=>	'',
-							"wrapwithclass"			=>	''
+							"wrapwithclass"			=>	'',
+							"nonaffiliateshow"		=>	'no'
 						);
 
 		extract(shortcode_atts($defaults, $atts));
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
+		if ((empty($reference)) && ($nonaffiliateshow == 'no')){
+			return '';
+		}
 
 		$html = '';
 
@@ -300,10 +312,23 @@ class affiliateshortcodes {
 							"postfix"				=>	'',
 							"prefix"				=>	'',
 							"wrapwith"				=>	'',
-							"wrapwithclass"			=>	''
+							"wrapwithclass"			=>	'',
+							"nonaffiliateshow"		=>	'no'
 						);
 
 		extract(shortcode_atts($defaults, $atts));
+
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
+		if ((empty($reference)) && ($nonaffiliateshow == 'no')){
+			return '';
+		}
 
 		$html = '';
 
@@ -350,10 +375,24 @@ class affiliateshortcodes {
 							"postfix"				=>	'',
 							"prefix"				=>	'',
 							"wrapwith"				=>	'',
-							"wrapwithclass"			=>	''
+							"wrapwithclass"			=>	'',
+							"nonaffiliateshow"		=>	'no'
 						);
 
 		extract(shortcode_atts($defaults, $atts));
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
+		if ((empty($reference)) && ($nonaffiliateshow == 'no')){
+			return '';
+		}
+
+
 
 		$html = '';
 
@@ -399,10 +438,22 @@ class affiliateshortcodes {
 							"postfix"				=>	'',
 							"prefix"				=>	'',
 							"wrapwith"				=>	'',
-							"wrapwithclass"			=>	''
+							"wrapwithclass"			=>	'',
+							"nonaffiliateshow"		=>	'no'
 						);
 
 		extract(shortcode_atts($defaults, $atts));
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
+		if ((empty($reference)) && ($nonaffiliateshow == 'no')){
+			return '';
+		}
 
 		$html = '';
 
@@ -448,10 +499,22 @@ class affiliateshortcodes {
 							"postfix"				=>	'',
 							"prefix"				=>	'',
 							"wrapwith"				=>	'',
-							"wrapwithclass"			=>	''
+							"wrapwithclass"			=>	'',
+							"nonaffiliateshow"		=>	'no'
 						);
 
 		extract(shortcode_atts($defaults, $atts));
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
+		if ((empty($reference)) && ($nonaffiliateshow == 'no')){
+			return '';
+		}
 
 		$html = '';
 
@@ -1483,10 +1546,22 @@ class affiliateshortcodes {
 							"postfix"				=>	'',
 							"prefix"				=>	'',
 							"wrapwith"				=>	'',
-							"wrapwithclass"			=>	''
+							"wrapwithclass"			=>	'',
+							"nonaffiliateshow"		=>	'no'
 						);
 
 		extract(shortcode_atts($defaults, $atts));
+
+		$user = wp_get_current_user();
+		$user_ID = $user->ID;
+
+		if(empty($user_ID)) {
+			return '';
+		}
+		$reference = get_user_meta($user_ID, 'affiliate_reference', true);
+		if ((empty($reference)) && ($nonaffiliateshow == 'no')){
+			return '';
+		}
 
 		$html = '';
 

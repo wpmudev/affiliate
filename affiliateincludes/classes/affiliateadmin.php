@@ -835,173 +835,176 @@ class affiliateadmin {
 			
 			//$results = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatedata} WHERE user_id = %d ORDER BY period DESC", $user_ID ) );
 
-			if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
-				echo '<br /><a href="' . add_query_arg('subpage', 'summary') .'">'. __('&larr; Return to Affiliate Period Summary', 'affiliate') .'</a>';
-			}
+			if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
 
 
-			echo "<div id='affdashgraph' style='width: 100%; margin-top: 20px; min-height: 350px; background-color: #fff; margin-bottom: 20px;'>";
-			echo "</div>";
-
-			echo "<div id='clickscolumn' style='width: 48%; margin-right: 2%; margin-top: 20px; min-height: 400px; float: left;'>";
-
-			if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
-				$period = '';
-				if (isset($_GET['period'])) $period = esc_attr($_GET['period']);
-				if (!empty($period)) $period = date('Ym');
-				$this->show_users_period_details_table($user_ID, $period);
-			} else {
-				$this->show_users_period_summary_table($user_ID);
-			}
-
-			echo "</div>";
-
-
-			echo "<div id='referrerscolumn' style='width: 48%; margin-left: 2%; min-height: 400px; margin-top: 20px; background: #fff; float: left;'>";
-
-			do_action('affiliate_before_profile_graphs', $user_ID);
-			do_action('affiliate_before_visits_table', $user_ID);
-
-			echo "<div id='affvisitgraph' style='width: 100%; min-height: 350px; background-color: #fff; margin-bottom: 20px;'>";
-			echo "</div>";
-
-			// This months visits table
-			$rows = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatereferrers} WHERE user_id = %d AND period = %s ORDER BY referred DESC LIMIT 0, 15", $user_ID, date("Ym") ) );
-			echo "<table class='widefat'>";
-
-			echo "<thead>";
-				echo "<tr>";
-				echo "<th scope='col'>";
-				echo  __('Top referrers for ','affiliate') . date("M Y");
-				echo "</th>";
-				echo "<th scope='col' style='width: 3em;'>";
-				echo __('Visits','affiliate');
-				echo "</th>";
-				echo "</tr>";
-			echo "</thead>";
-
-			echo "<tfoot>";
-				echo "<tr>";
-				echo "<th scope='col'>";
-				echo  __('Top referrers for ','affiliate') . date("M Y");
-				echo "</th>";
-				echo "<th scope='col' style='width: 3em;'>";
-				echo __('Visits','affiliate');
-				echo "</th>";
-				echo "</tr>";
-			echo "</tfoot>";
-
-			echo "<tbody>";
-
-			if(!empty($rows)) {
-
-				$class = 'alternate';
-				foreach($rows as $r) {
-
-					echo "<tr class='$class' style='$style'>";
-					echo "<td style='padding: 5px;'>";
-					echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
-					echo "</td>";
-					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
-					echo $r->referred;
-					echo "</td>";
-					echo "</tr>";
-
-					if($class != 'alternate') {
-						$class = '';
-					} else {
-						$class = 'alternate';
-					}
-
+				if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
+					echo '<br /><a href="' . add_query_arg('subpage', 'summary') .'">'. __('&larr; Return to Affiliate Period Summary', 'affiliate') .'</a>';
 				}
 
-			} else {
-				echo __('<tr><td colspan="2">You have no referred visits this month.</td></tr>','affiliate');
-			}
 
-			echo "</tbody>";
-			echo "</table>";
+				echo "<div id='affdashgraph' style='width: 100%; margin-top: 20px; min-height: 350px; background-color: #fff; margin-bottom: 20px;'>";
+				echo "</div>";
 
-			do_action('affiliate_after_visits_table', $user_ID);
+				echo "<div id='clickscolumn' style='width: 48%; margin-right: 2%; margin-top: 20px; min-height: 400px; float: left;'>";
 
-			do_action('affiliate_before_topreferrers_table', $user_ID);
-
-			// Top referrers of all time
-
-			// Build 18 months of years
-			$startat = strtotime(date("Y-m-15"));
-			$years = array();
-			for($n = 0; $n < 18; $n++) {
-				$rdate = strtotime("-$n month", $startat);
-				$years[] = "'" . date('Ym', $rdate) . "'";
-			}
-
-			$rows = $this->db->get_results( $this->db->prepare( "SELECT url, SUM(referred) as totalreferred FROM {$this->affiliatereferrers} WHERE user_id = %d AND period in (" . implode(',', $years) . ") GROUP BY url ORDER BY totalreferred DESC LIMIT 0, 15", $user_ID ) );
-			echo "<br/>";
-			echo "<table class='widefat'>";
-
-			echo "<thead>";
-				echo "<tr>";
-				echo "<th scope='col'>";
-				echo  __('Top referrers over past 18 months','affiliate');
-				echo "</th>";
-				echo "<th scope='col' style='width: 3em;'>";
-				echo __('Visits','affiliate');
-				echo "</th>";
-				echo "</tr>";
-			echo "</thead>";
-
-			echo "<tfoot>";
-				echo "<tr>";
-				echo "<th scope='col'>";
-				echo  __('Top referrers over past 18 months','affiliate');
-				echo "</th>";
-				echo "<th scope='col' style='width: 3em;'>";
-				echo __('Visits','affiliate');
-				echo "</th>";
-				echo "</tr>";
-			echo "</tfoot>";
-
-			echo "<tbody>";
-
-			if(!empty($rows)) {
-
-				$class = 'alternate';
-				foreach($rows as $r) {
-
-					echo "<tr class='$class' style='$style'>";
-					echo "<td style='padding: 5px;'>";
-					echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
-					echo "</td>";
-					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
-					echo $r->totalreferred;
-					echo "</td>";
-					echo "</tr>";
-
-					if($class != 'alternate') {
-						$class = '';
-					} else {
-						$class = 'alternate';
-					}
-
+				if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
+					$period = '';
+					if (isset($_GET['period'])) $period = esc_attr($_GET['period']);
+					if (!empty($period)) $period = date('Ym');
+					$this->show_users_period_details_table($user_ID, $period);
+				} else {
+					$this->show_users_period_summary_table($user_ID);
 				}
 
-			} else {
-				echo __('<tr><td colspan="2">You have no overall referred visits.</td></tr>','affiliate');
+				echo "</div>";
+
+
+				echo "<div id='referrerscolumn' style='width: 48%; margin-left: 2%; min-height: 400px; margin-top: 20px; background: #fff; float: left;'>";
+
+				do_action('affiliate_before_profile_graphs', $user_ID);
+				do_action('affiliate_before_visits_table', $user_ID);
+
+				echo "<div id='affvisitgraph' style='width: 100%; min-height: 350px; background-color: #fff; margin-bottom: 20px;'>";
+				echo "</div>";
+
+				// This months visits table
+				$rows = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatereferrers} WHERE user_id = %d AND period = %s ORDER BY referred DESC LIMIT 0, 15", $user_ID, date("Ym") ) );
+				echo "<table class='widefat'>";
+
+				echo "<thead>";
+					echo "<tr>";
+					echo "<th scope='col'>";
+					echo  __('Top referrers for ','affiliate') . date("M Y");
+					echo "</th>";
+					echo "<th scope='col' style='width: 3em;'>";
+					echo __('Visits','affiliate');
+					echo "</th>";
+					echo "</tr>";
+				echo "</thead>";
+
+				echo "<tfoot>";
+					echo "<tr>";
+					echo "<th scope='col'>";
+					echo  __('Top referrers for ','affiliate') . date("M Y");
+					echo "</th>";
+					echo "<th scope='col' style='width: 3em;'>";
+					echo __('Visits','affiliate');
+					echo "</th>";
+					echo "</tr>";
+				echo "</tfoot>";
+
+				echo "<tbody>";
+
+				if(!empty($rows)) {
+
+					$class = 'alternate';
+					foreach($rows as $r) {
+
+						echo "<tr class='$class' style='$style'>";
+						echo "<td style='padding: 5px;'>";
+						echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
+						echo "</td>";
+						echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
+						echo $r->referred;
+						echo "</td>";
+						echo "</tr>";
+
+						if($class != 'alternate') {
+							$class = '';
+						} else {
+							$class = 'alternate';
+						}
+
+					}
+
+				} else {
+					echo __('<tr><td colspan="2">You have no referred visits this month.</td></tr>','affiliate');
+				}
+
+				echo "</tbody>";
+				echo "</table>";
+
+				do_action('affiliate_after_visits_table', $user_ID);
+
+				do_action('affiliate_before_topreferrers_table', $user_ID);
+
+				// Top referrers of all time
+
+				// Build 18 months of years
+				$startat = strtotime(date("Y-m-15"));
+				$years = array();
+				for($n = 0; $n < 18; $n++) {
+					$rdate = strtotime("-$n month", $startat);
+					$years[] = "'" . date('Ym', $rdate) . "'";
+				}
+
+				$rows = $this->db->get_results( $this->db->prepare( "SELECT url, SUM(referred) as totalreferred FROM {$this->affiliatereferrers} WHERE user_id = %d AND period in (" . implode(',', $years) . ") GROUP BY url ORDER BY totalreferred DESC LIMIT 0, 15", $user_ID ) );
+				echo "<br/>";
+				echo "<table class='widefat'>";
+
+				echo "<thead>";
+					echo "<tr>";
+					echo "<th scope='col'>";
+					echo  __('Top referrers over past 18 months','affiliate');
+					echo "</th>";
+					echo "<th scope='col' style='width: 3em;'>";
+					echo __('Visits','affiliate');
+					echo "</th>";
+					echo "</tr>";
+				echo "</thead>";
+
+				echo "<tfoot>";
+					echo "<tr>";
+					echo "<th scope='col'>";
+					echo  __('Top referrers over past 18 months','affiliate');
+					echo "</th>";
+					echo "<th scope='col' style='width: 3em;'>";
+					echo __('Visits','affiliate');
+					echo "</th>";
+					echo "</tr>";
+				echo "</tfoot>";
+
+				echo "<tbody>";
+
+				if(!empty($rows)) {
+
+					$class = 'alternate';
+					foreach($rows as $r) {
+
+						echo "<tr class='$class' style='$style'>";
+						echo "<td style='padding: 5px;'>";
+						echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
+						echo "</td>";
+						echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
+						echo $r->totalreferred;
+						echo "</td>";
+						echo "</tr>";
+
+						if($class != 'alternate') {
+							$class = '';
+						} else {
+							$class = 'alternate';
+						}
+
+					}
+
+				} else {
+					echo __('<tr><td colspan="2">You have no overall referred visits.</td></tr>','affiliate');
+				}
+
+				echo "</tbody>";
+				echo "</table>";
+
+
+				echo "</div>";
+
+				do_action('affiliate_after_topreferrers_table', $user_ID);
+
+				do_action('affiliate_after_profile_graphs', $user_ID);
+
+				echo "<div style='clear: both;'></div>";
 			}
-
-			echo "</tbody>";
-			echo "</table>";
-
-
-			echo "</div>";
-
-			do_action('affiliate_after_topreferrers_table', $user_ID);
-
-			do_action('affiliate_after_profile_graphs', $user_ID);
-
-			echo "<div style='clear: both;'></div>";
-
 		?>
 
 		</div>
@@ -2566,7 +2569,7 @@ class affiliateadmin {
 				__('Credits','affiliate'), 
 				__('Debits','affiliate'), 
 				__('Payments','affiliate'), 
-				__('Balanace', 'affiliate')
+				__('Balance', 'affiliate')
 			)
 		);
 

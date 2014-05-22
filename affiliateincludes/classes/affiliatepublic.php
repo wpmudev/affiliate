@@ -520,13 +520,15 @@ class affiliate {
 
 		if(isset($_GET['ref'])) {
 			// There is an affiliate type query item, check it for validity and then redirect
-			
-			if(!isset( $_COOKIE['affiliate_' . COOKIEHASH])) {
+
+			if ((!isset( $_COOKIE['affiliate_' . COOKIEHASH])) || (AFFILIATE_REPLACE_COOKIE == 'yes')) {
+
 				// We haven't already been referred here by someone else - note only the first referrer
 				// within a time period gets the cookie.
 
 				// Check if the user is a valid referrer
 				$affiliate = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_reference' AND meta_value='%s'", $_GET['ref']) );
+				//error_log('affiliate user id['. $affiliate .']');
 				
 				if($affiliate) {
 					// Grab the referrer
@@ -555,8 +557,8 @@ class affiliate {
 					// Write the affiliate hash out - valid for 30 days.
 					@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))), COOKIEPATH, COOKIE_DOMAIN);
 				}
-			}
-
+			} 
+			
 			// The cookie is set so redirect to the page called but without the ref in the url
 			// for SEO reasons.
 			$this->redirect( remove_query_arg( array('ref') ) );
@@ -646,4 +648,29 @@ class affiliate {
 		// Ensure we have an exit
 		exit;
 	}
+	
+	function get_complete_records($user_id, $period = false, $area = array(), $area_id = false) {
+		$sql_str = "SELECT * FROM ". $this->affiliaterecords ." WHERE `user_id`=". $user_id;
+		if (!empty($period))
+			$sql_str .= " AND `period`='". $period ."' ";
+
+		if (!empty($area)) {
+			$area_str = '';
+			foreach($area as $area_item) {
+				if (!empty($area_str)) $area_str .= ',';
+				$area_str .= "'". $area_item ."'";
+			}
+			if (!empty($area_str)) {
+				$sql_str .= " AND `affiliatearea` IN (". $area_str .") ";
+			}
+		}
+		if (!empty($area_id))
+			$sql_str .= " AND `area_id`='". $area_id ."' ";
+
+		$sql_str .= ' LIMIT 50';
+
+		//echo "sql_str[". $sql_str ."]<br />";
+		return $this->db->get_results($sql_str);
+	}
+	
 }

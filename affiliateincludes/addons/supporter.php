@@ -176,7 +176,8 @@ function affiliate_supporter_settings() {
 			<?php
 				$prosites_currency = $psts->get_setting('currency');
 				$affiliate_currency = aff_get_option('affiliate-currency-paypal-masspay', 'USD');
-				if ($membership_currency != $affiliate_currency) {
+				//echo "prosites_currency[". $prosites_currency ."] affiliate_currency[". $affiliate_currency ."]<br />";
+				if ($prosites_currency != $affiliate_currency) {
 					?><p class="error"><?php echo sprintf(__('Currency mismatch. Your Pro Sites currency is set to <strong>%s</strong> but Affiliate currency is set to <strong>%s</strong>. Please ensure both are set correctly.'), $prosites_currency, $affiliate_currency) ?></p><?php
 				}
 			?>

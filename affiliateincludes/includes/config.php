@@ -15,6 +15,8 @@ if(!defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED')) define('AFFILIATE_USE_
 // The number of days to keep the cookie for
 if(!defined('AFFILIATE_COOKIE_DAYS')) define('AFFILIATE_COOKIE_DAYS',30);
 
+if(!defined('AFFILIATE_REPLACE_COOKIE')) define('AFFILIATE_REPLACE_COOKIE','no');
+
 // The key used to make the affiliate reference code
 if(!defined('AFFILIATE_REFERENCE_KEY')) define('AFFILIATE_REFERENCE_KEY',35);
 

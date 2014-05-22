@@ -4,9 +4,10 @@ Plugin Name: Affiliate
 Plugin URI: http://premium.wpmudev.org/project/wordpress-mu-affiliate
 Description: This plugin adds a simple affiliate system to your site. Track incoming clicks from affiliate referer links, Order tracking integration with MarketPress, Prosites paid signups and Membership paid signups.
 Author: WPMU DEV
-Version: 3.1.5.7
+Version: 3.1.5.8
 Author URI: http://premium.wpmudev.org
 WDP ID: 106
+Domain Path: /affiliateincludes/languages
 */
 
 require_once('affiliateincludes/includes/config.php');
