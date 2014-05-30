@@ -98,33 +98,34 @@ function affReBuildVisits(chart, ticks) {
 
 function affDoPlot() {
 
-	if(chart) {
-		affReBuildChart(chart, ticks);
-	} else {
-		jQuery.getJSON(affiliate.ajaxurl, { action: '_aff_getstats' },
-		        function(data){
+	if (jQuery('#affdashgraph').length) {
+		if(chart) {
+			affReBuildChart(chart, ticks);
+		} else {
+			jQuery.getJSON(affiliate.ajaxurl, { action: '_aff_getstats' }, function(data) {
 
-					if(data.chart) { chart = data.chart; } else { chart = []; }
-					if(data.ticks) { ticks = data.ticks; } else { ticks = []; }
+				if(data.chart) { chart = data.chart; } else { chart = []; }
+				if(data.ticks) { ticks = data.ticks; } else { ticks = []; }
 
-					affReBuildChart(chart, ticks);
-		        });
+				affReBuildChart(chart, ticks);
+			});
+		}
 	}
 
-	if(visit) {
-		affReBuildVisits(visit, ticktwo);
-	} else {
-		jQuery.getJSON(affiliate.ajaxurl, { action: '_aff_getvisits' },
-		        function(data){
+	if (jQuery('#affvisitgraph').length) {
+		if(visit) {
+			affReBuildVisits(visit, ticktwo);
+		} else {
+			jQuery.getJSON(affiliate.ajaxurl, { action: '_aff_getvisits' }, function(data) {
 
-					if(data.chart) { visit = data.chart; } else { visit = []; }
-					if(data.ticks) { ticktwo = data.ticks; } else { ticktwo = []; }
+				if(data.chart) { visit = data.chart; } else { visit = []; }
+				if(data.ticks) { ticktwo = data.ticks; } else { ticktwo = []; }
 
-					affReBuildVisits(visit, ticktwo);
+				affReBuildVisits(visit, ticktwo);
 
-				});
+			});
+		}
 	}
-
 }
 
 function affToggleView() {

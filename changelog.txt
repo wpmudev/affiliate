@@ -4,6 +4,12 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
+3.1.5.9 - 2014-05-30 - Paul Menard (Incsub)
+----------------------------------------------------------------------
+- Corrected issue where date months were not being properly translated. Changes used date() functions to using date_i18n() where date months are displayed. 
+- Regenerate .pot translation files
+
+----------------------------------------------------------------------
 3.1.5.8 - 2014-05-22 - Paul Menard (Incsub)
 ----------------------------------------------------------------------
 - Added logic to prevent affiliate shortcodes from displaying if user is not an affiliate. Thanks @Hector

@@ -293,7 +293,7 @@ class affiliateadmin {
 			$rdate = strtotime("-$n month", $startat);
 			$period = date('Ym', $rdate);
 
-			$ticks[] = array((int) $place, date('M', $rdate) . '<br/>' . date('Y', $rdate) );
+			$ticks[] = array((int) $place, date_i18n('M', $rdate) . '<br/>' . date_i18n('Y', $rdate) );
 
 			if(!empty($recent) && $recent->period == $period) {
 				// We are on the current period
@@ -368,7 +368,7 @@ class affiliateadmin {
 				$rdate = strtotime("-$n month", $startat);
 				$period = date('Ym', $rdate);
 
-				$ticks[] = array((int) $place, date('M', $rdate) . '<br/>' . date('Y', $rdate) );
+				$ticks[] = array((int) $place, date_i18n('M', $rdate) . '<br/>' . date_i18n('Y', $rdate) );
 
 				if(!empty($recent) && $recent->period == $period && $recent->url == $url) {
 					// We are on the current period
@@ -1403,7 +1403,7 @@ class affiliateadmin {
 			for($n=0; $n <=24; $n++) {
 				$rdate = strtotime("-$n month", $startat);
 				$period = date('Ym', $rdate);
-				$period_options .= '<option value="' . $period . '">' . date('M Y', $rdate) . '</option>';
+				$period_options .= '<option value="' . $period . '">' . date_i18n('M Y', $rdate) . '</option>';
 			}
 
 			echo "<form action='' method='post'>";
@@ -2613,7 +2613,11 @@ class affiliateadmin {
 		}
 
 		$startat = strtotime(date("Y-m-15"));
-
+		//echo "startat[". $startat ."]<br />";
+		
+		//global $wp_locale;
+		//echo "wp_locale<pre>"; print_r($wp_locale); echo "</pre>";
+		
 		for($n = 0; $n < 18; $n++) {
 			$rdate = strtotime("-$n month", $startat);
 			$period = date('Ym', $rdate);
@@ -2632,10 +2636,12 @@ class affiliateadmin {
 				}
 				*/
 				
-				echo '<a title="'. __('View Affiliate detail transactions for this period', 'affiliate') .'" href="'. add_query_arg('subpage', 'details') .'">'. date("M", $rdate) . '<br/>' . date("Y", $rdate) .'</a>';
+				$period_url = add_query_arg('subpage', 'details');
+				$period_url = add_query_arg('period', $period, $period_url);
+				echo '<a title="'. __('View Affiliate detail transactions for this period', 'affiliate') .'" href="'. $period_url .'">'. date_i18n("M", $rdate, true) . '<br/>' . date_i18n("Y", $rdate) .'</a>';
 				
 			} else {
-				echo date("M", $rdate) . '<br/>' . date("Y", $rdate);
+				echo date_i18n("M", $rdate, true) . '<br/>' . date_i18n("Y", $rdate);
 			}
 			echo '</td>';
 

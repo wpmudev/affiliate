@@ -588,7 +588,7 @@ class affiliateshortcodes {
 			$rdate = strtotime("-$n month", $startat);
 			$period = date('Ym', $rdate);
 
-			$ticks[] = array((int) $place, date('M', $rdate) . '<br/>' . date('Y', $rdate) );
+			$ticks[] = array((int) $place, date_i18n('M', $rdate) . '<br/>' . date_i18n('Y', $rdate) );
 
 			if(!empty($recent) && $recent->period == $period) {
 				// We are on the current period
@@ -638,7 +638,9 @@ class affiliateshortcodes {
 			$years[] = "'" . date('Ym', $rdate) . "'";
 		}
 
-		$visitresults = $this->db->get_results( $this->db->prepare( "SELECT ar.* FROM {$this->affiliatereferrers} as ar INNER JOIN ( SELECT url FROM {$this->affiliatereferrers} WHERE user_id = $user_ID AND period in (" . implode(',', $years) . ") GROUP BY url ORDER BY sum(referred) DESC LIMIT 0, 10 ) as arr ON ar.url = arr.url WHERE ar.user_id = %d ORDER BY ar.url, ar.period DESC", $user_ID ) );
+		$sql_str = $this->db->prepare( "SELECT ar.* FROM {$this->affiliatereferrers} as ar INNER JOIN ( SELECT url FROM {$this->affiliatereferrers} WHERE user_id = $user_ID AND period in (" . implode(',', $years) . ") GROUP BY url ORDER BY sum(referred) DESC LIMIT 0, 10 ) as arr ON ar.url = arr.url WHERE ar.user_id = %d ORDER BY ar.url, ar.period DESC", $user_ID );
+		
+		$visitresults = $this->db->get_results( $sql_str );
 
 		$urls = $this->db->get_col(null, 2);
 
@@ -663,7 +665,7 @@ class affiliateshortcodes {
 				$rdate = strtotime("-$n month", $startat);
 				$period = date('Ym', $rdate);
 
-				$ticks[] = array((int) $place, date('M', $rdate) . '<br/>' . date('Y', $rdate) );
+				$ticks[] = array((int) $place, date_i18n('M', $rdate) . '<br/>' . date_i18n('Y', $rdate) );
 
 				if(!empty($recent) && $recent->period == $period && $recent->url == $url) {
 					// We are on the current period
@@ -872,7 +874,7 @@ class affiliateshortcodes {
 
 			echo "<tr class='$alt_class periods' id='period-$place'>";
 			echo '<td valign="top">';
-			echo date("M", $rdate) . '<br/>' . date("Y", $rdate);
+			echo date_i18n("M", $rdate) . '<br/>' . date_i18n("Y", $rdate);
 			echo '</td>';
 
 			if(!empty($recent) && $recent->period == $period) {
@@ -1002,7 +1004,7 @@ class affiliateshortcodes {
 		echo "<thead>";
 			echo "<tr>";
 			echo "<th scope='col'>";
-			echo  __('Top referrers for ','affiliate') . date("M Y");
+			echo  __('Top referrers for','affiliate') .' '. date_i18n("M Y");
 			echo "</th>";
 			echo "<th scope='col' style='width: 3em;'>";
 			echo __('Visits','affiliate');
@@ -1013,7 +1015,7 @@ class affiliateshortcodes {
 		echo "<tfoot>";
 			echo "<tr>";
 			echo "<th scope='col'>";
-			echo  __('Top referrers for ','affiliate') . date("M Y");
+			echo  __('Top referrers for', 'affiliate') .' '. date_i18n("M Y");
 			echo "</th>";
 			echo "<th scope='col' style='width: 3em;'>";
 			echo __('Visits','affiliate');

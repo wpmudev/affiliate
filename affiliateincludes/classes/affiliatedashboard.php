@@ -80,7 +80,7 @@ class affiliatedashboard {
 			$rdate = strtotime("-$n month", $startat);
 			$period = date('Ym', $rdate);
 
-			$ticks[] = array((int) $place, date('M y', $rdate));
+			$ticks[] = array((int) $place, date_i18n('M y', $rdate));
 
 			if(!empty($recent) && $recent->period == $period) {
 				// We are on the current period
