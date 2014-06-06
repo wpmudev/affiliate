@@ -4,7 +4,7 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
-3.1.5.10 - 2014-06-06 - Marko Miljus (Incsub)
+3.1.6 - 2014-06-06 - Marko Miljus (Incsub)
 ----------------------------------------------------------------------
 - Correct issue with HTTPS affiliate links
 
