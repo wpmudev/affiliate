@@ -1356,7 +1356,7 @@ class affiliateshortcodes {
 						<tr style='background: transparent;'>
 							<th valign='top'><label for="affiliate_referrer"><?php _e('Your URL', 'affiliate'); ?></label></th>
 							<td>
-								http://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo get_user_meta($user_ID, 'affiliate_referrer', true); ?>" class="regular-text" />
+								<?php echo is_ssl() ? 'https' : 'http'; ?>://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo get_user_meta($user_ID, 'affiliate_referrer', true); ?>" class="regular-text" />
 								<?php 	echo "&nbsp;&nbsp;";
 								 		if (isset($msg)) {
 											echo $msg;

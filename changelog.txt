@@ -4,6 +4,11 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
+3.1.5.10 - 2014-06-06 - Marko Miljus (Incsub)
+----------------------------------------------------------------------
+- Correct issue with HTTPS affiliate links
+
+----------------------------------------------------------------------
 3.1.5.9 - 2014-05-30 - Paul Menard (Incsub)
 ----------------------------------------------------------------------
 - Corrected issue where date months were not being properly translated. Changes used date() functions to using date_i18n() where date months are displayed. 

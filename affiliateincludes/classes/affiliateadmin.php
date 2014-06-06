@@ -741,7 +741,7 @@ class affiliateadmin {
 							<tr style='background: transparent;'>
 								<th><label for="affiliate_referrer"><?php _e('Your URL', 'affiliate'); ?></label></th>
 								<td>
-									http://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo $referrer; ?>" class="regular-text" />
+									<?php echo is_ssl() ? 'https' : 'http'; ?>://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo $referrer; ?>" class="regular-text" />
 									<?php 	echo "&nbsp;&nbsp;";
 									 		if (isset($msg)) {
 												echo $msg;
