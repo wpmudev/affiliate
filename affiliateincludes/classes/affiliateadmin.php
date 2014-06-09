@@ -672,7 +672,7 @@ class affiliateadmin {
 					<tr style='background: transparent;'>
 						<th><label for="affiliate_paypal"><?php _e('PayPal Email Address', 'affiliate'); ?></label></th>
 						<td>
-						<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo get_user_meta($user_ID, 'affiliate_paypal', true); ?>" class="regular-text" />
+						<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo esc_attr(get_user_meta($user_ID, 'affiliate_paypal', true)); ?>" class="regular-text" />
 						</td>
 					</tr>
 
@@ -741,7 +741,7 @@ class affiliateadmin {
 							<tr style='background: transparent;'>
 								<th><label for="affiliate_referrer"><?php _e('Your URL', 'affiliate'); ?></label></th>
 								<td>
-									<?php echo is_ssl() ? 'https' : 'http'; ?>://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo $referrer; ?>" class="regular-text" />
+									<?php echo is_ssl() ? 'https' : 'http'; ?>://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo esc_attr($referrer); ?>" class="regular-text" />
 									<?php 	echo "&nbsp;&nbsp;";
 									 		if (isset($msg)) {
 												echo $msg;
@@ -812,7 +812,7 @@ class affiliateadmin {
 					<tr style='background: transparent;'>
 						<th><label for="affiliate_paypal"><?php _e('PayPal Email Address', 'affiliate'); ?></label></th>
 						<td>
-						<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo get_user_meta($user_ID, 'affiliate_paypal', true); ?>" class="regular-text" />
+						<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo esc_attr(get_user_meta($user_ID, 'affiliate_paypal', true)); ?>" class="regular-text" />
 						</td>
 					</tr>
 
@@ -1358,7 +1358,7 @@ class affiliateadmin {
 				echo "<form action='' method='post'>";
 				wp_nonce_field( 'approve-user-' . $user_id );
 				echo '<input type="hidden" name="action" value="approveuser" />';
-				echo '<input type="hidden" name="userid" id="approveuserid" value="' . $user_id . '" />';
+				echo '<input type="hidden" name="userid" id="approveuserid" value="' . esc_attr($user_id) . '" />';
 				echo "<table class='widefat'>";
 
 				echo "<thead>";
@@ -1409,7 +1409,7 @@ class affiliateadmin {
 			echo "<form action='' method='post'>";
 			wp_nonce_field( 'credit-user-' . $user_id );
 			echo '<input type="hidden" name="action" value="usercredit" />';
-			echo '<input type="hidden" name="userid" id="credituserid" value="' . $user_id . '" />';
+			echo '<input type="hidden" name="userid" id="credituserid" value="' . esc_attr($user_id) . '" />';
 			echo "<table class='widefat'>";
 
 			echo "<thead>";
@@ -1454,7 +1454,7 @@ class affiliateadmin {
 			echo "<form action='' method='post'>";
 			wp_nonce_field( 'debit-user-' . $user_id );
 			echo '<input type="hidden" name="action" value="userdebit" />';
-			echo '<input type="hidden" name="userid" id="debituserid" value="' . $user_id . '" />';
+			echo '<input type="hidden" name="userid" id="debituserid" value="' . esc_attr($user_id) . '" />';
 			echo "<table class='widefat'>";
 
 			echo "<thead>";
@@ -1496,7 +1496,7 @@ class affiliateadmin {
 			echo "<form action='' method='post'>";
 			wp_nonce_field( 'pay-user-' . $user_id );
 			echo '<input type="hidden" name="action" value="userpayment" />';
-			echo '<input type="hidden" name="userid" id="payuserid" value="' . $user_id . '" />';
+			echo '<input type="hidden" name="userid" id="payuserid" value="' . esc_attr($user_id) . '" />';
 			echo "<table class='widefat'>";
 
 			echo "<thead>";
@@ -1559,7 +1559,7 @@ class affiliateadmin {
 
 			<form action="" method="get">
 			<?php
-				echo '<input type="hidden" name="page" value="' . $page . '" />';
+				echo '<input type="hidden" name="page" value="' . esc_attr($page) . '" />';
 
 				$aff_list_table->search_box( __( 'Search Users' ), 'user' );
 			?>
@@ -1755,7 +1755,7 @@ class affiliateadmin {
 
 			echo '<form id="form-affiliate-list" action="?page=' . $page . '&amp;action=allaffiliates" method="post">';
 			echo '<input type="hidden" name="action" value="allaffiliates" />';
-			echo '<input type="hidden" name="page" value="' . $page . '" />';
+			echo '<input type="hidden" name="page" value="' . esc_attr($page) . '" />';
 
 			echo '<div class="tablenav">';
 
@@ -1828,7 +1828,7 @@ class affiliateadmin {
 					echo '<th scope="row" class="check-column">';
 
 					if( $this->approved_affiliate( $result->user_id ) ) {
-						echo '<input type="checkbox" id="payment-'. $result->user_id . "-" . $result->period .'" name="allpayments[]" value="'. $result->user_id . "-" . $result->period .'" />';
+						echo '<input type="checkbox" id="payment-'. $result->user_id . "-" . $result->period .'" name="allpayments[]" value="'. esc_attr($result->user_id . "-" . $result->period) .'" />';
 					}
 
 					echo '</th>';

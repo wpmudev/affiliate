@@ -240,7 +240,7 @@ class Affiliates_List_Table extends WP_List_Table {
 			$placeholder_text .= ', '. __('Domain Path', 'affiliate');
 		}
 		$placeholder_text .= __(' or Mapped Domain', 'affiliate');
-		?><label for="affiliate-search-blog"><?php _e('Blog:', 'affiliate'); ?> <input size="40" type="text" id="affiliate-search-blog" name="blog" value="<?php echo $this->filters['blog']; ?>" placeholder="<?php echo $placeholder_text; ?>" /><?php
+		?><label for="affiliate-search-blog"><?php _e('Blog:', 'affiliate'); ?> <input size="40" type="text" id="affiliate-search-blog" name="blog" value="<?php echo esc_attr($this->filters['blog']); ?>" placeholder="<?php echo $placeholder_text; ?>" /><?php
 	}
 
 	function current_action() {

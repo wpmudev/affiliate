@@ -189,7 +189,7 @@ function affiliate_marketpress_settings( $settings ) {
         				<th scope="row"><?php _e('Set percentage to be paid to affiliates', 'affiliate') ?></th>
         				<td>
 							<?php $percentage = aff_get_option('affiliate_mp_percentage', 0); ?>
-							<input type='text' name='affiliate_mp_percentage' value='<?php echo number_format($percentage, 2); ?>' style='width:5em;'/>&nbsp;<?php _e('%', 'affiliate'); ?>
+							<input type='text' name='affiliate_mp_percentage' value='<?php echo esc_attr(number_format($percentage, 2)); ?>' style='width:5em;'/>&nbsp;<?php _e('%', 'affiliate'); ?>
                 			<?php
 
                 			?>

@@ -1314,7 +1314,7 @@ class affiliateshortcodes {
 				<tr style='background: transparent;'>
 					<th><label for="affiliate_paypal"><?php _e('PayPal Email Address', 'affiliate'); ?></label></th>
 					<td>
-					<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo get_user_meta($user_ID, 'affiliate_paypal', true); ?>" class="regular-text" />
+					<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo esc_attr(get_user_meta($user_ID, 'affiliate_paypal', true)); ?>" class="regular-text" />
 					</td>
 				</tr>
 
@@ -1356,7 +1356,7 @@ class affiliateshortcodes {
 						<tr style='background: transparent;'>
 							<th valign='top'><label for="affiliate_referrer"><?php _e('Your URL', 'affiliate'); ?></label></th>
 							<td>
-								<?php echo is_ssl() ? 'https' : 'http'; ?>://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo get_user_meta($user_ID, 'affiliate_referrer', true); ?>" class="regular-text" />
+								<?php echo is_ssl() ? 'https' : 'http'; ?>://&nbsp;<input type="text" name="affiliate_referrer" id="affiliate_referrer" value="<?php echo esc_attr(get_user_meta($user_ID, 'affiliate_referrer', true)); ?>" class="regular-text" />
 								<?php 	echo "&nbsp;&nbsp;";
 								 		if (isset($msg)) {
 											echo $msg;
@@ -1451,7 +1451,7 @@ class affiliateshortcodes {
 				<tr style='background: transparent;'>
 					<th><label for="affiliate_paypal"><?php _e('PayPal Email Address', 'affiliate'); ?></label></th>
 					<td>
-					<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo get_user_meta($user_ID, 'affiliate_paypal', true); ?>" class="regular-text" />
+					<input type="text" name="affiliate_paypal" id="affiliate_paypal" value="<?php echo esc_attr(get_user_meta($user_ID, 'affiliate_paypal', true)); ?>" class="regular-text" />
 					</td>
 				</tr>
 
