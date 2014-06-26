@@ -43,7 +43,13 @@ class affiliate {
 				}
 			}
 		}
-
+                
+                $cookie_domain = network_home_url();
+                $cookie_domain = str_replace('http://','',$cookie_domain);
+                $cookie_domain = str_replace('https://','',$cookie_domain);
+                $cookie_domain = str_replace('www.','',$cookie_domain);
+                $this->cookie_domain = '.'.$cookie_domain;
+                
 		//$installed = aff_get_option('Aff_Installed', false);
 
 		//if($installed === false || $installed != $this->build) {
@@ -606,7 +612,7 @@ class affiliate {
                     @setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $reference),
                             (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))),
                             COOKIEPATH,
-                            COOKIE_DOMAIN
+                            $this->cookie_domain
                             );
 
                 }
@@ -620,7 +626,7 @@ class affiliate {
                 // everything failed, we don't have a reference
                 if(defined('AFFILIATE_SETNOCOOKIE') && AFFILIATE_SETNOCOOKIE == 'yes'){
                     // we are supposed to set a no-affiliate cookie
-                    @setcookie('noaffiliate_' . COOKIEHASH, 'notanaff', 0, COOKIEPATH, COOKIE_DOMAIN);
+                    @setcookie('noaffiliate_' . COOKIEHASH, 'notanaff', 0, COOKIEPATH, $this->cookie_domain);
                 }
             }
 		
@@ -669,7 +675,7 @@ class affiliate {
                 do_action( 'affiliate_referrer', $affiliate, $referrer );
 
                 // Write the affiliate hash out - valid for 30 days.
-                @setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $reference), (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))), COOKIEPATH, COOKIE_DOMAIN);
+                @setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $reference), (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))), COOKIEPATH, $this->cookie_domain);
 
         }
 
