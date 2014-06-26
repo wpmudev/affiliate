@@ -244,20 +244,27 @@ class affiliate {
 		$affiliate_referred_id = $this->get_affiliate_user_id_from_hash();
 		//echo "affiliate_referred_id[". $affiliate_referred_id .']<br />';
 		if (empty($affiliate_referred_id)) {
-			// If we don't have the affiliate reference then double check the signup meta info. 
+			if (is_multisite()) {
+                                // If we don't have the affiliate reference then double check the signup meta info. 
 			
-			global $wpdb;
-			$sql_str = $wpdb->prepare("SELECT meta FROM $wpdb->signups WHERE user_email = %s LIMIT 1", get_the_author_meta('user_email', $new_user_id));
-			//echo "sql_str[". $sql_str ."]<br />";	
-			$signup_meta = $wpdb->get_var( $sql_str );		
-			//echo "signup_meta<pre>"; print_r($signup_meta); echo "</pre>";
-			if ($signup_meta) {
-				$signup_meta = maybe_unserialize($signup_meta);
-				//echo "signup_meta<pre>"; print_r($signup_meta); echo "</pre>";
-				if ((isset($signup_meta['affiliate_referred_by'])) && (!empty($signup_meta['affiliate_referred_by']))) {
-					$affiliate_referred_id = $signup_meta['affiliate_referred_by'];
-				} 
-			}
+                                global $wpdb;
+                        
+                                // the table won't exist if it isn't multisite
+                        
+                                $sql_str = $wpdb->prepare("SELECT meta FROM $wpdb->signups WHERE user_email = %s LIMIT 1", get_the_author_meta('user_email', $new_user_id));
+                                //echo "sql_str[". $sql_str ."]<br />";	
+                                $signup_meta = $wpdb->get_var($sql_str);
+                                //echo "signup_meta<pre>"; print_r($signup_meta); echo "</pre>";
+                        
+                        
+                                if ($signup_meta) {
+                                        $signup_meta = maybe_unserialize($signup_meta);
+                                        //echo "signup_meta<pre>"; print_r($signup_meta); echo "</pre>";
+                                        if ((isset($signup_meta['affiliate_referred_by'])) && (!empty($signup_meta['affiliate_referred_by']))) {
+                                                $affiliate_referred_id = $signup_meta['affiliate_referred_by'];
+                                        } 
+                                }
+                        }
 		}
 
 		if (!empty($affiliate_referred_id)) {
