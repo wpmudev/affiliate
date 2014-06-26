@@ -47,7 +47,7 @@ class affiliate {
                 // fix for domain mapping
                 $this->cookie_domain = COOKIE_DOMAIN;
                 
-                if (defined('SUBDOMAIN_INSTALL')) {
+                if (defined('SUBDOMAIN_INSTALL')&& !defined('SUNRISE')) {
                     $cookie_domain = network_home_url();
                     $cookie_domain = str_replace('http://','',$cookie_domain);
                     $cookie_domain = str_replace('https://','',$cookie_domain);
