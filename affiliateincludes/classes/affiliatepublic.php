@@ -44,11 +44,16 @@ class affiliate {
 			}
 		}
                 
-                $cookie_domain = network_home_url();
-                $cookie_domain = str_replace('http://','',$cookie_domain);
-                $cookie_domain = str_replace('https://','',$cookie_domain);
-                $cookie_domain = str_replace('www.','',$cookie_domain);
-                $this->cookie_domain = '.'.$cookie_domain;
+                // fix for domain mapping
+                $this->cookie_domain = COOKIE_DOMAIN;
+                
+                if (defined('SUBDOMAIN_INSTALL')) {
+                    $cookie_domain = network_home_url();
+                    $cookie_domain = str_replace('http://','',$cookie_domain);
+                    $cookie_domain = str_replace('https://','',$cookie_domain);
+                    $cookie_domain = str_replace('www.','',$cookie_domain);
+                    $this->cookie_domain = '.'.$cookie_domain;
+                }
                 
 		//$installed = aff_get_option('Aff_Installed', false);
 
