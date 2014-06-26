@@ -524,7 +524,7 @@ class affiliate {
 	function handle_affiliate_link() {
             
             $reference = false;
-            $referer = '';
+            $referrer = '';
             $affiliate = false;
             
 
@@ -542,7 +542,7 @@ class affiliate {
             // set the reference
             $reference = isset($_GET['ref'])?$_GET['ref']:false;
             
-            // set the referer, if we have one
+            // set the referrer, if we have one
             if(isset($_SERVER['HTTP_REFERER'])) {
                 $referrer = parse_url(esc_attr($_SERVER['HTTP_REFERER']), PHP_URL_HOST);
             }
@@ -560,7 +560,7 @@ class affiliate {
             // we have an affiliate
             if($affiliate){
                 // set the cookie
-                $this->set_affiliate_cookie($affiliate,$reference,$referer);
+                $this->set_affiliate_cookie($affiliate,$reference,$referrer);
                 // The cookie is set so redirect to the page called but without the ref in the url
                 // for SEO reasons.
                 $this->redirect( remove_query_arg( array('ref') ) );
@@ -573,14 +573,14 @@ class affiliate {
             // are we still supposed to continue?
             if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes') {
                 // we still don't have a cookie, but we do have a referrer
-                if(!isset( $_COOKIE['affiliate_' . COOKIEHASH]) && !empty($referer)) {
-                    // get affiliate user_id from referer
-                    $affiliate = $this->referer_has_user($referer);
+                if(!isset( $_COOKIE['affiliate_' . COOKIEHASH]) && !empty($referrer)) {
+                    // get affiliate user_id from referrer
+                    $affiliate = $this->referrer_has_user($referrer);
                 }
                 
             }
             
-            // we have an affiliate for the referer!
+            // we have an affiliate for the referrer!
             if($affiliate){
                 // we aren't setting the cookie by default
                 $set_cookie = false;
@@ -652,8 +652,8 @@ class affiliate {
             return $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_reference' AND meta_value='%s'", $reference) );
         }
         
-        function referer_has_user($referer){
-            return $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value='%s'", $referer) );
+        function referrer_has_user($referrer){
+            return $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value='%s'", $referrer) );
         }
         
         function set_affiliate_cookie($affiliate, $reference, $referrer){
