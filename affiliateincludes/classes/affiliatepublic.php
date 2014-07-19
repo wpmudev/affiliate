@@ -244,20 +244,27 @@ class affiliate {
 		$affiliate_referred_id = $this->get_affiliate_user_id_from_hash();
 		//echo "affiliate_referred_id[". $affiliate_referred_id .']<br />';
 		if (empty($affiliate_referred_id)) {
-			// If we don't have the affiliate reference then double check the signup meta info. 
+			if (is_multisite()) {
+                                // If we don't have the affiliate reference then double check the signup meta info. 
 			
-			global $wpdb;
-			$sql_str = $wpdb->prepare("SELECT meta FROM $wpdb->signups WHERE user_email = %s LIMIT 1", get_the_author_meta('user_email', $new_user_id));
-			//echo "sql_str[". $sql_str ."]<br />";	
-			$signup_meta = $wpdb->get_var( $sql_str );		
-			//echo "signup_meta<pre>"; print_r($signup_meta); echo "</pre>";
-			if ($signup_meta) {
-				$signup_meta = maybe_unserialize($signup_meta);
-				//echo "signup_meta<pre>"; print_r($signup_meta); echo "</pre>";
-				if ((isset($signup_meta['affiliate_referred_by'])) && (!empty($signup_meta['affiliate_referred_by']))) {
-					$affiliate_referred_id = $signup_meta['affiliate_referred_by'];
-				} 
-			}
+                                global $wpdb;
+                        
+                                // the table won't exist if it isn't multisite
+                        
+                                $sql_str = $wpdb->prepare("SELECT meta FROM $wpdb->signups WHERE user_email = %s LIMIT 1", get_the_author_meta('user_email', $new_user_id));
+                                //echo "sql_str[". $sql_str ."]<br />";	
+                                $signup_meta = $wpdb->get_var($sql_str);
+                                //echo "signup_meta<pre>"; print_r($signup_meta); echo "</pre>";
+                        
+                        
+                                if ($signup_meta) {
+                                        $signup_meta = maybe_unserialize($signup_meta);
+                                        //echo "signup_meta<pre>"; print_r($signup_meta); echo "</pre>";
+                                        if ((isset($signup_meta['affiliate_referred_by'])) && (!empty($signup_meta['affiliate_referred_by']))) {
+                                                $affiliate_referred_id = $signup_meta['affiliate_referred_by'];
+                                        } 
+                                }
+                        }
 		}
 
 		if (!empty($affiliate_referred_id)) {
@@ -509,112 +516,162 @@ class affiliate {
 
 
 	function handle_affiliate_link() {
-		if(isset($_COOKIE['noaffiliate_' . COOKIEHASH])) {
-			if(isset($_GET['ref'])) {
-				// redirect to the none affiliate url anyway, just to be tidy
-				$this->redirect( remove_query_arg( array('ref') ) );
-			}
-			// If there isn't a ref set then return because we don't want to do anything
-			return true;
-		}
+            
+            $reference = false;
+            $referer = '';
+            $affiliate = false;
+            
 
-		if(isset($_GET['ref'])) {
-			// There is an affiliate type query item, check it for validity and then redirect
+            if($this->no_affiliate_condition()){
+                if(isset($_GET['ref'])) {
+                    // redirect to the none affiliate url anyway, just to be tidy
+                    $this->redirect( remove_query_arg( array('ref') ) );
+                }
+                
+                // return if the condition exists
+                return;
+                                
+            }
+            
+            // set the reference
+            $reference = isset($_GET['ref'])?$_GET['ref']:false;
+            
+            // set the referer, if we have one
+            if(isset($_SERVER['HTTP_REFERER'])) {
+                $referrer = parse_url(esc_attr($_SERVER['HTTP_REFERER']), PHP_URL_HOST);
+            }
+            
+            // we have a ref parameter in the url
+            if($reference){
+                // if a cookie doesn't exist already or we are allowed to replace it
+                if ((!isset( $_COOKIE['affiliate_' . COOKIEHASH])) || (AFFILIATE_REPLACE_COOKIE == 'yes')) {
+                    // get the affiliate user_id from the reference
+                    $affiliate = $this->reference_has_user($reference);
+                }
+                
+            }
+            
+            // we have an affiliate
+            if($affiliate){
+                // set the cookie
+                $this->set_affiliate_cookie($affiliate,$reference,$referer);
+                // The cookie is set so redirect to the page called but without the ref in the url
+                // for SEO reasons.
+                $this->redirect( remove_query_arg( array('ref') ) );
+            }
+            
+            
+            // cool, we haven't been redirected, so no ref was passed and no cookie was set
+            // affiliate is false and reference is false 
+           
+            // are we still supposed to continue?
+            if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes') {
+                // we still don't have a cookie, but we do have a referrer
+                if(!isset( $_COOKIE['affiliate_' . COOKIEHASH]) && !empty($referer)) {
+                    // get affiliate user_id from referer
+                    $affiliate = $this->referer_has_user($referer);
+                }
+                
+            }
+            
+            // we have an affiliate for the referer!
+            if($affiliate){
+                // we aren't setting the cookie by default
+                $set_cookie = false;
+                
+                // see if we are going to set the cookie
+                if(defined('AFFILIATE_VALIDATE_REFERRER_URLS') && AFFILIATE_VALIDATE_REFERRER_URLS == 'yes' ) {
+                        // Check the URL is verified
+                        $validated = get_user_meta($affiliate, 'affiliate_referrer_validated', true);
+                        if(!empty($validated) && $validated == 'yes') {
+                                $set_cookie = true;
+                        }
+                } else {
+                    $set_cookie = true;
+                }
+                
+                // we can set the cookie
+                if($set_cookie){
+                                            
+                    // get a valid reference for the user_id
+                    $reference = get_user_meta($affiliate, 'affiliate_reference',true);
+                    // Update a quick count for this month
+                    //do_action( 'affiliate_click', $affiliate);
+                    do_action( 'affiliate_click', $affiliate, false, 'unique', false, false, $meta);
 
-			if ((!isset( $_COOKIE['affiliate_' . COOKIEHASH])) || (AFFILIATE_REPLACE_COOKIE == 'yes')) {
+                    // Store the referrer
+                    do_action( 'affiliate_referrer', $affiliate, $referrer );
 
-				// We haven't already been referred here by someone else - note only the first referrer
-				// within a time period gets the cookie.
+                    // Write the affiliate hash out - valid for 30 days.
+                    @setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $reference),
+                            (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))),
+                            COOKIEPATH,
+                            COOKIE_DOMAIN
+                            );
 
-				// Check if the user is a valid referrer
-				$affiliate = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_reference' AND meta_value='%s'", $_GET['ref']) );
-				//error_log('affiliate user id['. $affiliate .']');
-				
-				if($affiliate) {
-					// Grab the referrer
-					if(isset($_SERVER['HTTP_REFERER'])) {
-						$referrer = parse_url(esc_attr($_SERVER['HTTP_REFERER']), PHP_URL_HOST);
-					} else {
-						$referrer = '';
-					}
-					
-					$meta = array(
-						'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
-						'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
-						'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
-						//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
-					);
-
-					// Update a quick count for this month
-					$note = __('Referal', 'affiliate') .' '. esc_attr($_SERVER['HTTP_REFERER']);
-					$amount = apply_filters('affiliate_click_amount_filter', '0.00', $affiliate );
-					$amount = number_format($amount, 2);
-					//error_log(__FUNCTION__ .": amount[". $amount ."]");
-					do_action( 'affiliate_click', $affiliate, $amount, 'unique:click', false, $note, $meta);
-
-					do_action( 'affiliate_referrer', $affiliate, $referrer );
-
-					// Write the affiliate hash out - valid for 30 days.
-					@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))), COOKIEPATH, COOKIE_DOMAIN);
-				}
-			} 
-			
-			// The cookie is set so redirect to the page called but without the ref in the url
-			// for SEO reasons.
-			$this->redirect( remove_query_arg( array('ref') ) );
-		}
-
-		if(defined('AFFILIATE_CHECKALL') && AFFILIATE_CHECKALL == 'yes') {
-			// We are here if there isn't a reference passed, so we need to check the referrer.
-			if(!isset( $_COOKIE['affiliate_' . COOKIEHASH]) && isset($_SERVER['HTTP_REFERER'])) {
-				// We haven't already been referred here by someone else - note only the first referrer
-				// within a time period gets the cookie.
-				$referrer = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
-
-				$meta = array(
-					'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
-					'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
-					'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
-					//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
-				);
-
-				// Check if the user is a valid referrer
-				$affiliate = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value='%s'", $referrer) );
-				if(!empty($affiliate)) {
-
-					if(defined('AFFILIATE_VALIDATE_REFERRER_URLS') && AFFILIATE_VALIDATE_REFERRER_URLS == 'yes' ) {
-						// Check the URL is verified
-						$validated = get_user_meta($affiliate, 'affiliate_referrer_validated', true);
-						if(!empty($validated) && $validated == 'yes') {
-							// Update a quick count for this month
-							//do_action( 'affiliate_click', $affiliate);
-							do_action( 'affiliate_click', $affiliate, false, 'unique', false, false, $meta);
-							
-							// Store the referrer
-							do_action( 'affiliate_referrer', $affiliate, $referrer );
-
-							// Write the affiliate hash out - valid for 30 days.
-							@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))), COOKIEPATH, COOKIE_DOMAIN);
-						}
-					} else {
-						// Update a quick count for this month
-						//do_action( 'affiliate_click', $affiliate);
-						do_action( 'affiliate_click', $affiliate, false, 'unique', false, false, $meta);
-												
-						// Store the referrer
-						do_action( 'affiliate_referrer', $affiliate, $referrer );
-
-						// Write the affiliate hash out - valid for 30 days.
-						@setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $_GET['ref']), (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))), COOKIEPATH, COOKIE_DOMAIN);
-					}
-
-				} else {
-					if(defined('AFFILIATE_SETNOCOOKIE') && AFFILIATE_SETNOCOOKIE == 'yes') @setcookie('noaffiliate_' . COOKIEHASH, 'notanaff', 0, COOKIEPATH, COOKIE_DOMAIN);
-				}
-			}
-		}
-
+                }
+                
+                // return, so that no affiliate cookie is never set
+                return;
+                
+            }
+            
+            if(!$reference){
+                // everything failed, we don't have a reference
+                if(defined('AFFILIATE_SETNOCOOKIE') && AFFILIATE_SETNOCOOKIE == 'yes'){
+                    // we are supposed to set a no-affiliate cookie
+                    @setcookie('noaffiliate_' . COOKIEHASH, 'notanaff', 0, COOKIEPATH, COOKIE_DOMAIN);
+                }
+            }
+		
 	}
+        
+        /**
+         * To check the no_affiliate cookie
+         * @return boolean True if the cookie is set and needs to be considered
+         */
+        function no_affiliate_condition(){
+            // if we are supposed to check this cookie
+            if(defined('AFFILIATE_SETNOCOOKIE') && 'yes' == AFFILIATE_SETNOCOOKIE ){
+                if(isset($_COOKIE['noaffiliate_' . COOKIEHASH])) {
+                    // If there isn't a reference set then return because we don't want to do anything
+                    return true;
+		}
+                return false;
+            }
+            return false;
+        }
+        
+        function reference_has_user($reference){
+            return $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_reference' AND meta_value='%s'", $reference) );
+        }
+        
+        function referer_has_user($referer){
+            return $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value='%s'", $referer) );
+        }
+        
+        function set_affiliate_cookie($affiliate, $reference, $referrer){
+					
+                $meta = array(
+                        'REMOTE_URL'		=>	esc_attr($_SERVER['HTTP_REFERER']),
+                        'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
+                        'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
+                        //'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
+                );
+
+                // Update a quick count for this month
+                $note = __('Referal', 'affiliate') .' '. esc_attr($_SERVER['HTTP_REFERER']);
+                $amount = apply_filters('affiliate_click_amount_filter', '0.00', $affiliate );
+                $amount = number_format($amount, 2);
+                //error_log(__FUNCTION__ .": amount[". $amount ."]");
+                do_action( 'affiliate_click', $affiliate, $amount, 'unique:click', false, $note, $meta);
+
+                do_action( 'affiliate_referrer', $affiliate, $referrer );
+
+                // Write the affiliate hash out - valid for 30 days.
+                @setcookie('affiliate_' . COOKIEHASH, 'aff' . md5(AUTH_SALT . $reference), (time() + (60 * 60 * 24 * ((int) AFFILIATE_COOKIE_DAYS ))), COOKIEPATH, COOKIE_DOMAIN);
+
+        }
 
 	function redirect($location, $status = 302) {
 		// Put our own version of the redirect function here because even though the
