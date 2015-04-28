@@ -4,6 +4,16 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
+3.1.6.4 - 2014-04-28 - Marko Miljus (Incsub), Saurabh Shukla (Incsub) 
+----------------------------------------------------------------------
+- Security Update: Fixed possible WordPress XSS bug
+- resolved issue with tracking sign-ups across the network
+----------------------------------------------------------------------
+3.1.6.3 - 2014-06-11 - Marko Miljus (Incsub)
+----------------------------------------------------------------------
+- resolved issue with updating and deleting the plugin
+
+----------------------------------------------------------------------
 3.1.6.2 - 2014-06-11 - Marko Miljus (Incsub)
 ----------------------------------------------------------------------
 - resolved issue with add-ons

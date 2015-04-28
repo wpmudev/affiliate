@@ -839,7 +839,7 @@ class affiliateadmin {
 
 
 				if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
-					echo '<br /><a href="' . add_query_arg('subpage', 'summary') .'">'. __('&larr; Return to Affiliate Period Summary', 'affiliate') .'</a>';
+					echo '<br /><a href="' . esc_url(add_query_arg('subpage', 'summary')) .'">'. __('&larr; Return to Affiliate Period Summary', 'affiliate') .'</a>';
 				}
 
 
@@ -1330,7 +1330,7 @@ class affiliateadmin {
 
 			
 			if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
-				echo '<br /><a href="' . add_query_arg('subpage', 'summary') .'">'. __('&larr; Return to Affiliate Period Summary', 'affiliate') .'</a>';
+				echo '<br /><a href="' . esc_url(add_query_arg('subpage', 'summary')) .'">'. __('&larr; Return to Affiliate Period Summary', 'affiliate') .'</a>';
 			}
 			
 			echo "<br/>";
@@ -2636,8 +2636,8 @@ class affiliateadmin {
 				}
 				*/
 				
-				$period_url = add_query_arg('subpage', 'details');
-				$period_url = add_query_arg('period', $period, $period_url);
+				$period_url = esc_url(add_query_arg('subpage', 'details'));
+				$period_url = esc_url(add_query_arg('period', $period, $period_url));
 				echo '<a title="'. __('View Affiliate detail transactions for this period', 'affiliate') .'" href="'. $period_url .'">'. date_i18n("M", $rdate, true) . '<br/>' . date_i18n("Y", $rdate) .'</a>';
 				
 			} else {

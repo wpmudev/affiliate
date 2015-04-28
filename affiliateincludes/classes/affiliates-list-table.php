@@ -386,15 +386,15 @@ class Affiliates_List_Table extends WP_List_Table {
 						if (($blog_details) && (!empty($blog_details))) {
 							$blog_name .= $blog_details->blogname;
 							$actions = array();
-							$filter_url = add_query_arg('blog', $blog_details->blog_id, $this->url_base);
+							$filter_url = esc_url(add_query_arg('blog', $blog_details->blog_id, $this->url_base));
 							
 							$search_s = isset($_REQUEST['s']) ? esc_attr( wp_unslash( $_REQUEST['s'] ) ) : '';
 							if (!empty($search_s)) 
-								$filter_url = add_query_arg('s', $this->filters['search'], $filter_url);
+								$filter_url = esc_url(add_query_arg('s', $this->filters['search'], $filter_url));
 														
 							$actions['affiliate-filter'] = '<a title="'. __('Filter listing by this Blog', 'affiliate') .'" href="'. $filter_url  .'" >'. __('filter', 'affiliate') .'</a>';
 							$actions['affiliate-dashboard'] = '<a title="'. __('Visit Dashboard', 'affiliate') .'" href="'. get_admin_url($blog_details->blog_id) .'" >'. __('dashboard', 'affiliate') .'</a>';
-							$actions['affiliate-dashboard-admin'] = '<a title="'. __('Visit Dashboard', 'affiliate') .'" href="'. add_query_arg('page', 'affiliatesadmin', get_admin_url($blog_details->blog_id)) .'" >'. __('affiliate', 'affiliate') .'</a>';
+							$actions['affiliate-dashboard-admin'] = '<a title="'. __('Visit Dashboard', 'affiliate') .'" href="'. esc_url(add_query_arg('page', 'affiliatesadmin', get_admin_url($blog_details->blog_id))) .'" >'. __('affiliate', 'affiliate') .'</a>';
 							
 							
 							$actions['affiliate-visit'] = '<a title="'. __('Visit Site', 'affiliate') .'" href="'. $blog_details->siteurl .'" >'. __('visit', 'affiliate') .'</a>';
