@@ -69,7 +69,9 @@ class Affiliate_Membership2_Integration {
 				require_once ABSPATH . '/wp-admin/includes/plugin.php';
 			}
 
-			if ( ! is_plugin_active_for_network( $affiliate_plugin ) ) {
+			if ( ! is_plugin_active_for_network( $affiliate_plugin )
+				&& current_user_can( 'manage_options' )
+			) {
 				lib2()->ui->admin_message(
 					__( 'Membership2 uses network-wide protection.<br>Please network activate the Affiliate plugin to avoid problems with the Membership2 integration for Affiliates.', 'affiliate' ),
 					'err'
