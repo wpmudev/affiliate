@@ -25,22 +25,22 @@ class affiliateadmin {
 
 		// Add support for new WPMUDEV Dashboard Notices
 		global $wpmudev_notices;
-		$wpmudev_notices[] = array( 'id'=> 106,'name'=> 'Affiliate', 'screens' => array( 
+		$wpmudev_notices[] = array( 'id'=> 106,'name'=> 'Affiliate', 'screens' => array(
 			'toplevel_page_affiliatesadmin',
 			'affiliates_page_affiliatesadminmanage',
 			'affiliates_page_affiliatesadminsettings',
 			'affiliates_page_affiliatesadminaddons',
 			'users_page_affiliateearnings',
-			'users_page_affiliatebanners',		
-			'toplevel_page_affiliatesadmin-network', 
+			'users_page_affiliatebanners',
+			'toplevel_page_affiliatesadmin-network',
 			'affiliates_page_affiliatesadminmanage-network',
 			'affiliates_page_affiliatesadminsettings-network',
 			'affiliates_page_affiliatesadminaddons-network',
 			'users_page_affiliateearnings-network',
 			'users_page_affiliatebanners-network'
-			) 
+			)
 		);
-		include_once( dirname(__FILE__) . '../../external/wpmudev-dash-notification.php' );	
+		include_once( dirname(__FILE__) . '../../external/wpmudev-dash-notification.php' );
 
 		global $wpdb;
 
@@ -48,7 +48,7 @@ class affiliateadmin {
 		$this->db =& $wpdb;
 
 		foreach ($this->tables as $table) {
-			if ((affiliate_is_plugin_active_for_network()) 
+			if ((affiliate_is_plugin_active_for_network())
 			 && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
 				// we're activated site wide
 				$this->$table = $this->db->base_prefix . $table;
@@ -140,8 +140,8 @@ class affiliateadmin {
 				`payments` decimal(10,4) default '0.0000',
 				`lastupdated` datetime default '0000-00-00 00:00:00',
 				UNIQUE KEY user_period (user_id,period),
-				KEY user_id (user_id), 
-				KEY period (period) 
+				KEY user_id (user_id),
+				KEY period (period)
 			) ". $charset_collate .";";
 
 
@@ -151,8 +151,8 @@ class affiliateadmin {
 				`url` varchar(255) default NULL,
 				`referred` bigint(20) default '0',
 				UNIQUE KEY user_period_url (user_id,period,url),
-				KEY user_id (user_id), 
-				KEY period (period) 
+				KEY user_id (user_id),
+				KEY period (period)
 			) ". $charset_collate .";";
 
 		$sql_affiliaterecords_current = "CREATE TABLE `" . $this->affiliaterecords . "` (
@@ -175,14 +175,14 @@ class affiliateadmin {
 
 		//echo "sql_affiliatedata_current[". $sql_affiliatereferrers_current ."]<br />";
 		dbDelta($sql_affiliatereferrers_current);
-		
+
 		if ($this->db->get_var("SHOW TABLES LIKE '". $this->affiliaterecords ."'") != $this->affiliaterecords) {
 			//echo "IF sql_affiliaterecords_current[". $sql_affiliaterecords_current ."]<br />";
 			dbDelta($sql_affiliaterecords_current);
 		} else {
 			//echo "ELSE sql_affiliaterecords_current[". $sql_affiliaterecords_current ."]<br />";
 			dbDelta($sql_affiliaterecords_current);
-			
+
 			if ($this->installed_version < 8) {
 				$sql_str = "ALTER TABLE `".$this->affiliaterecords."` ADD `id` BIGINT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (  `id` ) ;";
 				//echo "sql_str[". $sql_str ."<br />";
@@ -190,8 +190,8 @@ class affiliateadmin {
 			}
 		}
 		//die();
-		
-		if ((affiliate_is_plugin_active_for_network()) 
+
+		if ((affiliate_is_plugin_active_for_network())
 		 && (defined('AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED') && AFFILIATE_USE_GLOBAL_IF_NETWORK_ACTIVATED == 'yes')) {
 
 			// We need to check for a transfer across from old options to new ones
@@ -505,7 +505,7 @@ class affiliateadmin {
 		}
 
 		// Admin user report page
-		if( ((isset($_GET['page'])) && ($_GET['page'] == 'affiliatesadminmanage')) 
+		if( ((isset($_GET['page'])) && ($_GET['page'] == 'affiliatesadminmanage'))
 		 && isset($_GET['id'])) {
 			wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
 
@@ -581,7 +581,7 @@ class affiliateadmin {
 		if(isset($_POST['action']) && addslashes($_POST['action']) == 'update') {
 
 			//echo "_POST<pre>"; print_r($_POST); echo "</pre>";
-			
+
 			check_admin_referer('affiliatesettings');
 
 			update_user_meta($user_ID, 'enable_affiliate', $_POST['enable_affiliate']);
@@ -684,15 +684,15 @@ class affiliateadmin {
 
 					$reference = get_user_meta($user_ID, 'affiliate_reference', true);
 					//echo "reference[". $reference ."]<br />";
-					
+
 					$referrer = get_user_meta($user_ID, 'affiliate_referrer', true);
 					//echo "referrer[". $referrer ."]<br />";
-					
+
 					$refurl = "profile.php?page=affiliateearnings";
 
 					$validreferrer = get_user_meta($user_ID, 'affiliate_referrer_validated', true);
 					//echo "validreferrer[". $validreferrer ."]<br />";
-					
+
 					?>
 					<p><?php _e('<h3>Affiliate Details</h3>', 'affiliate') ?></p>
 					<p><?php _e('In order for us to track your referrals, you should use the following URL to link to our site:', 'affiliate'); ?></p>
@@ -832,7 +832,7 @@ class affiliateadmin {
 			echo "</div>";
 
 
-			
+
 			//$results = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatedata} WHERE user_id = %d ORDER BY period DESC", $user_ID ) );
 
 			if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {
@@ -1111,7 +1111,7 @@ class affiliateadmin {
 														$paypal = get_user_meta($affdetails[0], 'affiliate_paypal', true);
 														$amounts = $this->db->get_row( "SELECT debits, credits, payments FROM " . $this->affiliatedata . " WHERE user_id = " . $affdetails[0] . " AND period = '" . $affdetails[1] . "'" );
 														//echo "amounts<pre>"; print_r($amounts); echo "</pre>";
-														
+
 														$amount = ($amounts->credits - $amounts->debits) - $amounts->payments;
 														//echo "amount[". $amount ."]<br />";
 														if($amount > 0 && !empty($paypal)) {
@@ -1234,15 +1234,15 @@ class affiliateadmin {
 								'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
 								//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
 							);
-							
+
 							//$note .= ' '. __('by', 'affiliate') .': ';
 							//if ( !empty( $user->display_name ) )
 							//	$note .= $user->display_name .' ('. $user->user_login.')';
 							//else
 							//	$note .= $user->user_login;
-							
+
 							$this->db->insert( $this->affiliaterecords, array( 'user_id' => $user_id, 'period' => $period, 'affiliatearea' => 'debit', 'area_id' => false, 'affiliatenote' => $note, 'amount' => $debit, 'meta' => maybe_serialize($meta), 'timestamp' => current_time('mysql', true) ) );
-														
+
 							echo '<div id="message" class="updated fade"><p>' . __('Debit has been assigned correctly.', 'affiliate') . '</p></div>';
 						}
 						break;
@@ -1253,7 +1253,7 @@ class affiliateadmin {
 						$note 		= esc_attr($_POST['creditnote']);
 						//echo "note[". $note ."]<br />";
 						//die();
-						
+
 						$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, credits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE credits = credits + %f", $user_id, $period, $credit, $credit );
 						$queryresult = $this->db->query($sql);
 						if($queryresult) {
@@ -1269,7 +1269,7 @@ class affiliateadmin {
 							//	$note .= $user->display_name .' ('. $user->user_login.')';
 							//else
 							//	$note .= $user->user_login;
-							
+
 							$this->db->insert( $this->affiliaterecords, array( 'user_id' => $user_id, 'period' => $period, 'affiliatearea' => 'credit', 'area_id' => false, 'affiliatenote' => $note, 'amount' => $credit, 'meta' => maybe_serialize($meta), 'timestamp' => current_time('mysql', true) ) );
 
 							echo '<div id="message" class="updated fade"><p>' . __('Credit has been assigned correctly.', 'affiliate') . '</p></div>';
@@ -1280,7 +1280,7 @@ class affiliateadmin {
 						$period 	= addslashes($_POST['payperiod']);
 						$payment 	= abs(floatval($_POST['payvalue']));
 						$note 		= esc_attr($_POST['paynote']);
-						
+
 						$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, payments, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE payments = payments + %f", $user_id, $period, $payment, $payment );
 						$queryresult = $this->db->query($sql);
 						if($queryresult) {
@@ -1296,7 +1296,7 @@ class affiliateadmin {
 							//	$note .= $user->display_name .' ('. $user->user_login.')';
 							//else
 							//	$note .= $user->user_login;
-							
+
 							$this->db->insert( $this->affiliaterecords, array( 'user_id' => $user_id, 'period' => $period, 'affiliatearea' => 'payment', 'area_id' => false, 'affiliatenote' => $note, 'amount' => $payment, 'meta' => maybe_serialize($meta), 'timestamp' => current_time('mysql', true) ) );
 
 							echo '<div id="message" class="updated fade"><p>' . __('Payment has been assigned correctly.', 'affiliate') . '</p></div>';
@@ -1328,11 +1328,11 @@ class affiliateadmin {
 				echo " " . __('linked to ', 'affiliate') . "<a href='http://{$referrer}'>" . $referrer . "</a>";
 			}
 
-			
+
 			if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
 				echo '<br /><a href="' . esc_url(add_query_arg('subpage', 'summary')) .'">'. __('&larr; Return to Affiliate Period Summary', 'affiliate') .'</a>';
 			}
-			
+
 			echo "<br/>";
 			echo "<div id='clickscolumn' style='width: 48%; margin-right: 10px; margin-top: 20px; min-height: 400px; float: left;'>";
 
@@ -1431,13 +1431,13 @@ class affiliateadmin {
 					echo '<select name="creditperiod" id="creditperiod">';
 					echo $period_options;
 					echo '</select>&nbsp;';
-					
+
 					echo '<label for="creditvalue">'. __('Value : ','affiliate') .'</label>';
 					echo '<input type="text" id="creditvalue" name="creditvalue" value="" style="width: 10%;"/>&nbsp;';
-					
+
 					echo '<label for="creditnote">'. __('Note : ','affiliate') .'</label>';
 					echo '<input type="text" id="creditnote" name="creditnote" value="" style="width: 45%;" placeholder="'. __('Credit for...', 'affiliate') .'"/>';
-					
+
 					echo "</td>";
 					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
 					echo "<input type='submit' name='creditaccount' value='" . __('Add Credit','affiliate') . "' class='button-primary' />";
@@ -1518,7 +1518,7 @@ class affiliateadmin {
 					echo '<select name="payperiod" id="payperiod">';
 					echo $period_options;
 					echo '</select>&nbsp;';
-					
+
 					echo '<label for="payvalue">' .__('Value : ','affiliate') .'</label>';
 					echo '<input type="text" id="payvalue" name="payvalue" value="" style="width: 10%;" />&nbsp;';
 
@@ -1574,7 +1574,7 @@ class affiliateadmin {
 
 	function show_affiliates_panel_menu() {
 		return;
-		
+
 		global $page, $subpage;
 
 		$tab = $page;
@@ -1653,11 +1653,11 @@ class affiliateadmin {
 										if ($record) {
 											echo "record<pre>"; print_r($record);
 											//die();
-								
+
 											//if(defined('AFFILIATE_ORIGINAL_PAYMENT_CALCULATION') && AFFILIATE_ORIGINAL_PAYMENT_CALCULATION == true) {
-												$sql_str = $this->db->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->payments + ($record->credits - $record->debits), current_time('mysql', true), $affdetails[0], $affdetails[1]); 
-												
-												
+												$sql_str = $this->db->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->payments + ($record->credits - $record->debits), current_time('mysql', true), $affdetails[0], $affdetails[1]);
+
+
 												$user = wp_get_current_user();
 												$meta = array(
 													'current_user_id'	=>	$user->ID,
@@ -1665,10 +1665,10 @@ class affiliateadmin {
 													'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
 													//'HTTP_USER_AGENT'	=>	esc_attr($_SERVER['HTTP_USER_AGENT'])
 												);
-							
+
 												$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affdetails[0], 'period' => $affdetails[1], 'affiliatearea' => 'payment', 'area_id' => false, 'affiliatenote' => $note, 'amount' => $record->credits - $record->debits, 'meta' => maybe_serialize($meta), 'timestamp' => current_time('mysql', true) ) );
-												
-												
+
+
 												//echo "#1 sql_str[". $sql_str ."]<br />";
 												//die();
 												$affected = $this->db->query( $sql_str );
@@ -1676,7 +1676,7 @@ class affiliateadmin {
 											//	$sql_str = $this->db->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->credits - $record->debits, current_time('mysql', true), $affdetails[0], $affdetails[1]);
 											//	echo "#2 sql_str[". $sql_str ."]<br />";
 											//	die();
-										
+
 											//	$affected = $this->db->query( $sql_str );
 											//}
 											if($affected) {
@@ -1706,22 +1706,22 @@ class affiliateadmin {
 
 									$balance = ($record->credits - $record->debits) - $record->payments;
 									//echo "balance[". $balance ."]<br />";
-									
+
 									if ($balance > 0) {
-								
-										$sql_str = $this->db->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $balance+$record->payments, current_time('mysql', true), $affdetails[0], $affdetails[1]); 
+
+										$sql_str = $this->db->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $balance+$record->payments, current_time('mysql', true), $affdetails[0], $affdetails[1]);
 										//echo "#1 sql_str[". $sql_str ."]<br />";
 										$affected = $this->db->query( $sql_str );
 										if($affected) {
 											echo '<div id="message" class="updated fade"><p>' . __('Payment has been assigned correctly.', 'affiliate') . '</p></div>';
-										
+
 											$user = wp_get_current_user();
 											$meta = array(
 												'current_user_id'	=>	$user->ID,
 												'LOCAL_URL'			=>	( is_ssl() ? 'https://' : 'http://' ) . esc_attr($_SERVER['HTTP_HOST']) . esc_attr($_SERVER['REQUEST_URI']),
 												'IP'				=>	(isset($_SERVER['HTTP_X_FORWARD_FOR'])) ? esc_attr($_SERVER['HTTP_X_FORWARD_FOR']) : esc_attr($_SERVER['REMOTE_ADDR']),
 											);
-					
+
 											$this->db->insert( $this->affiliaterecords, array( 'user_id' => $affdetails[0], 'period' => $affdetails[1], 'affiliatearea' => 'payment', 'area_id' => false, 'affiliatenote' => $note, 'amount' => $balance, 'meta' => maybe_serialize($meta), 'timestamp' => current_time('mysql', true) ) );
 										}
 									}
@@ -1850,7 +1850,7 @@ class affiliateadmin {
 						$actions[] = "<a href='?page=$page&amp;action=makepayment&amp;id=". $result->user_id . "-" . $result->period ."&amp;reportperiod=" . $reportperiod . "' class='edit'>" . __('Pay Balance','affiliate') . "</a>";
 					}
 					$actions[] = "<a href='?page=affiliatesadminmanage&amp;subpage=summary&amp;id=". $result->user_id . "' class='edit'>" . __('Manage Affiliate','affiliate') . "</a>";
-					
+
 /*
 					if ((intval($result->uniques)) || (intval($result->signups)) || intval($result->completes)) {
 						if(is_network_admin()) {
@@ -1888,7 +1888,7 @@ class affiliateadmin {
 					echo '<td valign="top" class="num">';
 					echo intval($result->completes);
 					echo '</div>';
-					
+
 					echo '</td>';
 
 					echo '<td valign="top" class="num">';
@@ -1926,13 +1926,13 @@ class affiliateadmin {
 				echo '<th scope="col">';
 				echo __('Username','affiliate');
 				echo '</th>';
-				
+
 				if (aff_get_option('affiliateenableapproval', 'no') == 'yes') {
 					echo '<th scope="col">';
 					echo __('Approved','affiliate');
 					echo '</th>';
 				}
-				
+
 				reset($columns);
 				foreach($columns as $column) {
 					echo '<th scope="col" class="num">';
@@ -2105,7 +2105,7 @@ class affiliateadmin {
 
 		//$active_plugins = get_option( 'active_plugins', array());
 		//echo "active plugins<pre>"; print_r($active_plugins); echo "</pre>";
-		
+
 		if ( !empty($msg) ) {
 			echo '<div id="message" class="updated fade"><p>' . $messages[(int) $msg] . '</p></div>';
 			$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
@@ -2182,9 +2182,9 @@ class affiliateadmin {
 				<tbody>
 					<?php
 					if(!empty($plugins)) {
-						
+
 						$AFFILIATE_IS_NETWORK_ACTIVE = affiliate_is_plugin_active_for_network();
-						
+
 						foreach($plugins as $key => $plugin) {
 							$default_headers = array(
 								'Name' 				=> 	'Plugin Name',
@@ -2193,12 +2193,13 @@ class affiliateadmin {
 								'AuthorURI' 		=> 	'Author URI',
 								'Network'			=>	'Network',
 								'Depends'			=>	'Depends',
-								'Class'				=>	'Class'
+								'Class'				=>	'Class',
+								'Deprecated'		=>	'Deprecated',
 							);
 
 							$plugin_data = get_file_data( affiliate_dir('affiliateincludes/addons/' . $plugin), $default_headers, 'plugin' );
 							//echo "plugin_data<pre>"; print_r($plugin_data); echo "</pre>";
-							
+
 							if(empty($plugin_data['Name'])) {
 								continue;
 							}
@@ -2207,24 +2208,24 @@ class affiliateadmin {
 								$plugin_data['Network'] = false;
 							} else if ($plugin_data['Network'] == 'true') {
 								$plugin_data['Network'] = true;
-							} 
+							}
 							if ( ($plugin_data['Network'] == true) && (!is_multisite()) && (is_network_admin()) ) {
 								continue;
 							}
-								
+
 							//echo "plugin_data<pre>"; print_r($plugin_data); echo "</pre>";
-							
+
 							$PLUGINS_CAN_BE_ACTIVE = true;
-							if ( ($plugin_data['Network'] == true) && (!$AFFILIATE_IS_NETWORK_ACTIVE) ) { 
+							if ( ($plugin_data['Network'] == true) && (!$AFFILIATE_IS_NETWORK_ACTIVE) ) {
 								$PLUGINS_CAN_BE_ACTIVE = false;
-							} 
+							}
 							//echo "[". $plugin_data['Name'] ."] PLUGINS_CAN_BE_ACTIVE[". $PLUGINS_CAN_BE_ACTIVE ."]<br />";
-							
+
 							// Set the initial active
 							$PLUGIN_INSTALLED = true;
-							if ((!isset($plugin_data['Depends'])) || (empty($plugin_data['Depends']))) { 
+							if ((!isset($plugin_data['Depends'])) || (empty($plugin_data['Depends']))) {
 								$plugin_data['Network'] = array();
-								if ((isset($plugin_data['Class'])) && (!empty($plugin_data['Class']))) { 
+								if ((isset($plugin_data['Class'])) && (!empty($plugin_data['Class']))) {
 									if (!class_exists($plugin_data['Class']))
 										$PLUGIN_INSTALLED = false;
 								}
@@ -2235,7 +2236,7 @@ class affiliateadmin {
 									foreach($depends as $depend) {
 										//echo "depend[". $depend ."]<br />";
 										if ((!affiliate_is_plugin_active($depend)) && (!affiliate_is_plugin_active_for_network($depend))) {
-											if ((isset($plugin_data['Class'])) || (!empty($plugin_data['Class']))) { 
+											if ((isset($plugin_data['Class'])) || (!empty($plugin_data['Class']))) {
 												//echo "class[". $plugin_data['Class'] ."]<br />";
 												if (!class_exists($plugin_data['Class']))
 													$PLUGIN_INSTALLED = false;
@@ -2246,8 +2247,15 @@ class affiliateadmin {
 									}
 								}
 							}
+
 							//echo "[". $plugin_data['Name'] ."] PLUGIN_INSTALLED[". $PLUGIN_INSTALLED ."]<br />";
-							
+
+							if ( 'yes' == $plugin_data['Deprecated'] && ! $PLUGIN_INSTALLED ) {
+								// We only display deprecated Add-Ons when the deprecated dependency is installed.
+								continue;
+							}
+
+
 							?>
 							<tr valign="middle" class="alternate" id="plugin-<?php echo $plugin; ?>">
 								<th class="check-column" scope="row">
@@ -2269,10 +2277,10 @@ class affiliateadmin {
 										?><br/><?php echo esc_html($plugin_data['Description']);
 									}
 
-									//if ($plugin_data['Network'] == true)  { 
+									//if ($plugin_data['Network'] == true)  {
 									//	echo '<br /><strong>' .__('Network only - Requires Affiliate plugin is Network Activated', 'affiliate') .'</strong>';
-									//} 
-										
+									//}
+
 									if (($PLUGINS_CAN_BE_ACTIVE) && ($PLUGIN_INSTALLED)) {
 										$actions = array();
 										if(in_array($plugin, $active)) {
@@ -2283,7 +2291,7 @@ class affiliateadmin {
 										if (count($actions)) {
 											?><br /><div class="row-actions"><?php echo implode(" | ", $actions); ?></div><?php
 										}
-									} 
+									}
 									?>
 								</td>
 								<td class="column-active">
@@ -2294,7 +2302,7 @@ class affiliateadmin {
 											} else {
 												echo __('Inactive', 'affiliate');
 											}
-										} 
+										}
 									?>
 								</td>
 						    </tr>
@@ -2414,7 +2422,7 @@ class affiliateadmin {
 				$area[] = 'click';
 			else if ($type == 'signups')
 				$area[] = 'signups';
-		} 
+		}
 
 		?><h3><?php _e('Affiliate Transactions', 'affiliate'); ?></h3><?php
 		$this->show_complete_records_table($user->ID, $period, $area);
@@ -2463,12 +2471,12 @@ class affiliateadmin {
 				$amount_total += $compete_record->amount;
 				$compete_record->meta = maybe_unserialize($compete_record->meta);
 				//echo "compete_record->meta<pre>"; print_r($compete_record->meta); echo "</pre>";
-				
+
 				$style = ( ' class="alternate"' == $style ) ? '' : ' class="alternate"';
 				?>
 				<tr <?php echo $style; ?>>
 					<td class="affiliate-period"><?php echo $compete_record->period; ?></td>
-					<td class="affiliate-type"><?php 
+					<td class="affiliate-type"><?php
 						$order_label =  __('Order#', 'affiliate'). ' '. $compete_record->area_id;
 						if (($compete_record->affiliatearea == 'paid:marketpress') && (!empty($compete_record->area_id))) {
 							if ((!isset($_GET['page'])) || ($_GET['page'] != 'marketpress-orders')) {
@@ -2485,11 +2493,11 @@ class affiliateadmin {
 						} else if ($compete_record->affiliatearea == 'unique') {
 							echo __('Referral Link', 'affiliate');
 						} else {
-							
+
 						}
-						
+
 						?></td>
-					<td class="affiliate-note"><?php 
+					<td class="affiliate-note"><?php
 						if ($compete_record->affiliatearea == 'unique') {
 							if (!empty($compete_record->meta)) {
 								//$meta = maybe_unserialize($compete_record->meta);
@@ -2501,29 +2509,29 @@ class affiliateadmin {
 										echo ' ('. $compete_record->meta['IP'] .')';
 									}
 								}
-								if (isset($compete_record->meta['LOCAL_URL'])) 
+								if (isset($compete_record->meta['LOCAL_URL']))
 									echo ' -> '. $compete_record->meta['LOCAL_URL'];
 							}
 						} else if ($compete_record->affiliatearea == 'paid:marketpress') {
-							echo $compete_record->affiliatenote; 
+							echo $compete_record->affiliatenote;
 							//echo "compete_record->meta<pre>"; print_r($compete_record->meta); echo "</pre>";
 							if ((isset($compete_record->meta['order_amount'])) && (!empty($compete_record->meta['order_amount']))) {
 								if ((isset($compete_record->meta['commision_rate'])) && (!empty($compete_record->meta['commision_rate']))) {
 									echo ' ($'. $compete_record->meta['order_amount'] .' X '. $compete_record->meta['commision_rate'];
 									if ((isset($compete_record->meta['commision_type'])) && ($compete_record->meta['commision_type'] == 'percentage')) {
-										echo '%'; 
+										echo '%';
 									}
 									echo ')';
 								}
 							}
-								
+
 						} else {
-							echo $compete_record->affiliatenote; 
+							echo $compete_record->affiliatenote;
 						}
 					?></td>
-					<td class="affiliate-amount"><?php 
+					<td class="affiliate-amount"><?php
 						if ($compete_record->affiliatearea == 'paid:marketpress') {
-							echo number_format($compete_record->amount, 2); 
+							echo number_format($compete_record->amount, 2);
 						} else {
 							echo '&nbsp;';
 						}?></td>
@@ -2556,19 +2564,19 @@ class affiliateadmin {
 
 
 	function show_users_period_summary_table($user_id){
-		$headings = aff_get_option('affiliateheadings', 
-			array( 
-				__('Unique Clicks','affiliate'), 
-				__('Sign ups','affiliate'), 
+		$headings = aff_get_option('affiliateheadings',
+			array(
+				__('Unique Clicks','affiliate'),
+				__('Sign ups','affiliate'),
 				__('Paid members','affiliate')
 			)
 		);
 
-		$headings = array_merge($headings, 
-			array( 
-				__('Credits','affiliate'), 
-				__('Debits','affiliate'), 
-				__('Payments','affiliate'), 
+		$headings = array_merge($headings,
+			array(
+				__('Credits','affiliate'),
+				__('Debits','affiliate'),
+				__('Payments','affiliate'),
 				__('Balance', 'affiliate')
 			)
 		);
@@ -2614,10 +2622,10 @@ class affiliateadmin {
 
 		$startat = strtotime(date("Y-m-15"));
 		//echo "startat[". $startat ."]<br />";
-		
+
 		//global $wp_locale;
 		//echo "wp_locale<pre>"; print_r($wp_locale); echo "</pre>";
-		
+
 		for($n = 0; $n < 18; $n++) {
 			$rdate = strtotime("-$n month", $startat);
 			$period = date('Ym', $rdate);
@@ -2626,7 +2634,7 @@ class affiliateadmin {
 			echo "<tr class='periods' id='period-$place'>";
 			echo '<td valign="top">';
 			//echo "recent<pre>"; print_r($recent); echo "</pre>";
-			if ((!empty($recent->uniques)) || (!empty($recent->signups)) || (!empty($recent->completes)) 
+			if ((!empty($recent->uniques)) || (!empty($recent->signups)) || (!empty($recent->completes))
 			 || (!empty($recent->debits)) || (!empty($recent->credits)) || (!empty($recent->payments))) {
 				/*
 				if(is_network_admin()) {
@@ -2635,11 +2643,11 @@ class affiliateadmin {
 					echo '<a href="'. admin_url('user-edit.php?user_id='. $user_id .'&period='. $period .'#affiliate-details') .'">'. date("M", $rdate) . '<br/>' . date("Y", $rdate) .'</a>';
 				}
 				*/
-				
+
 				$period_url = esc_url(add_query_arg('subpage', 'details'));
 				$period_url = esc_url(add_query_arg('period', $period, $period_url));
 				echo '<a title="'. __('View Affiliate detail transactions for this period', 'affiliate') .'" href="'. $period_url .'">'. date_i18n("M", $rdate, true) . '<br/>' . date_i18n("Y", $rdate) .'</a>';
-				
+
 			} else {
 				echo date_i18n("M", $rdate, true) . '<br/>' . date_i18n("Y", $rdate);
 			}
@@ -2756,14 +2764,14 @@ class affiliateadmin {
 		echo '</tr>';
 		echo '</tfoot>';
 
-		echo '</table>';		
+		echo '</table>';
 	}
-	
+
 	function show_users_period_details_table($user_id, $period) {
-		$columns = array( 
+		$columns = array(
 				'date'		=>	__('Date','affiliate'),
-				'type'		=>	__('Type','affiliate'), 
-				'note'		=>	__('Note','affiliate'), 
+				'type'		=>	__('Type','affiliate'),
+				'note'		=>	__('Note','affiliate'),
 				'amount'	=>	__('Amount','affiliate')
 		);
 
@@ -2780,9 +2788,9 @@ class affiliateadmin {
 		}
 		echo '</tr>';
 		echo '</thead>';
-		
+
 		$amountTotal = 0.00;
-		
+
 		echo '<tbody id="the-list">';
 		$records = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliaterecords} WHERE user_id = %d ORDER BY timestamp DESC", $user_id ) );
 		//echo "records<pre>"; print_r($records); echo "</pre>";
@@ -2792,7 +2800,7 @@ class affiliateadmin {
 				if (!empty($record->meta)) {
 					$record->meta = maybe_unserialize($record->meta);
 				}
-				//echo "record<pre>"; print_r($record); echo "</pre>";				
+				//echo "record<pre>"; print_r($record); echo "</pre>";
 
 				echo '<tr>';
 				foreach($columns as $key => $column) {
@@ -2800,15 +2808,15 @@ class affiliateadmin {
 						case 'date':
 							echo '<td>'. date_i18n(get_option('date_format') .' '.get_option('time_format'), strtotime($record->timestamp) + get_option('gmt_offset') * 3600, false) .'</td>';
 							break;
-							
+
 						case 'type':
 							echo '<td>';
 
 							if (($record->affiliatearea == 'paid:marketpress') && (!empty($record->area_id))) {
 								_e('Paid', 'affiliate');
-							} else if (substr($record->affiliatearea, 0, strlen('paid:')) == 'paid:') {	
+							} else if (substr($record->affiliatearea, 0, strlen('paid:')) == 'paid:') {
 								_e('Paid', 'affiliate');
-							} else if (substr($record->affiliatearea, 0, strlen('unique:')) == 'unique:') {	
+							} else if (substr($record->affiliatearea, 0, strlen('unique:')) == 'unique:') {
 								_e('Unique', 'affiliate');
 							} else if (substr($record->affiliatearea, 0, strlen('signup:')) == 'signup:') {
 								//if ($record->affiliatearea == "signup:user")
@@ -2820,13 +2828,13 @@ class affiliateadmin {
 							} else {
 								echo ucwords($record->affiliatearea);
 							}
-								
+
 							echo '</td>';
 							break;
 
 						case 'note':
-							echo '<td>'; 
-							
+							echo '<td>';
+
 							if (!empty($record->affiliatenote)) {
 								if ((($record->affiliatearea == 'paid:marketpress') || ($record->affiliatearea == 'marketpress')) && (!empty($record->area_id))) {
 									_e('MarketPress', 'affiliate');
@@ -2846,7 +2854,7 @@ class affiliateadmin {
 									_e('User:', 'affiliate');
 									$user = new WP_User( $record->area_id );
 									if (($user) && (intval($user->ID) === intval($record->area_id))) {
-										//echo ' '.$record->area_id;	
+										//echo ' '.$record->area_id;
 										$display_name = $user->display_name;
 										if (current_user_can('edit_users')) {
 											if(is_network_admin()) {
@@ -2868,13 +2876,13 @@ class affiliateadmin {
 										//$display_name = $user->display_name;
 										echo ' <a href="' . $blog_details->siteurl  .'">'.  $blog_details->blogname .'</a>';
 									}
-									
-								} else if (($record->affiliatearea == 'paid:membership') 
+
+								} else if (($record->affiliatearea == 'paid:membership')
 									&& (!empty($record->area_id)) && (isset($record->meta['tolevel_id']))
 									&& (function_exists('affiliate_membership_get_subscription_levels'))) {
-									
-									//echo "record<pre>"; print_r($record); echo "</pre>";				
-										
+
+									//echo "record<pre>"; print_r($record); echo "</pre>";
+
 									$levels = affiliate_membership_get_subscription_levels();
 									//echo "levels<pre>"; print_r($levels); echo "</pre>";
 									if (!empty($levels)) {
@@ -2888,7 +2896,7 @@ class affiliateadmin {
 									echo $record->affiliatenote;
 								} else {
 									echo $record->affiliatenote;
-									
+
 									if (($record->affiliatearea == "debit") || ($record->affiliatearea == "credit") || ($record->affiliatearea == "payment")) {
 										if ((isset($record->meta['current_user_id'])) && (!empty($record->meta['current_user_id']))) {
 											$user = new WP_User( intval($record->meta['current_user_id']) );
@@ -2902,12 +2910,12 @@ class affiliateadmin {
 													$note .= $user->user_login;
 												}
 												echo $note;
-												
+
 											}
 										}
 									}
 								}
-							} 
+							}
 							//echo "<br />meta<pre>"; print_r($record->meta); echo "</pre>";
 							echo '</td>';
 							break;
@@ -2925,17 +2933,17 @@ class affiliateadmin {
 								$amountTotal += $record->amount;
 							}
 							break;
-							
+
 						default:
 							do_action('affiliate_details_column_'. $key, $record);
-							break;							
+							break;
 					}
 				}
 				echo '</tr>';
-				
-				
+
+
 			}
-		} 
+		}
 		echo '</tbody>';
 
 		echo '<tfoot>';
@@ -2946,6 +2954,6 @@ class affiliateadmin {
 		echo '</tr>';
 		echo '</tfoot>';
 
-		echo '</table>';		
+		echo '</table>';
 	}
 }
