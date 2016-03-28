@@ -150,7 +150,7 @@ class affiliateadmin {
 				`period` varchar(6) default NULL,
 				`url` varchar(255) default NULL,
 				`referred` bigint(20) default '0',
-				UNIQUE KEY user_period_url (user_id,period,url),
+				UNIQUE KEY user_period_url (user_id,period),
 				KEY user_id (user_id),
 				KEY period (period)
 			) ". $charset_collate .";";
