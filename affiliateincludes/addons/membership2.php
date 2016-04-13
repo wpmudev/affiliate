@@ -72,7 +72,7 @@ class Affiliate_Membership2_Integration {
 			if ( ! is_plugin_active_for_network( $affiliate_plugin )
 				&& current_user_can( 'manage_options' )
 			) {
-				lib2()->ui->admin_message(
+				lib3()->ui->admin_message(
 					__( 'Membership2 uses network-wide protection.<br>Please network activate the Affiliate plugin to avoid problems with the Membership2 integration for Affiliates.', 'affiliate' ),
 					'err'
 				);
@@ -197,8 +197,8 @@ class Affiliate_Membership2_Integration {
 			'site_id'         => $site_id,
 			'current_user_id' => get_current_user_id(),
 			'REMOTE_URL'      => $_SERVER['HTTP_REFERER'],
-			'LOCAL_URL'       => lib2()->net->current_url(),
-			'IP'              => lib2()->net->current_ip()->ip,
+			'LOCAL_URL'       => lib3()->net->current_url(),
+			'IP'              => lib3()->net->current_ip()->ip,
 		);
 
 		do_action(

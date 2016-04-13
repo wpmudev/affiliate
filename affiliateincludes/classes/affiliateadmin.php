@@ -118,7 +118,7 @@ class affiliateadmin {
 	function create_affiliate_tables() {
 
 		if (!function_exists('dbDelta'))
-			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+			{require_once(ABSPATH . 'wp-admin/includes/upgrade.php');}
 
 		// Get the correct character collate
 		if ( ! empty($this->db->charset) ) {
@@ -245,7 +245,7 @@ class affiliateadmin {
 		$mofile = affiliate_dir( "affiliateincludes/languages/affiliate-$locale.mo" );
 
 		if ( file_exists( $mofile ) )
-			load_textdomain( 'affiliate', $mofile );
+			{load_textdomain( 'affiliate', $mofile );}
 
 	}
 
@@ -523,7 +523,7 @@ class affiliateadmin {
 
 	function is_duplicate_url( $url, $user_id ) {
 
-		if(empty($url)) return false;
+		if(empty($url)) {return false;}
 
 		$affiliate = $this->db->get_var( $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = 'affiliate_referrer' AND meta_value='%s' AND user_id != %d", $url, $user_id) );
 
@@ -663,8 +663,8 @@ class affiliateadmin {
 						<th><label for="enable_affiliate"><?php _e('Enable Affiliate links', 'affiliate'); ?></label></th>
 						<td>
 							<select name='enable_affiliate'>
-								<option value='yes' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') echo "selected = 'selected'"; ?>><?php _e('Yes please', 'affiliate'); ?></option>
-								<option value='no' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) != 'yes') echo "selected = 'selected'"; ?>><?php _e('No thanks', 'affiliate'); ?></option>
+								<option value='yes' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {echo "selected = 'selected'";} ?>><?php _e('Yes please', 'affiliate'); ?></option>
+								<option value='no' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) != 'yes') {echo "selected = 'selected'";} ?>><?php _e('No thanks', 'affiliate'); ?></option>
 							</select>
 						</td>
 					</tr>
@@ -803,8 +803,8 @@ class affiliateadmin {
 						<th><label for="enable_affiliate"><?php _e('Enable Affiliate links', 'affiliate'); ?></label></th>
 						<td>
 							<select name='enable_affiliate'>
-								<option value='yes' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') echo "selected = 'selected'"; ?>><?php _e('Yes please', 'affiliate'); ?></option>
-								<option value='no' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) != 'yes') echo "selected = 'selected'"; ?>><?php _e('No thanks', 'affiliate'); ?></option>
+								<option value='yes' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) == 'yes') {echo "selected = 'selected'";} ?>><?php _e('Yes please', 'affiliate'); ?></option>
+								<option value='no' <?php if(get_user_meta($user_ID, 'enable_affiliate', true) != 'yes') {echo "selected = 'selected'";} ?>><?php _e('No thanks', 'affiliate'); ?></option>
 							</select>
 						</td>
 					</tr>
@@ -850,8 +850,8 @@ class affiliateadmin {
 
 				if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
 					$period = '';
-					if (isset($_GET['period'])) $period = esc_attr($_GET['period']);
-					if (!empty($period)) $period = date('Ym');
+					if (isset($_GET['period'])) {$period = esc_attr($_GET['period']);}
+					if (!empty($period)) {$period = date('Ym');}
 					$this->show_users_period_details_table($user_ID, $period);
 				} else {
 					$this->show_users_period_summary_table($user_ID);
@@ -1341,8 +1341,8 @@ class affiliateadmin {
 				$this->show_users_period_summary_table($user_id);
 			} else if ((isset($_GET['subpage'])) && ($_GET['subpage'] == "details")) {
 				$period = '';
-				if (isset($_GET['period'])) $period = esc_attr($_GET['period']);
-				if (!empty($period)) $period = date('Ym');
+				if (isset($_GET['period'])) {$period = esc_attr($_GET['period']);}
+				if (!empty($period)) {$period = date('Ym');}
 				$this->show_users_period_details_table($user_id, $period);
 			}
 			echo "</div>";
@@ -1374,7 +1374,7 @@ class affiliateadmin {
 
 				echo "<tbody>";
 						$app = get_user_meta( $user_id, 'affiliateapproved', true );
-						if(empty($app)) $app = 'no';
+						if(empty($app)) {$app = 'no';}
 						echo "<tr class='' style=''>";
 						echo "<td style='padding: 5px;'>";
 						echo __('User is ','affiliate');
@@ -1595,7 +1595,7 @@ class affiliateadmin {
 			<?php
 				foreach($menus as $key => $menu) {
 					?>
-					<a class="nav-tab<?php if($tab == $key) echo ' nav-tab-active'; ?>" href="admin.php?page=<?php echo $key; ?>"><?php echo $menu; ?></a>
+					<a class="nav-tab<?php if($tab == $key) {echo ' nav-tab-active';} ?>" href="admin.php?page=<?php echo $key; ?>"><?php echo $menu; ?></a>
 					<?php
 				}
 
@@ -1768,7 +1768,7 @@ class affiliateadmin {
 					$rdate = strtotime("-$n month", $startat);
 					$period = date('Ym', $rdate);
 					echo '<option value="' . $period . '"';
-					if($reportperiod == $period) echo ' selected="selected"';
+					if($reportperiod == $period) {echo ' selected="selected"';}
 					echo '>' . date('M Y', $rdate) . '</option>';
 				}
 				echo '</select>&nbsp;';
@@ -2227,7 +2227,7 @@ class affiliateadmin {
 								$plugin_data['Network'] = array();
 								if ((isset($plugin_data['Class'])) && (!empty($plugin_data['Class']))) {
 									if (!class_exists($plugin_data['Class']))
-										$PLUGIN_INSTALLED = false;
+										{$PLUGIN_INSTALLED = false;}
 								}
 
 							} else {
@@ -2239,7 +2239,7 @@ class affiliateadmin {
 											if ((isset($plugin_data['Class'])) || (!empty($plugin_data['Class']))) {
 												//echo "class[". $plugin_data['Class'] ."]<br />";
 												if (!class_exists($plugin_data['Class']))
-													$PLUGIN_INSTALLED = false;
+													{$PLUGIN_INSTALLED = false;}
 											} else {
 												$PLUGIN_INSTALLED = false;
 											}
@@ -2417,11 +2417,11 @@ class affiliateadmin {
 		if (isset($_GET['type'])) {
 			$type = esc_attr($_GET['type']);
 			if ($type == 'paid')
-				$area[] = 'marketpress';
+				{$area[] = 'marketpress';}
 			else if ($type == 'uniques')
-				$area[] = 'click';
+				{$area[] = 'click';}
 			else if ($type == 'signups')
-				$area[] = 'signups';
+				{$area[] = 'signups';}
 		}
 
 		?><h3><?php _e('Affiliate Transactions', 'affiliate'); ?></h3><?php
@@ -2431,12 +2431,12 @@ class affiliateadmin {
 	function get_complete_records($user_id, $period = false, $area = array(), $area_id = false) {
 		$sql_str = "SELECT * FROM ". $this->affiliaterecords ." WHERE `user_id`=". $user_id;
 		if (!empty($period))
-			$sql_str .= " AND `period`='". $period ."' ";
+			{$sql_str .= " AND `period`='". $period ."' ";}
 
 		if (!empty($area)) {
 			$area_str = '';
 			foreach($area as $area_item) {
-				if (!empty($area_str)) $area_str .= ',';
+				if (!empty($area_str)) {$area_str .= ',';}
 				$area_str .= "'". $area_item ."'";
 			}
 			if (!empty($area_str)) {
@@ -2444,7 +2444,7 @@ class affiliateadmin {
 			}
 		}
 		if (!empty($area_id))
-			$sql_str .= " AND `area_id`='". $area_id ."' ";
+			{$sql_str .= " AND `area_id`='". $area_id ."' ";}
 
 		$sql_str .= ' LIMIT 50';
 
@@ -2510,7 +2510,7 @@ class affiliateadmin {
 									}
 								}
 								if (isset($compete_record->meta['LOCAL_URL']))
-									echo ' -> '. $compete_record->meta['LOCAL_URL'];
+									{echo ' -> '. $compete_record->meta['LOCAL_URL'];}
 							}
 						} else if ($compete_record->affiliatearea == 'paid:marketpress') {
 							echo $compete_record->affiliatenote;
@@ -2905,7 +2905,7 @@ class affiliateadmin {
 												if ( !empty( $user->display_name ) ) {
 													$note .= $user->display_name;
 													if ($user->display_name !== $user->user_login)
-														$note .= ' ('. $user->user_login.')';
+														{$note .= ' ('. $user->user_login.')';}
 												} else {
 													$note .= $user->user_login;
 												}
