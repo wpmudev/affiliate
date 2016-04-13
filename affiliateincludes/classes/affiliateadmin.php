@@ -2644,7 +2644,7 @@ class affiliateadmin {
 				}
 				*/
 
-				$period_url = esc_url(add_query_arg('subpage', 'details'));
+				$period_url = esc_url_raw(add_query_arg('subpage', 'details'));
 				$period_url = esc_url(add_query_arg('period', $period, $period_url));
 				echo '<a title="'. __('View Affiliate detail transactions for this period', 'affiliate') .'" href="'. $period_url .'">'. date_i18n("M", $rdate, true) . '<br/>' . date_i18n("Y", $rdate) .'</a>';
 
