@@ -4,6 +4,13 @@ Author: Incsub
 Change Log:
 
 ----------------------------------------------------------------------
+3.1.6.7 - 2015-06-16 - Hoang Ngo
+----------------------------------------------------------------------
+- Integrated with MarketPress 3+
+- Fix required table doesn't create properly
+- Fix period detail link broken
+
+----------------------------------------------------------------------
 3.1.6.6 - 2015-06-16 - Philipp Stracker, Rheinard Korf
 ----------------------------------------------------------------------
 - Add integration for ProSites 3.5
