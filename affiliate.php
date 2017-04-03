@@ -10,26 +10,26 @@ WDP ID: 106
 Domain Path: /affiliateincludes/languages
 */
 
-require_once('affiliateincludes/includes/config.php');
-require_once('affiliateincludes/includes/functions.php');
+require_once(plugin_dir_path( __FILE__ ) . 'affiliateincludes/includes/config.php');
+require_once(plugin_dir_path( __FILE__ ) . 'affiliateincludes/includes/functions.php');
 // Set up my location
 set_affiliate_url(__FILE__);
 set_affiliate_dir(__FILE__);
 
 if(is_admin()) {
-	include_once('affiliateincludes/includes/affiliate_admin_metaboxes.php');
+	include_once(plugin_dir_path( __FILE__ ) . 'affiliateincludes/includes/affiliate_admin_metaboxes.php');
 
 	// Only include the administration side of things when we need to
-	include_once('affiliateincludes/classes/affiliateadmin.php');
-	include_once('affiliateincludes/classes/affiliatedashboard.php');
+	include_once(plugin_dir_path( __FILE__ ) . 'affiliateincludes/classes/affiliateadmin.php');
+	include_once(plugin_dir_path( __FILE__ ) . 'affiliateincludes/classes/affiliatedashboard.php');
 
 	$affadmin = new affiliateadmin();
 	$affdash = new affiliatedashboard();
 }
 
 // Include the public and shortcode classes for both public and admin areas
-include_once('affiliateincludes/classes/affiliatepublic.php');
-include_once('affiliateincludes/classes/affiliateshortcodes.php');
+include_once(plugin_dir_path( __FILE__ ) . 'affiliateincludes/classes/affiliatepublic.php');
+include_once(plugin_dir_path( __FILE__ ) . 'affiliateincludes/classes/affiliateshortcodes.php');
 
 $affiliate = new affiliate();
 $affshortcode = new affiliateshortcodes();
