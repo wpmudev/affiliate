@@ -8,13 +8,15 @@ Class: M_Membership
 Deprecated: yes
 */
 
+// Register actions only if Membership plugin is active (Membership plugin is deprecated anyway).
+if ( affiliate_is_plugin_active( 'membership/membershippremium.php' ) || affiliate_is_plugin_active_for_network( 'membership/membershippremium.php' ) ) {
 
-add_action( 'membership_payment_processed', 					'affiliate_membership_payment_processed', 10, 5);
-add_action( 'membership_add_subscription', 						'affiliate_membership_add_subscription', 10, 4 );
-
-add_action( 'membership_subscription_form_after_levels', 		'affiliate_membership_subscription_settings' );
-add_action( 'membership_subscription_update', 					'affiliate_membership_subscription_update');
-add_action( 'membership_subscription_add', 						'affiliate_membership_subscription_update');
+	add_action( 'membership_payment_processed', 					'affiliate_membership_payment_processed', 10, 5);
+	add_action( 'membership_add_subscription', 						'affiliate_membership_add_subscription', 10, 4 );
+	add_action( 'membership_subscription_form_after_levels', 		'affiliate_membership_subscription_settings' );
+	add_action( 'membership_subscription_update', 					'affiliate_membership_subscription_update');
+	add_action( 'membership_subscription_add', 						'affiliate_membership_subscription_update');
+}
 
 
 function affiliate_membership_payment_processed( $m_user_id, $m_sub_id, $m_amount, $m_currency, $m_txn_id ) {

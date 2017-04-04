@@ -10,6 +10,7 @@ Class: MarketPress
 
 // Register actions only if MarketPress is active.
 if ( affiliate_is_plugin_active( 'marketpress/marketpress.php' ) || affiliate_is_plugin_active_for_network( 'marketpress/marketpress.php' ) ) {
+
 	add_action( 'mp_shipping_process', 'affiliate_marketpress_record_order' );
 	add_action( 'mp_order_paid', 'affiliate_marketpress_paid_order' );
 	add_action( 'mp_single_order_display_box', 'affiliate_marketpress_display_metabox' );
