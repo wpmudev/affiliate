@@ -96,24 +96,44 @@ class affiliateshortcodes {
 	}
 
 	function check_for_shortcodes( ) {
-		global $wp_query;
 
-		if ( is_singular() ) {
-			$post = $wp_query->get_queried_object();
-			if ( false !== strpos($post->post_content, '[affiliatestatschart') || false !== strpos($post->post_content, '[affiliatevisitschart') || false !== strpos($post->post_content, '[affiliateuserdetails')  ) {
-				if( !current_theme_supports( 'affiliate_scripts' )) {
-					wp_enqueue_script('flot_js', affiliate_url('affiliateincludes/js/jquery.flot.min.js'), array('jquery'));
-					wp_enqueue_script( 'affiliatepublicjs', $this->get_custom_javascript(), array('jquery') );
-					wp_localize_script( 'affiliatepublicjs', 'affiliate', array( 'ajaxurl' => admin_url('admin-ajax.php') ) );
+		// Do not continue if not a singular page.
+		if ( ! is_singular() ) {
+			return;
+		}
 
-					add_action('wp_head', array(&$this, 'add_iehead') );
+		if( ! current_theme_supports( 'affiliate_scripts' ) ) {
+			// Load affiliate scripts if required shortcodes are found.
+			if ( shortcode_exists( 'affiliatestatschart' ) || shortcode_exists( 'affiliatevisitschart' ) || shortcode_exists( 'affiliateuserdetails' )  ) {
+				wp_enqueue_script( 'flot_js', affiliate_url( 'affiliateincludes/js/jquery.flot.min.js' ), array( 'jquery' ) );
+				wp_enqueue_script( 'affiliatepublicjs', $this->get_custom_javascript(), array( 'jquery' ) );
+				wp_localize_script( 'affiliatepublicjs', 'affiliate', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+
+				add_action( 'wp_head', array( &$this, 'add_iehead' ) );
+			}
+		}
+
+		if ( ! current_theme_supports( 'affiliate_styles' ) ) {
+			// Affiliate shortcode tags.
+			$shortcodes = array(
+				'affiliatelogincheck',
+				'affiliateuserdetails',
+				'affiliatestatstable',
+				'affiliatestatschart',
+				'affiliatevisitstable',
+				'affiliatetopvisitstable',
+				'affiliatevisitschart',
+				'affiliatebanners',
+				'affiliatedebugforcepayment'
+			);
+			foreach ( $shortcodes as $shortcode ) {
+				// Check whether shortcode exists.
+				if ( shortcode_exists( $shortcode ) ) {
+					wp_enqueue_style('affiliatepubliccss', $this->get_custom_stylesheet(), array());
+					// Once added, no need to loop.
+					break;
 				}
 			}
-
-			if ( false !== strpos($post->post_content, '[affiliate') && !current_theme_supports( 'affiliate_styles' ) ) {
-				wp_enqueue_style( 'affiliatepubliccss', $this->get_custom_stylesheet(), array() );
-			}
-
 		}
 	}
 
