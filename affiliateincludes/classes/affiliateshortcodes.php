@@ -82,8 +82,8 @@ class affiliateshortcodes {
 
 		add_shortcode('affiliatedebugforcepayment', array(&$this, 'do_affiliateforcepayment_shortcode') );
 
-		// Check for shortcodes in any posts
-		add_action( 'template_redirect', array(&$this, 'check_for_shortcodes') );
+		// Check for shortcodes in any posts, then register styles and scripts.
+		add_action( 'wp_enqueue_scripts', array(&$this, 'check_for_shortcodes') );
 
 	}
 
