@@ -8,7 +8,11 @@ Depends: pro-sites/pro-sites.php
 Class: ProSites
 */
 
-add_action( 'plugins_loaded', 'affiliate_supporter_hooks' );
+// Register actions only if Pro Sites is active.
+if ( affiliate_is_plugin_active( 'pro-sites/pro-sites.php' ) || affiliate_is_plugin_active_for_network( 'pro-sites/pro-sites.php' ) ) {
+
+	add_action( 'plugins_loaded', 'affiliate_supporter_hooks' );
+}
 
 function affiliate_supporter_hooks() {
 

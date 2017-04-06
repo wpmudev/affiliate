@@ -8,16 +8,19 @@ Depends: marketpress/marketpress.php
 Class: MarketPress
 */
 
-add_action( 'mp_shipping_process', 'affiliate_marketpress_record_order' );
-add_action( 'mp_order_paid', 'affiliate_marketpress_paid_order' );
-add_action( 'mp_single_order_display_box', 'affiliate_marketpress_display_metabox' );
-add_action( 'mp_gateway_settings', 'affiliate_marketpress_settings' );
+// Register actions only if MarketPress is active.
+if ( affiliate_is_plugin_active( 'marketpress/marketpress.php' ) || affiliate_is_plugin_active_for_network( 'marketpress/marketpress.php' ) ) {
 
-//mp3
-add_action( 'init', 'aff_mp_addon_add_metabox', 20 );
-add_action( 'mp_order/new_order', 'aff_mp3_record_order' );
-add_action( 'mp_order_order_paid', 'aff_mp3_paid_order' );
-add_action( 'add_meta_boxes_mp_order', 'aff_mp3_add_metabox', 21 );
+	add_action( 'mp_shipping_process', 'affiliate_marketpress_record_order' );
+	add_action( 'mp_order_paid', 'affiliate_marketpress_paid_order' );
+	add_action( 'mp_single_order_display_box', 'affiliate_marketpress_display_metabox' );
+	add_action( 'mp_gateway_settings', 'affiliate_marketpress_settings' );
+	//mp3
+	add_action( 'init', 'aff_mp_addon_add_metabox', 20 );
+	add_action( 'mp_order/new_order', 'aff_mp3_record_order' );
+	add_action( 'mp_order_order_paid', 'aff_mp3_paid_order' );
+	add_action( 'add_meta_boxes_mp_order', 'aff_mp3_add_metabox', 21 );
+}
 
 function aff_mp3_add_metabox() {
 	add_meta_box( 'mp-order-aff-mp3-metabox', __( 'Affiliate', 'mp' ), 'aff_mp3_show_metabox', 'mp_order', 'normal', 'core' );

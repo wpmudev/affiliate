@@ -9,8 +9,12 @@ Class: Classifieds_Core
 
 define( 'AFF_CLASSIFIEDS_ADDON', 1 );
 
-add_action( 'classifieds_set_paid_member', 'cf_affiliate_new_paid', 10, 3 );
-add_action( 'classifieds_affiliate_settings', 'cf_affiliate_settings' );
+// Register actions only if Classifieds plugin is active.
+if ( affiliate_is_plugin_active( 'classifieds/loader.php' ) || affiliate_is_plugin_active_for_network( 'classifieds/loader.php' ) ) {
+
+	add_action( 'classifieds_set_paid_member', 'cf_affiliate_new_paid', 10, 3 );
+	add_action( 'classifieds_affiliate_settings', 'cf_affiliate_settings' );
+}
 
 function cf_affiliate_new_paid( $affiliate_settings, $user_id, $billing_type ) {
 	global $blog_id, $site_id;

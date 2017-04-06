@@ -9,8 +9,12 @@ Class: Directory_Core
 
 define( 'AFF_DIRECTORY_ADDON', 1 );
 
-add_action( 'directory_set_paid_member', 'dr_affiliate_new_paid', 10, 3 );
-add_action( 'directory_affiliate_settings', 'dr_affiliate_settings' );
+// Register actions only if Directory plugin is active.
+if ( affiliate_is_plugin_active( 'directory/loader.php' ) || affiliate_is_plugin_active_for_network( 'directory/loader.php' ) ) {
+
+	add_action( 'directory_set_paid_member', 'dr_affiliate_new_paid', 10, 3 );
+	add_action( 'directory_affiliate_settings', 'dr_affiliate_settings' );
+}
 
 function dr_affiliate_new_paid( $affiliate_settings, $user_id, $billing_type ) {
 	global $blog_id, $site_id;
