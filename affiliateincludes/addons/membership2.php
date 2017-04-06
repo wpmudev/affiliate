@@ -123,6 +123,11 @@ class Affiliate_Membership2_Integration {
 		global $affiliate; // Used for communication with Affiliates plugin.
 		global $blog_id, $site_id; // Used for logging.
 
+		// Pay only if it an active membership.
+		if ( $subscription->status != $subscription::STATUS_ACTIVE ) {
+			return;
+		}
+
 		$user_id = $invoice->user_id;
 		$membership = $subscription->get_membership();
 		$pay_once = defined( 'AFFILIATE_PAYONCE' ) && 'yes' == AFFILIATE_PAYONCE;
