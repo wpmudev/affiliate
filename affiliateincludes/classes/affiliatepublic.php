@@ -389,7 +389,7 @@ class affiliate {
 			// Record the click in the affiliate table - v0.2+
 			$period = date( 'Ym' );
 
-			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, uniques, credits, lastupdated) VALUES (%d, %s, %d, %01.2f, now()) ON DUPLICATE KEY UPDATE uniques = uniques + %d, credits = credits + %01.2f", $affiliate_user_id, $period, 1, $amount, 1, $amount );
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, uniques, credits, lastupdated) VALUES (%d, %s, %d, %f, now()) ON DUPLICATE KEY UPDATE uniques = uniques + %d, credits = credits + %f", $affiliate_user_id, $period, 1, $amount, 1, $amount );
 			//error_log(__FUNCTION__ .": sql[". $sql ."]");
 
 			$queryresult = $this->db->query( $sql );
@@ -427,7 +427,7 @@ class affiliate {
 
 			$period = date( 'Ym' );
 
-			$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, signups, credits, lastupdated) VALUES (%d, %s, %d, %01.2f, now()) ON DUPLICATE KEY UPDATE signups = signups + %d, credits = credits + %01.2f", $affiliate_user_id, $period, 1, $amount, 1, $amount );
+			$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, signups, credits, lastupdated) VALUES (%d, %s, %d, %f, now()) ON DUPLICATE KEY UPDATE signups = signups + %d, credits = credits + %f", $affiliate_user_id, $period, 1, $amount, 1, $amount );
 			$queryresult = $this->db->query( $sql );
 
 			if ( ! defined( 'AFFILIATEID' ) ) {
@@ -461,7 +461,7 @@ class affiliate {
 			// Need to get the amount paid and calculate the commision
 			$amount = number_format( $amount, 2, '.', '' );
 
-			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, completes, credits, lastupdated) VALUES (%d, %s, %d, %01.2f, now()) ON DUPLICATE KEY UPDATE completes = completes + %d, credits = credits + %01.2f ", $affiliate_user_id, $period, 1, $amount, 1, $amount );
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, completes, credits, lastupdated) VALUES (%d, %s, %d, %f, now()) ON DUPLICATE KEY UPDATE completes = completes + %d, credits = credits + %f ", $affiliate_user_id, $period, 1, $amount, 1, $amount );
 			//echo "sql[". $sql ."]<br />";
 			$queryresult = $this->db->query( $sql );
 
@@ -491,7 +491,7 @@ class affiliate {
 			// Need to get the amount paid and calculate the commision
 			$amount = number_format( $amount, 2, '.', '' );
 
-			$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, credits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE credits = credits + %01.2f ", $affiliate_user_id, $period, $amount, $amount );
+			$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, credits, lastupdated) VALUES (%d, %s, %f, now()) ON DUPLICATE KEY UPDATE credits = credits + %f ", $affiliate_user_id, $period, $amount, $amount );
 			$queryresult = $this->db->query( $sql );
 
 			$meta = array(
@@ -523,7 +523,7 @@ class affiliate {
 			// Need to get the amount paid and calculate the commision
 			$amount = number_format( $amount, 2, '.', '' );
 
-			$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, debits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE debits = debits + %01.2f ", $affiliate_user_id, $period, $amount, $amount );
+			$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, debits, lastupdated) VALUES (%d, %s, %f, now()) ON DUPLICATE KEY UPDATE debits = debits + %f ", $affiliate_user_id, $period, $amount, $amount );
 			$queryresult = $this->db->query( $sql );
 
 			$meta = array(
