@@ -388,9 +388,7 @@ class affiliate {
 
 			// Record the click in the affiliate table - v0.2+
 			$period = date( 'Ym' );
-
-			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, uniques, credits, lastupdated) VALUES (%d, %s, %d, %01.2f, now()) ON DUPLICATE KEY UPDATE uniques = uniques + %d, credits = credits + %01.2f", $affiliate_user_id, $period, 1, $amount, 1, $amount );
-			//error_log(__FUNCTION__ .": sql[". $sql ."]");
+			$sql = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, uniques, credits, lastupdated) VALUES (%d, %s, %d, %f, now()) ON DUPLICATE KEY UPDATE uniques = uniques + %d, credits = credits + %f", $affiliate_user_id, $period, 1, $amount, 1, $amount );
 
 			$queryresult = $this->db->query( $sql );
 
@@ -567,9 +565,8 @@ class affiliate {
 	function handle_affiliate_link() {
 
 		$reference = false;
-		$referrer   = '';
+		$referrer  = '';
 		$affiliate = false;
-
 
 		if ( $this->no_affiliate_condition() ) {
 			if ( isset( $_GET['ref'] ) ) {
