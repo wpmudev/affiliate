@@ -1187,7 +1187,7 @@ class affiliateadmin {
 									$amount = ( $amounts->credits - $amounts->debits ) - $amounts->payments;
 									//echo "amount[". $amount ."]<br />";
 									if ( $amount > 0 && ! empty( $paypal ) ) {
-										$line = sprintf( "%s\t%01.2f\t%s\t%s\t%s\n", $paypal, $amount, $currency, $id, $notes );
+										$line = sprintf( "%s\t%f\t%s\t%s\t%s\n", $paypal, $amount, $currency, $id, $notes );
 										echo $line;
 									}
 
@@ -1296,7 +1296,7 @@ class affiliateadmin {
 						$period      = addslashes( $_POST['debitperiod'] );
 						$debit       = abs( floatval( $_POST['debitvalue'] ) );
 						$note        = esc_attr( $_POST['debitnote'] );
-						$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, debits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE debits = debits + %f", $user_id, $period, $debit, $debit );
+						$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, debits, lastupdated) VALUES (%d, %s, %f, now()) ON DUPLICATE KEY UPDATE debits = debits + %f", $user_id, $period, $debit, $debit );
 						$queryresult = $this->db->query( $sql );
 						if ( $queryresult ) {
 							$user = wp_get_current_user();
@@ -1335,7 +1335,7 @@ class affiliateadmin {
 						//echo "note[". $note ."]<br />";
 						//die();
 
-						$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, credits, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE credits = credits + %f", $user_id, $period, $credit, $credit );
+						$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, credits, lastupdated) VALUES (%d, %s, %f, now()) ON DUPLICATE KEY UPDATE credits = credits + %f", $user_id, $period, $credit, $credit );
 						$queryresult = $this->db->query( $sql );
 						if ( $queryresult ) {
 							$user = wp_get_current_user();
@@ -1371,7 +1371,7 @@ class affiliateadmin {
 						$payment = abs( floatval( $_POST['payvalue'] ) );
 						$note    = esc_attr( $_POST['paynote'] );
 
-						$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, payments, lastupdated) VALUES (%d, %s, %01.2f, now()) ON DUPLICATE KEY UPDATE payments = payments + %f", $user_id, $period, $payment, $payment );
+						$sql         = $this->db->prepare( "INSERT INTO {$this->affiliatedata} (user_id, period, payments, lastupdated) VALUES (%d, %s, %f, now()) ON DUPLICATE KEY UPDATE payments = payments + %f", $user_id, $period, $payment, $payment );
 						$queryresult = $this->db->query( $sql );
 						if ( $queryresult ) {
 							$user = wp_get_current_user();
@@ -1762,7 +1762,7 @@ class affiliateadmin {
 											//die();
 
 											//if(defined('AFFILIATE_ORIGINAL_PAYMENT_CALCULATION') && AFFILIATE_ORIGINAL_PAYMENT_CALCULATION == true) {
-											$sql_str = $this->db->prepare( "UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->payments + ( $record->credits - $record->debits ), current_time( 'mysql', true ), $affdetails[0], $affdetails[1] );
+											$sql_str = $this->db->prepare( "UPDATE " . $this->affiliatedata . " SET payments = %f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->payments + ( $record->credits - $record->debits ), current_time( 'mysql', true ), $affdetails[0], $affdetails[1] );
 
 
 											$user = wp_get_current_user();
@@ -1789,7 +1789,7 @@ class affiliateadmin {
 											//die();
 											$affected = $this->db->query( $sql_str );
 											//} else {
-											//	$sql_str = $this->db->prepare("UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->credits - $record->debits, current_time('mysql', true), $affdetails[0], $affdetails[1]);
+											//	$sql_str = $this->db->prepare("UPDATE " . $this->affiliatedata . " SET payments = %f, lastupdated = %s WHERE user_id = %d AND period = %s", $record->credits - $record->debits, current_time('mysql', true), $affdetails[0], $affdetails[1]);
 											//	echo "#2 sql_str[". $sql_str ."]<br />";
 											//	die();
 
@@ -1825,7 +1825,7 @@ class affiliateadmin {
 
 									if ( $balance > 0 ) {
 
-										$sql_str = $this->db->prepare( "UPDATE " . $this->affiliatedata . " SET payments = %01.2f, lastupdated = %s WHERE user_id = %d AND period = %s", $balance + $record->payments, current_time( 'mysql', true ), $affdetails[0], $affdetails[1] );
+										$sql_str = $this->db->prepare( "UPDATE " . $this->affiliatedata . " SET payments = %f, lastupdated = %s WHERE user_id = %d AND period = %s", $balance + $record->payments, current_time( 'mysql', true ), $affdetails[0], $affdetails[1] );
 										//echo "#1 sql_str[". $sql_str ."]<br />";
 										$affected = $this->db->query( $sql_str );
 										if ( $affected ) {
