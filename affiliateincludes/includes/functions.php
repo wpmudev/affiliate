@@ -1,25 +1,25 @@
 <?php
 function affiliate_is_plugin_active_for_network($plugin = 'affiliate/affiliate.php') {
 	if (!is_multisite()) return false;
-		
+
 	if ( !function_exists( 'is_plugin_active_for_network' ) ) {
 		require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
 	}
 
 
-	if ( (function_exists('is_plugin_active_for_network')) && (is_plugin_active_for_network($plugin)) ) 
+	if ( (function_exists('is_plugin_active_for_network')) && (is_plugin_active_for_network($plugin)) )
 		return true;
 	else
 		return false;
 }
 
 function affiliate_is_plugin_active($plugin = 'affiliate/affiliate.php') {
-		
+
 	if ( !function_exists( 'is_plugin_active' ) ) {
 		require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
 	}
 
-	if ( (function_exists('is_plugin_active')) && (is_plugin_active($plugin)) ) 
+	if ( (function_exists('is_plugin_active')) && (is_plugin_active($plugin)) )
 		return true;
 	else
 		return false;
@@ -36,7 +36,7 @@ function set_affiliate_url($base) {
 	} else {
 		$M_affiliate_url = trailingslashit(WP_PLUGIN_URL . '/affiliate');
 	}
-	
+
 	if (is_ssl()) {
 		$M_affiliate_url = str_replace('http://', 'https://', $M_affiliate_url);
 	}
@@ -82,7 +82,7 @@ function get_affiliate_addons() {
 			$aff_plugins = array ();
 			while ( ( $plugin = readdir( $dh ) ) !== false ) {
 
-				// Not sure why this file is present. But ignore it. 
+				// Not sure why this file is present. But ignore it.
 				if ($plugin == "prosites.php") {
 					continue;
 				}
@@ -110,7 +110,7 @@ function load_affiliate_addons() {
 			$aff_plugins = array ();
 			while ( ( $plugin = readdir( $dh ) ) !== false ) {
 
-				// Not sure why this file is present. But ignore it. 
+				// Not sure why this file is present. But ignore it.
 				if ($plugin == "prosites.php") {
 					continue;
 				}
@@ -140,7 +140,7 @@ function load_all_affiliate_addons() {
 			$aff_plugins = array ();
 			while ( ( $plugin = readdir( $dh ) ) !== false ) {
 
-				// Not sure why this file is present. But ignore it. 
+				// Not sure why this file is present. But ignore it.
 				if ($plugin == "prosites.php")
 					continue;
 
@@ -158,7 +158,7 @@ function load_all_affiliate_addons() {
 
 function aff_get_option( $option, $default = false ) {
 
-	if (affiliate_is_plugin_active_for_network()) {	
+	if (affiliate_is_plugin_active_for_network()) {
 		return get_site_option( $option, $default);
 	} else {
 		return get_option( $option, $default);
@@ -166,7 +166,7 @@ function aff_get_option( $option, $default = false ) {
 }
 
 function aff_update_option( $option, $value = null ) {
-	if (affiliate_is_plugin_active_for_network()) {	
+	if (affiliate_is_plugin_active_for_network()) {
 		return update_site_option( $option, $value);
 	} else {
 		return update_option( $option, $value);
@@ -174,7 +174,7 @@ function aff_update_option( $option, $value = null ) {
 }
 
 function aff_delete_option( $option ) {
-	if (affiliate_is_plugin_active_for_network()) {	
+	if (affiliate_is_plugin_active_for_network()) {
 		return delete_site_option( $option );
 	} else {
 		return delete_option( $option );
@@ -186,7 +186,7 @@ function aff_build_reference( $user ) {
 	if(defined('AFFILIATE_REFERENCE_PREFIX') && AFFILIATE_REFERENCE_PREFIX != '' ) {
 		$ref = AFFILIATE_REFERENCE_PREFIX . '-' . strrev(sprintf('%02d', $user->ID + (int) AFFILIATE_REFERENCE_KEY));
 	} else {
-		$ref = $user->user_login . '-' . strrev(sprintf('%02d', $user->ID + (int) AFFILIATE_REFERENCE_KEY));
+		$ref = str_replace(' ', '-', $user->user_login) . '-' . strrev(sprintf('%02d', $user->ID + (int) AFFILIATE_REFERENCE_KEY));
 	}
 
 	return $ref;
@@ -200,7 +200,7 @@ function aff_format_currency($currency = '', $amount = false) {
 	 // get the currency symbol
 	 $symbol = $affiliate_currencies[$currency][1];
 	 echo "symbol<pre>"; print_r($symbol); echo "</pre>";
-	 
+
 	 // if many symbols are found, rebuild the full symbol
 	 $symbols = explode(', ', $symbol);
 	 if (is_array($symbols)) {
