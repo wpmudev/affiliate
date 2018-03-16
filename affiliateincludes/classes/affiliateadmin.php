@@ -577,8 +577,9 @@ class affiliateadmin {
 	}
 
 	function validate_url_for_file( $url, $file ) {
+                $schema = is_ssl() ? 'https://' : 'http://';
 
-		$fullurl = 'http://' . $url . $file;
+		$fullurl = $schema . $url . $file;
 
 		$response = wp_remote_head( $fullurl );
 
@@ -637,7 +638,7 @@ class affiliateadmin {
 			update_user_meta( $user_ID, 'affiliate_paypal', $_POST['affiliate_paypal'] );
 			if ( ! empty( $_POST['affiliate_referrer'] ) ) {
 
-				$url = str_replace( 'http://', '', untrailingslashit( $_POST['affiliate_referrer'] ) );
+				$url = str_replace( array('http://', 'https://'), '', untrailingslashit( $_POST['affiliate_referrer'] ) );
 				// store the update - even though it could be wrong
 				update_user_meta( $user_ID, 'affiliate_referrer', $url );
 				// Remove any validated referrers as it may have been changed
@@ -814,13 +815,14 @@ class affiliateadmin {
 									} else {
 										// Not valid - generate filename
 										$filename = md5( 'affiliatefilename-' . $user_ID . '-' . $user->user_login . "-" . $referrer ) . '.html';
+                                                                                $schema = is_ssl() ? 'https://' : 'http://';
 
 										// Output message
 										echo "<br/>";
 										_e( 'You need to validate this URL by uploading a file to the root of the site above with the following name : ', 'affiliate' );
 										echo "<br/>";
 										echo __( 'Filename : ', 'affiliate' ) . $filename;
-										echo " <a href='http://" . trailingslashit( $referrer ) . $filename . "' target=_blank>" . __( '[click here to check if the file exists]', 'affiliate' ) . "</a>";
+										echo " <a href='" . $schema . trailingslashit( $referrer ) . $filename . "' target=_blank>" . __( '[click here to check if the file exists]', 'affiliate' ) . "</a>";
 										echo '<br/><input type="submit" name="Submit" class="button" value="' . __( 'Validate', 'affiliate' ) . '" />';
 									}
 								}
@@ -968,6 +970,8 @@ class affiliateadmin {
 
 			echo "<tbody>";
 
+                        $schema = is_ssl() ? 'https://' : 'http://';
+
 			if ( ! empty( $rows ) ) {
 
 				$class = 'alternate';
@@ -975,7 +979,7 @@ class affiliateadmin {
 
 					echo "<tr class='$class' style='$style'>";
 					echo "<td style='padding: 5px;'>";
-					echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
+					echo "<a href='" . $schema . $r->url . "'>" . $r->url . "</a>";
 					echo "</td>";
 					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
 					echo $r->referred;
@@ -1039,6 +1043,8 @@ class affiliateadmin {
 
 			echo "<tbody>";
 
+                        $schema = is_ssl() ? 'https://' : 'http://';
+
 			if ( ! empty( $rows ) ) {
 
 				$class = 'alternate';
@@ -1046,7 +1052,7 @@ class affiliateadmin {
 
 					echo "<tr class='$class' style='$style'>";
 					echo "<td style='padding: 5px;'>";
-					echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
+					echo "<a href='" . $schema . $r->url . "'>" . $r->url . "</a>";
 					echo "</td>";
 					echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
 					echo $r->totalreferred;
@@ -1423,8 +1429,9 @@ class affiliateadmin {
 			echo "<strong>" . __( 'Details for user : ', 'affiliate' ) . $user->user_login . " ( " . get_user_meta( $user_id, 'affiliate_paypal', true ) . " )" . "</strong>";
 			// Get the affiliate website listing
 			$referrer = get_user_meta( $user_id, 'affiliate_referrer', true );
+                        $schema = is_ssl() ? 'https://' : 'http://';
 			if ( ! empty( $referrer ) ) {
-				echo " " . __( 'linked to ', 'affiliate' ) . "<a href='http://{$referrer}'>" . $referrer . "</a>";
+                                echo " " . __( 'linked to ', 'affiliate' ) . "<a href='{$schema}{$referrer}'>" . $referrer . "</a>";
 			}
 
 
@@ -1976,8 +1983,9 @@ class affiliateadmin {
 
 					// Get the affiliate website listing
 					$referrer = get_user_meta( $result->user_id, 'affiliate_referrer', true );
+                                        $schema = is_ssl() ? 'https://' : 'http://';
 					if ( ! empty( $referrer ) ) {
-						echo " " . __( 'linked to ', 'affiliate' ) . "<a href='http://{$referrer}'>" . $referrer . "</a>";
+						echo " " . __( 'linked to ', 'affiliate' ) . "<a href='{$schema}{$referrer}'>" . $referrer . "</a>";
 					}
 
 					// Quick links
