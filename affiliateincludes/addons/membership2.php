@@ -202,8 +202,8 @@ class Affiliate_Membership2_Integration {
 			'site_id'         => $site_id,
 			'current_user_id' => get_current_user_id(),
 			'REMOTE_URL'      => $_SERVER['HTTP_REFERER'],
-			'LOCAL_URL'       => lib3()->net->current_url(),
-			'IP'              => lib3()->net->current_ip()->ip,
+			'LOCAL_URL'       => mslib3()->net->current_url(),
+			'IP'              => mslib3()->net->current_ip()->ip,
 		);
 
 		do_action(
