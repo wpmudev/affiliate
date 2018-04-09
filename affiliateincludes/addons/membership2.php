@@ -29,6 +29,12 @@ class Affiliate_Membership2_Integration {
 	protected $api = null;
 
 	/**
+	 * A reference to the Membership2 MsTheLib3_Wrap instance.
+	 * The property is set by $this::init()
+	 */
+	protected $ms_lib = null;
+
+	/**
 	 * Create and setup the Membership2 integration.
 	 *
 	 * @since  1.0.0
@@ -61,6 +67,12 @@ class Affiliate_Membership2_Integration {
 	 */
 	public function init( $api ) {
 		$this->api = $api;
+		if( function_exists( 'mslib3' ) ){
+			$this->ms_lib = mslib3();
+		}
+		elseif( function_exists( 'lib3' ) ){
+			$this->ms_lib = lib3();
+		}
 
 		if ( MS_Plugin::is_network_wide() ) {
 			$affiliate_plugin = 'affiliate/affiliate.php';
@@ -72,7 +84,7 @@ class Affiliate_Membership2_Integration {
 			if ( ! is_plugin_active_for_network( $affiliate_plugin )
 				&& current_user_can( 'manage_options' )
 			) {
-				lib3()->ui->admin_message(
+				$this->ms_lib->ui->admin_message(
 					__( 'Membership2 uses network-wide protection.<br>Please network activate the Affiliate plugin to avoid problems with the Membership2 integration for Affiliates.', 'affiliate' ),
 					'err'
 				);
@@ -202,8 +214,8 @@ class Affiliate_Membership2_Integration {
 			'site_id'         => $site_id,
 			'current_user_id' => get_current_user_id(),
 			'REMOTE_URL'      => $_SERVER['HTTP_REFERER'],
-			'LOCAL_URL'       => mslib3()->net->current_url(),
-			'IP'              => mslib3()->net->current_ip()->ip,
+			'LOCAL_URL'       => $this->ms_lib->net->current_url(),
+			'IP'              => $this->ms_lib->net->current_ip()->ip,
 		);
 
 		do_action(
