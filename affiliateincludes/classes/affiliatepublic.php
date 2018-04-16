@@ -70,10 +70,9 @@ class affiliate {
 		add_action( 'user_register', array( &$this, 'user_register' ), 10 );
 		add_action( 'wpmu_activate_user', array( &$this, 'wpmu_activate_user' ), 10, 3 );
 
-		add_filter( 'add_signup_meta', array( &$this, 'add_signup_meta' ), 10 );
-		add_action( 'wpmu_activate_blog', array( &$this, 'wpmu_activate_blog' ), 10, 5 );
+		add_action( 'wpmu_new_blog', array( &$this, 'wpmu_new_blog' ), 10, 6 );
 
-		// Include affiliate plugins 
+		// Include affiliate plugins
 		if ( ! is_admin() ) // We only need to load if we are not in admin.
 		{
 			load_affiliate_addons();
@@ -323,13 +322,12 @@ class affiliate {
 		}
 	}
 
-	function wpmu_activate_blog( $new_blog_id, $new_user_id, $new_user_password, $new_blog_title, $new_blog_meta ) {
+	function wpmu_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
 		//echo 'in '. __FILE__ .': '. __FUNCTION__ .': '. __LINE__ .'<br />';
 
-		// Check if this signup was from an affiliate referal. 
-		if ( isset( $new_blog_meta['affiliate_referred_by'] ) ) {
-			$affiliate_user_id = intval( $new_blog_meta['affiliate_referred_by'] );
-
+		// Check if this signup was from an affiliate referal.
+		$affiliate_user_id = $this->get_affiliate_user_id_from_hash();
+		if ( $affiliate_user_id ) {
 			// Call the affiliate action
 			$meta = array(
 				'REMOTE_URL' => esc_attr( $_SERVER['HTTP_REFERER'] ),
@@ -339,22 +337,12 @@ class affiliate {
 			);
 
 			$note = __( 'Blog', 'affiliate' );
-			do_action( 'affiliate_signup', $affiliate_user_id, false, 'signup:blog', $new_blog_id, $note, $meta );
+			do_action( 'affiliate_signup', $affiliate_user_id, false, 'signup:blog', $blog_id, $note, $meta );
 
-			update_blog_option( $new_blog_id, 'affiliate_referred_by', $affiliate_user_id );
+			update_blog_option( $blog_id, 'affiliate_referred_by', $affiliate_user_id );
 
-//			$this->wpmu_activate_user($new_user_id, '', $new_blog_meta);
+//			$this->wpmu_activate_user($user_id, '', $meta);
 		}
-	}
-
-	function add_signup_meta( $meta ) {
-		//echo "meta<pre>"; print_r($meta); echo "</pre>";
-		$affiliate_user_id = $this->get_affiliate_user_id_from_hash();
-		if ( ! empty( $affiliate_user_id ) ) {
-			$meta['affiliate_referred_by'] = $affiliate_user_id;
-		}
-
-		return $meta;
 	}
 
 	function get_affiliate_user_id_from_hash() {
