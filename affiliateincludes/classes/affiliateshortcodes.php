@@ -659,7 +659,7 @@ class affiliateshortcodes {
 		}
 
 		$sql_str = $this->db->prepare( "SELECT ar.* FROM {$this->affiliatereferrers} as ar INNER JOIN ( SELECT url FROM {$this->affiliatereferrers} WHERE user_id = $user_ID AND period in (" . implode(',', $years) . ") GROUP BY url ORDER BY sum(referred) DESC LIMIT 0, 10 ) as arr ON ar.url = arr.url WHERE ar.user_id = %d ORDER BY ar.url, ar.period DESC", $user_ID );
-		
+
 		$visitresults = $this->db->get_results( $sql_str );
 
 		$urls = $this->db->get_col(null, 2);
@@ -883,7 +883,7 @@ class affiliateshortcodes {
 
 		$startat = strtotime(date("Y-m-15"));
 		$alt_class = '';
-		
+
 		for($n = 0; $n < 18; $n++) {
 			$rdate = strtotime("-$n month", $startat);
 			$period = date('Ym', $rdate);
@@ -1016,6 +1016,7 @@ class affiliateshortcodes {
 
 		do_action('affiliate_before_visits_table', $user_ID);
 
+                $schema = is_ssl() ? 'https://' : 'http://';
 		// This months visits table
 		$rows = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->affiliatereferrers} WHERE user_id = %d AND period = %s ORDER BY referred DESC LIMIT 0, 15", $user_ID, date("Ym") ) );
 		echo "<div id='visitstable' style=''>";
@@ -1052,7 +1053,7 @@ class affiliateshortcodes {
 
 				echo "<tr class='$class' style=''>";
 				echo "<td style='padding: 5px;'>";
-				echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
+				echo "<a href='" . $schema . $r->url . "'>" . $r->url . "</a>";
 				echo "</td>";
 				echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
 				echo $r->referred;
@@ -1105,6 +1106,8 @@ class affiliateshortcodes {
 			$years[] = "'" . date('Ym', $rdate) . "'";
 		}
 
+                $schema = is_ssl() ? 'https://' : 'http://';
+
 		$rows = $this->db->get_results( $this->db->prepare( "SELECT url, SUM(referred) as totalreferred FROM {$this->affiliatereferrers} WHERE user_id = %d AND period in (" . implode(',', $years) . ") GROUP BY url ORDER BY totalreferred DESC LIMIT 0, 15", $user_ID ) );
 		echo "<div id='topvisitstable' style=''>";
 		echo "<table class='widefat'>";
@@ -1140,7 +1143,7 @@ class affiliateshortcodes {
 
 				echo "<tr class='$class' style=''>";
 				echo "<td style='padding: 5px;'>";
-				echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
+				echo "<a href='" . $schema . $r->url . "'>" . $r->url . "</a>";
 				echo "</td>";
 				echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
 				echo $r->totalreferred;
@@ -1207,8 +1210,9 @@ class affiliateshortcodes {
 	}
 
 	function validate_url_for_file( $url, $file ) {
+                $schema = is_ssl() ? 'https://' : 'http://';
 
-		$fullurl = 'http://' . $url . $file;
+		$fullurl = $schema . $url . $file;
 
 		$response = wp_remote_head($fullurl);
 
@@ -1250,7 +1254,7 @@ class affiliateshortcodes {
 			update_user_meta($user_ID, 'affiliate_paypal', $_POST['affiliate_paypal']);
 			if(isset($_POST['affiliate_referrer'])) {
 
-				$url = str_replace('http://', '', untrailingslashit($_POST['affiliate_referrer']));
+				$url = str_replace(array('http://', 'https://'), '', untrailingslashit($_POST['affiliate_referrer']));
 				// store the update - even though it could be wrong
 				update_user_meta($user_ID, 'affiliate_referrer', $url );
 				// Remove any validated referrers as it may have been changed
@@ -1388,13 +1392,14 @@ class affiliateshortcodes {
 									else {
 										// Not valid - generate filename
 										$filename = md5('affiliatefilename-' . $user_ID . '-' . $user->user_login . "-" . $referrer) . '.html';
+                                                                                $schema = is_ssl() ? 'https://' : 'http://';
 
 										// Output message
 										echo "<br/>";
 										_e('You need to validate this URL by uploading a file to the root of the site above with the following name : ','affiliate');
 										echo "<br/>";
 										echo __('Filename : ', 'affiliate') . $filename;
-										echo " <a href='http://" . trailingslashit($referrer) . $filename . "' target=_blank>" . __('[click here to check if the file exists]', 'affiliate') . "</a>";
+										echo " <a href='" . $schema . trailingslashit($referrer) . $filename . "' target=_blank>" . __('[click here to check if the file exists]', 'affiliate') . "</a>";
 										echo '<br/><input type="submit" name="Submit" class="button" value="' . __('Validate','affiliate') . '" />';
 									}
 								}

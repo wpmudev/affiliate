@@ -201,13 +201,14 @@ class affiliatedashboard {
 
 		if(!empty($rows)) {
 
+                        $schema = is_ssl() ? 'https://' : 'http://';
 
 			$class = 'alternate';
 			foreach($rows as $r) {
 
 				echo "<tr class='$class' style='$style'>";
 				echo "<td style='padding: 5px;'>";
-				echo "<a href='http://" . $r->url . "'>" . $r->url . "</a>";
+				echo "<a href='" . $schema . $r->url . "'>" . $r->url . "</a>";
 				echo "</td>";
 				echo "<td style='width: 3em; padding: 5px; text-align: right;'>";
 				echo $r->referred;
