@@ -163,7 +163,7 @@ class Affiliate_Membership2_Integration {
 			$user_id
 		);
 
-		if ( is_array( $complete_records ) ) {
+		if ( $pay_once && is_array( $complete_records ) ) {
 			// Make sure that this subscription was not commissioned before.
 			foreach ( $complete_records as $record ) {
 				$meta = maybe_unserialize( $record->meta );
