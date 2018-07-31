@@ -218,6 +218,10 @@ class Affiliate_Membership2_Integration {
 			'IP'              => $this->ms_lib->net->current_ip()->ip,
 		);
 
+		$affiliate_process_payment = apply_filters( 'affiliate_process_payment', true, $user_id_referrer, $reward, $user_id, $meta );
+
+		if ( ! $affiliate_process_payment ) return;
+
 		do_action(
 			'affiliate_purchase',
 			$user_id_referrer,
