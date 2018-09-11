@@ -1844,6 +1844,7 @@ class affiliateadmin {
 												'LOCAL_URL'       => ( is_ssl() ? 'https://' : 'http://' ) . esc_attr( $_SERVER['HTTP_HOST'] ) . esc_attr( $_SERVER['REQUEST_URI'] ),
 												'IP'              => ( isset( $_SERVER['HTTP_X_FORWARD_FOR'] ) ) ? esc_attr( $_SERVER['HTTP_X_FORWARD_FOR'] ) : esc_attr( $_SERVER['REMOTE_ADDR'] ),
 											);
+											$note = __( 'Payment to affiliate', 'affiliate' );
 
 											$this->db->insert( $this->affiliaterecords, array(
 												'user_id'       => $affdetails[0],
