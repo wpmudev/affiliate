@@ -2230,6 +2230,10 @@ class affiliateadmin {
 		global $action, $page, $subpage;
 
 		wp_reset_vars( array( 'action', 'page', 'subpage' ) );
+		
+		if ( empty( $action ) && isset( $_GET['action2'] ) && 'toggle' == $_GET['action2'] ) {
+			$action = 'toggle';
+		}
 
 		$messages    = array();
 		$messages[1] = __( 'Addon updated.', 'affiliate' );
