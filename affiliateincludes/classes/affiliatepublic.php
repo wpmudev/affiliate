@@ -687,6 +687,10 @@ class affiliate {
 
 	function set_affiliate_cookie( $affiliate, $reference, $referrer ) {
 
+		if ( ! isset( $_SERVER['HTTP_REFERER'] ) || empty( $_SERVER['HTTP_REFERER'] ) ) {
+			$_SERVER['HTTP_REFERER'] = ( isset( $_SERVER['REMOTE_ADDR'] ) ) ? $_SERVER['REMOTE_ADDR'] : '';
+		}
+		
 		$meta = array(
 			'REMOTE_URL' => esc_attr( $_SERVER['HTTP_REFERER'] ),
 			'LOCAL_URL'  => ( is_ssl() ? 'https://' : 'http://' ) . esc_attr( $_SERVER['HTTP_HOST'] ) . esc_attr( $_SERVER['REQUEST_URI'] ),
