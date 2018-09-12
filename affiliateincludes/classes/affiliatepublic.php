@@ -664,6 +664,10 @@ class affiliate {
 	 * @return boolean True if the cookie is set and needs to be considered
 	 */
 	function no_affiliate_condition() {
+	
+        if ( ! isset( $_SERVER['HTTP_REFERER'] ) || empty( $_SERVER['HTTP_REFERER'] ) ) {
+            return true;
+        }
 		// if we are supposed to check this cookie
 		if ( defined( 'AFFILIATE_SETNOCOOKIE' ) && 'yes' == AFFILIATE_SETNOCOOKIE ) {
 			if ( isset( $_COOKIE[ 'noaffiliate_' . COOKIEHASH ] ) ) {
@@ -686,10 +690,6 @@ class affiliate {
 	}
 
 	function set_affiliate_cookie( $affiliate, $reference, $referrer ) {
-	
-        if ( '' == $referrer && ( ! isset( $_SERVER['HTTP_REFERER'] ) || empty( $_SERVER['HTTP_REFERER'] ) ) ){
-			return;
-		}
 
 		$meta = array(
 			'REMOTE_URL' => esc_attr( $_SERVER['HTTP_REFERER'] ),
